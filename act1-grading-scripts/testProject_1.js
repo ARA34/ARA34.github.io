@@ -12,7 +12,7 @@ module.exports = class {
     }
 
     initReqs() {
-        this.requirements.fredSaysHaveFun = { bool: false, str: 'Fred the fish says "Have fun!"' };
+        this.requirements.julianSaysHaveFun = { bool: false, str: 'Julian the cat says "Have fun!"' };
     }
 
 
@@ -22,14 +22,14 @@ module.exports = class {
 
         if (!is(fileObj)) return;
 
-        let haveFunFred = false;
+        let haveFunJulian = false;
 
         let requiredSteps = 150;
 
         for (let target of project.targets) {
             if (target.isStage) { continue; }
             else {
-                // looks in sprite names fred for a say block, move block
+                // looks in sprite names Julian for a say block, move block
                 if (target.name === 'Julian') {
                     for (let script of target.scripts) {
                         for (let block of script.allBlocks()) {
@@ -39,52 +39,23 @@ module.exports = class {
                                 let finalString = punctuationless.replace(/\s{2,}/g, " ");
                                 finalString = finalString.replace(/\s+/g, '');
                                 if (finalString === 'havefun') {
-                                    haveFunFred = true; 
+                                    haveFunJulian = true; 
                                 }
                             }
 
                             if (block.opcode === 'motion_movesteps') {
-                                numMoveFred++;
-                                distanceMoveFred += block.floatInput('STEPS');
+                                numMoveJulian++;
+                                distanceMoveJulian += block.floatInput('STEPS');
                             }
                         }
                     }
-                    // if a move block is added, the boolean of fred moving is set to true
-                    if (distanceMoveFred > requiredSteps) {
-                        fredMoves = true;
+                    // if a move block is added, the boolean of julian moving is set to true
+                    if (distanceMoveJulian > requiredSteps) {
+                        julianMoves = true;
                     }
                 }
 
-                // looks through helen to find the  speed that she changes costuems at, if it is less than one
-                // boolean that means she changes costumes faster is set to true
-                else if (target.name === 'Helen') {
-                    for (let script of target.scripts) {
-                        for (let block of script.allBlocks()) {
-                            if (block.opcode === 'control_repeat') {
-                                let subscript = block.subscripts[0];
-                                for (let block of subscript.blocks) {
-                                    if (block.opcode = 'control_wait') {
-                                        if (block.floatInput('DURATION') < 1) {
-                                            helenSpeed = true;
-                                        }
-                                    }
-                                }
-                            }
-
-
-                            // when helen is clicked, she changes to a different color
-                            if (script.blocks[0].opcode === "event_whenthisspriteclicked") {
-                                for (let block of script.blocks) {
-                                    if (['looks_nextcostume'].includes(block.opcode)) {
-                                        helenColor = true;
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                }
-                // deals with the cases if the sprite names are changed from fred and helen
+                // deals with the cases if the sprite names are changed from julian and helen
                 else {
                     for (let script of target.scripts)
                     {
@@ -131,22 +102,12 @@ module.exports = class {
             }
         }
         // for all requirements, if the specific sprite does it or ANY sprite does it, the requirement is set to true
-        if (haveFunFred || haveFunMisc) {
-            this.requirements.fredSaysHaveFun.bool = true;
+        if (haveFunJulian || haveFunMisc) {
+            this.requirements.julianSaysHaveFun.bool = true;
         }
 
-        if (fredMoves || miscMoves) {
-            this.requirements.fredMoves.bool = true;
-        }
-
-        if (helenColor || miscColor) {
-            this.requirements.helenDifferentColor.bool = true;
-        }
-
-
-
-        if (helenSpeed || miscSpeed) {
-            this.requirements.helenChangesColorFaster.bool = true;
+        if (julianMoves || miscMoves) {
+            this.requirements.julianMoves.bool = true;
         }
     }
 }
