@@ -1,5 +1,5 @@
 /* 
-Scavenger Hunt Autograder
+testProject_1 Auto Grader
 Initial Version and testing: Saranya Turimella
 */
 
@@ -12,10 +12,10 @@ module.exports = class {
     }
 
     initReqs() {
-        this.requirements.fredSaysHaveFun = { bool: false, str: 'Fred the fish says "Have fun!"' };
-        this.requirements.fredMoves = { bool: false, str: 'Fred the fish moves all the way across the stage' };
-        this.requirements.helenChangesColorFaster = { bool: false, str: 'Helen the crab changes colors more quickly' };
-        this.requirements.helenDifferentColor = { bool: false, str: 'Helen changes to a different color when clicked' };
+        this.requirements.julianSaysHaveFun = { bool: false, str: 'Julian the cat says "Have fun!"' };
+        //this.requirements.fredMoves = { bool: false, str: 'Fred the fish moves all the way across the stage' };
+        //this.requirements.helenChangesColorFaster = { bool: false, str: 'Helen the crab changes colors more quickly' };
+        //this.requirements.helenDifferentColor = { bool: false, str: 'Helen changes to a different color when clicked' };
     }
 
 
@@ -25,16 +25,16 @@ module.exports = class {
 
         if (!is(fileObj)) return;
 
-        let haveFunFred = false;
+        let havefunJulian = false;
         let haveFunMisc = false;
-        let fredMoves = false;
+        let julianMoves = false;
         let miscMoves = false;
         let helenColor = false;
         let miscColor = false;
         let helenSpeed = false;
         let miscSpeed = false;
-        let numMoveFred = 0;
-        let distanceMoveFred = 0;
+        let numMoveJulian = 0;
+        let distanceMoveJulian = 0;
         let distanceMoveMisc = 0;
 
         let requiredSteps = 150;
@@ -43,7 +43,7 @@ module.exports = class {
             if (target.isStage) { continue; }
             else {
                 // looks in sprite names fred for a say block, move block
-                if (target.name === 'Fred') {
+                if (target.name === 'Julian') {
                     for (let script of target.scripts) {
                         for (let block of script.allBlocks()) {
                             if ((block.opcode === 'looks_sayforsecs')) {
@@ -52,19 +52,19 @@ module.exports = class {
                                 let finalString = punctuationless.replace(/\s{2,}/g, " ");
                                 finalString = finalString.replace(/\s+/g, '');
                                 if (finalString === 'havefun') {
-                                    haveFunFred = true; 
+                                    havefunJulian = true; 
                                 }
                             }
 
                             if (block.opcode === 'motion_movesteps') {
-                                numMoveFred++;
-                                distanceMoveFred += block.floatInput('STEPS');
+                                numMoveJulian++;
+                                distanceMoveJulian += block.floatInput('STEPS');
                             }
                         }
                     }
                     // if a move block is added, the boolean of fred moving is set to true
-                    if (distanceMoveFred > requiredSteps) {
-                        fredMoves = true;
+                    if (distanceMoveJulian > requiredSteps) {
+                        julianMoves = true;
                     }
                 }
 
@@ -142,20 +142,18 @@ module.exports = class {
             }
         }
         // for all requirements, if the specific sprite does it or ANY sprite does it, the requirement is set to true
-        if (haveFunFred || haveFunMisc) {
-            this.requirements.fredSaysHaveFun.bool = true;
+        if (havefunJulian || haveFunMisc) {
+            this.requirements.julianSaysHaveFun.bool = true;
         }
 
-        if (fredMoves || miscMoves) {
-            this.requirements.fredMoves.bool = true;
+        if (julianMoves || miscMoves) {
+            this.requirements.julianMoves.bool = true;
         }
 
         if (helenColor || miscColor) {
             this.requirements.helenDifferentColor.bool = true;
         }
-
-
-
+        
         if (helenSpeed || miscSpeed) {
             this.requirements.helenChangesColorFaster.bool = true;
         }
