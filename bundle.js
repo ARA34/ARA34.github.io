@@ -467,18 +467,15 @@ module.exports = class {
     }
 }
 
-
-
-
-
-
-
-
 },{"../grading-scripts-s3/scratch3":26}],7:[function(require,module,exports){
 /*
-Act 1 Events Ofrenda Autograder
-Intital version and testing: Saranya Turimella, Summer 2019
+Place holder code for Systems grading script
+Adapted from final-project.js 2023
+
+This script account for blocks being connected but doesnt account for the type of blocks being.. 
+connected except for the first one which is the run block
 */
+
 require('../grading-scripts-s3/scratch3')
 
 module.exports = class {
@@ -487,135 +484,53 @@ module.exports = class {
         this.extensions = {};
     }
 
-    initReqs() {
-        this.requirements.leftCostume = { bool: false, str: 'The left costume has been changed' }; // done
-        this.requirements.leftChanged = { bool: false, str: 'The left sprite has new dialogue' }; // done
-        this.requirements.middleSay = { bool: false, str: 'The middle sprite says something when clicked' }; // done
-        this.requirements.rightSay = { bool: false, str: 'The right sprite says something when clicked' }; // done
-
-        // done
-        /*
-        this.requirements.speaking1 = { bool: false, str: '1 sprite uses the say block' };
-        this.requirements.speaking2 = {bool: false, str: '2 sprites use the say block'};
-        this.requirements.speaking3 = {bool: false, str: '3 sprites use the say block'};
-        this.requirements.interactive1 = { bool: false, str: '1 sprite is interactive' };
-        this.requirements.interactive2 = {bool: false, str: '2 sprites are interactie'};
-        this.requirements.costume1 = {bool: false, str: '1 sprite has a new costume'};
-        this.requirements.costume2 = {bool: false, str: '2 sprites have a new costume'};
-        this.requirements.costume3 = {bool: false, str: '3 sprites have a new costume'};
-        */
-        
-       
-        // // extensions
-        this.extensions.leftSpaceSay = { bool: false, str: 'The left sprite says something when the space key is pressed' };
-        this.extensions.catrinaTurn = { bool: false, str: 'Catrina turns when an arrow key is pressed' };
-        this.extensions.middleSound = { bool: false, str: 'The middle sprite makes a sound when a letter key is pressed' };
-        this.extensions.rightAnyKey = { bool: false, str: 'The right sprite does something when any key is pressed' };
+     initReqs() {
+    
+        this.requirements.longScript = { bool: false, str: 'At least one script with 4 blocks' };//done
+        this.requirements.events = { bool: false, str: 'At least one sprite with three different event blocks.' };//done
+        this.requirements.loop = { bool: false, str: 'At least one sprite uses a repeat block to move smoothly.' };//done
     }
 
 
     grade(fileObj, user) {
         var project = new Project(fileObj, null);
-        var original = new Project(require('../act1-grading-scripts/originalOfrenda-test'), null);
-
         this.initReqs();
         if (!is(fileObj)) return;
 
-        console.log(project.sprites.find(s => s.name ==='Left'));
+        let stage = project.targets.find(t => t.isStage);
+     
+       let sprites = project.targets.filter(t=> !t.isStage);
 
-        var allSprites = project.sprites;
-
-        var leftSprite;
-        var middleSprite;
-        var rightSprite;
-
-        var candidates = allSprites.filter(s => s.name.toLowerCase().includes('left'));
-
-
-        function euclideanDistance(x1, y1, x2, y2) {
-            return Math.pow(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2), 0.5);
+        function procSprite(sprite){
+            var out = {maxScriptLength:0, nEvents:0, hasLoop:false}
+            out.maxScriptLength = Math.max(...sprite.scripts.filter(s=> s.blocks[0].opcode.includes("event_")).map(s=>s.blocks.length));
+            out.nEvents = new Set(sprite.scripts.filter(s=> s.blocks[0].opcode.includes("event_")).filter(s=>s.blocks.length > 1).map(s=>s.blocks[0].opcode + JSON.stringify(s.blocks[0].fields))).size;
+            var loops = sprite.scripts.filter(s=> s.blocks[0].opcode.includes("event_")).map(s=>s.blocks.filter(b=>b.opcode.includes("control_repeat"))).flat();
+            out.hasLoop = loops.some(loop=>loop.subscripts.some(s=>s.blocks.some(block=>block.opcode.includes("motion_") && s.blocks.some(block=>block.opcode.includes("control_wait")))));
+            return out;
         }
-        if(candidates.length == 1){
-            leftSprite = candidates[0];
-        } else {
-            // function distToLeft(s) {return Math.pow(Math.pow(s.x - -71, 2) + Math.pow(s.y - 56, 2), 0.5) }
-            function distToLeft(s) {return euclideanDistance(s.x, s.y, -71, 56)};
+        var results = sprites.map(procSprite);
+        this.requirements.longScript.bool = Math.max(...results.map(r=>r.maxScriptLength)) >= 4;
+        this.requirements.events.bool = results.filter(r=>r.nEvents >= 3).length > 0;
+        this.requirements.loop.bool = results.some(r=>r.hasLoop);
+        // this.reqiuirements.loop.bool = results.some(r=>r.hasLoop);
+        console.log(results);
+        console.log(results.some(r=>r.hasLoop));
+        console.log(sprites);
+   
 
-            allSprites.sort((a, b) => distToLeft(a) - distToLeft(b));
-            leftSprite = allSprites[0];
-        }
-        allSprites = allSprites.filter(s => s.name != leftSprite.name);
-
-        candidates = allSprites.filter(s => s.name.toLowerCase().includes('middle'));
-
-        if(candidates.length == 1){
-            middleSprite = candidates[0];
-        } else {
-            function distToMiddle(s) {return euclideanDistance(s.x, s.y, 6, 53)};
-
-            allSprites.sort((a, b) => distToMiddle(a) - distToMiddle(b));
-            middleSprite = allSprites[0];
-        }
-
-        allSprites = allSprites.filter(s => s.name != middleSprite.name);
-
-        candidates = allSprites.filter(s => s.name.toLowerCase().includes('right'));
-
-        if(candidates.length == 1){
-            rightSprite = candidates[0];
-        } else {
-            function distToRight(s) {return euclideanDistance(s.x, s.y, 71, 54)};
-
-            allSprites.sort((a, b) => distToRight(a) - distToRight(b));
-            rightSprite = allSprites[0];
-        }
-
-        allSprites = allSprites.filter(s => s.name != rightSprite.name);
-
-        this.requirements.leftCostume.bool = leftSprite.costumes[leftSprite.currentCostume].assetId != '8900e1f586f49453f2e7501e3fe4cfdd';
-        var leftScriptSayContents = leftSprite.scripts.filter(s => s.blocks[0].opcode.includes("event_whenthisspriteclicked")).map(s => s.blocks.filter(b => b.opcode.includes('looks_say')).map(b=>b.inputs['MESSAGE'][1][1]) ).filter(arr => arr.length > 0);
-        var originalMessages = ["Hi There!", "I loved to cook with my granchildren."];
-        this.requirements.leftChanged.bool = !leftScriptSayContents.some(script=>script.some(message=> originalMessages.includes(message)));
-
-        var onClickMiddleScripts = middleSprite.scripts.filter(s => s.blocks[0].opcode.includes("event_whenthisspriteclicked"));
-        if(onClickMiddleScripts.length > 0){
-            this.requirements.middleSay.bool = onClickMiddleScripts.some(s => s.blocks.some(block => block.opcode.includes("looks_say")));
-
-        }
-
-        var onClickRightScripts = rightSprite.scripts.filter(s => s.blocks[0].opcode.includes("event_whenthisspriteclicked"));
-        if(onClickRightScripts.length > 0){
-            this.requirements.rightSay.bool = onClickRightScripts.some(s => s.blocks.some(block => block.opcode.includes("looks_say")));
-        }
-
-        var leftWhenSpacePressedScripts = leftSprite.scripts.filter(s => s.blocks[0].opcode.includes("event_whenkeypressed") && s.blocks[0].fields.KEY_OPTION[0] ==="space");
-        if(leftWhenSpacePressedScripts.length > 0){
-            this.extensions.leftSpaceSay.bool = leftWhenSpacePressedScripts.some(s => s.blocks.some(block => block.opcode.includes("looks_say")));
-        }
-
-        // We check all remaning sprites to see if any have event_whenkeypressed blocks set to listen to an arrow
-        var catrinaCandidates = allSprites;
-        var catrinasArrowScripts = catrinaCandidates.map(catrina => catrina.scripts.filter(s => s.blocks[0].opcode.includes("event_whenkeypressed") && s.blocks[0].fields.KEY_OPTION[0].includes("arrow")));
-        // For each sprite with a event when arrow pressed block, we check if any also contain a motion turn block
-        this.extensions.catrinaTurn.bool = catrinasArrowScripts.some(catrinaScripts => catrinaScripts.some(script=> script.blocks.filter(block => block.opcode.includes("motion_turn")).length > 0));
-
-
-        var middleLetterPressedScripts = middleSprite.scripts.filter(s=> s.blocks[0].opcode === "event_whenkeypressed" && "abcdefghijklmnopqrstuvwxyz".includes(s.blocks[0].fields.KEY_OPTION[0]));
-        this.extensions.middleSound.bool = middleLetterPressedScripts.some(s => s.blocks.some(block => block.opcode.includes("sound_play")));
-
-        var rightAnyPressedScripts = rightSprite.scripts.filter(s=> s.blocks[0].opcode === "event_whenkeypressed" && s.blocks[0].fields.KEY_OPTION[0] === "any");
-        this.extensions.rightAnyKey.bool = rightAnyPressedScripts.some(s=> s.blocks.length > 1);
-        console.log([leftSprite, middleSprite, rightSprite])
+        return;
     }
-} 
-},{"../act1-grading-scripts/originalOfrenda-test":9,"../grading-scripts-s3/scratch3":26}],8:[function(require,module,exports){
+}
+ 
+},{"../grading-scripts-s3/scratch3":26}],8:[function(require,module,exports){
 
 /* 
-Scavenger Hunt Autograder
+testProject_1 Autograder
 Initial Version and testing: Saranya Turimella
 */
 
-require('../grading-scripts-s3/scratch3')
+require('../grading-scripts-s3/scratch3') // might not need check back on this
 
 module.exports = class {
     constructor() {
@@ -11068,8 +10983,9 @@ let graders = {
 
 /// Act 1 graders
 let actOneGraders = {
-    scavengerHunt: { name: 'M1 - Scavenger Hunt',    file: require('./act1-grading-scripts/scavengerHunt') },//,
-    testProject_1: { name: 'T1 - Testing Project',       file: require('./act1-grading-scripts/testProject_1') }
+    scavengerHunt: { name: 'M1 - Scavenger Hunt',    file: require('./act1-grading-scripts/scavengerHunt') },
+    systems:       { name: 'A3 - Systems',           file: require('./act3-grading-scripts/systems') },
+    testProject_1: { name: 'T1 - Testing Project',   file: require('./act3-grading-scripts/testProject_1') }
     //onTheFarm:     { name: 'M2 - On the Farm',       file: require('./act1-grading-scripts/onTheFarm') },
     //namePoem:      { name: 'M3 - Name Poem',         file: require('./act1-grading-scripts/name-poem') },
     //ofrenda:       { name: 'M4 - Ofrenda',           file: require('./act1-grading-scripts/ofrenda') },
@@ -11596,7 +11512,7 @@ function noError() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-},{"./act1-grading-scripts/aboutMe":1,"./act1-grading-scripts/animal-parade":2,"./act1-grading-scripts/dance-party":3,"./act1-grading-scripts/final-project":4,"./act1-grading-scripts/knockKnock":5,"./act1-grading-scripts/name-poem":6,"./act1-grading-scripts/ofrenda":7,"./act1-grading-scripts/testProject_1":8,"./act1-grading-scripts/scavengerHunt":10,"./grading-scripts-s3/animation-L1":11,"./grading-scripts-s3/animation-L2":12,"./grading-scripts-s3/complex-conditionals-L1":13,"./grading-scripts-s3/cond-loops-L1-syn":14,"./grading-scripts-s3/cond-loops-L2":15,"./grading-scripts-s3/decomp-L1":17,"./grading-scripts-s3/decomp-L2":18,"./grading-scripts-s3/events-L1-syn":19,"./grading-scripts-s3/events-L2":20,"./grading-scripts-s3/one-way-sync-L1":22,"./grading-scripts-s3/one-way-sync-L2":23,"./grading-scripts-s3/scratch-basics-L1":24,"./grading-scripts-s3/scratch-basics-L2":25,"./grading-scripts-s3/two-way-sync-L1":48}],51:[function(require,module,exports){
+},{"./act1-grading-scripts/aboutMe":1,"./act1-grading-scripts/animal-parade":2,"./act1-grading-scripts/dance-party":3,"./act1-grading-scripts/final-project":4,"./act1-grading-scripts/knockKnock":5,"./act1-grading-scripts/name-poem":6,"./act3-grading-scripts/systems":7,"./act1-grading-scripts/testProject_1":8,"./act1-grading-scripts/scavengerHunt":10,"./grading-scripts-s3/animation-L1":11,"./grading-scripts-s3/animation-L2":12,"./grading-scripts-s3/complex-conditionals-L1":13,"./grading-scripts-s3/cond-loops-L1-syn":14,"./grading-scripts-s3/cond-loops-L2":15,"./grading-scripts-s3/decomp-L1":17,"./grading-scripts-s3/decomp-L2":18,"./grading-scripts-s3/events-L1-syn":19,"./grading-scripts-s3/events-L2":20,"./grading-scripts-s3/one-way-sync-L1":22,"./grading-scripts-s3/one-way-sync-L2":23,"./grading-scripts-s3/scratch-basics-L1":24,"./grading-scripts-s3/scratch-basics-L2":25,"./grading-scripts-s3/two-way-sync-L1":48}],51:[function(require,module,exports){
 (function (global){(function (){
 'use strict';
 

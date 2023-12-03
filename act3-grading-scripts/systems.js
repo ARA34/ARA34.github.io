@@ -1,9 +1,11 @@
 /*
-Act 1 Final Project Autograder
-Initial version and testing: Zipporah Klain
-*/
+Place holder code for systems grading script
+Adapted from final-project.js
 
-// maxScriptLength
+
+This script account for blocks being connected but doesnt account for the type of blocks being.. 
+connected except for the first one which is the run block
+*/
 
 require('../grading-scripts-s3/scratch3')
 
