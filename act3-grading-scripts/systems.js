@@ -59,13 +59,12 @@ module.exports = class {
         this.requirements.events.bool = results.filter(r=>r.nEvents >= 3).length > 0;
         this.requirements.loop.bool = results.some(r=>r.hasLoop);
         // this.reqiuirements.loop.bool = results.some(r=>r.hasLoop);
-
-        this.requirements.explains.bool = results.filter(c=>c.hasExplanation).length == 6;
+        this.requirements.explains.bool = (results.length >= 6) ? this.requirements.explains.bool = results.filter(c=>c.hasExplanation == true).length == 6 : false;
         this.requirements.hasSay.bool = results.some(b=>b.hasSay);
 
         console.log(results);
         console.log(results.some(r=>r.hasLoop));
-        console.log(results.filter(c=>c.hasExplanation).length == 6);
+        //console.log(results.filter(c=>c.hasExplanation == true).length == 6);
         console.log(results.some(b=>b.hasSay));
 
         return;
