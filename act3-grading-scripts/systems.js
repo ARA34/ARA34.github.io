@@ -20,7 +20,7 @@ module.exports = class {
         this.requirements.events = { bool: false, str: 'At least one sprite with three different event blocks.' };//done
         this.requirements.loop = { bool: false, str: 'At least one sprite uses a repeat block to move smoothly.' };//done
         this.requirements.hasSay = { bool: false, str: "Has a say block" }; // example -- can remove
-        this.requirements.explains = { bool: false, str: "At least sound block or say block to explain."}; //working
+        this.requirements.explains = { bool: false, str: "At least sound block or say block to explain each arrow(6)."}; //done
     }
 
 
@@ -34,7 +34,7 @@ module.exports = class {
        let sprites = project.targets.filter(t=> !t.isStage); //important
 
         function procSprite(sprite){
-            var out = {maxScriptLength:0, nEvents:0, hasLoop:false, hasSay: false , hasExplanation: false , explains: false };
+            var out = {maxScriptLength:0, nEvents:0, hasLoop:false, hasSay:false , hasExplanation:false , explains:false };
 
             /*for (let script of sprite.scripts){
                 for (let block of script.allBlocks()){
@@ -60,12 +60,12 @@ module.exports = class {
         this.requirements.loop.bool = results.some(r=>r.hasLoop);
         // this.reqiuirements.loop.bool = results.some(r=>r.hasLoop);
 
-        this.requirements.explains.bool = results.filter(c=>c.hasExplanation).length = 6;
+        this.requirements.explains.bool = results.filter(c=>c.hasExplanation).length == 6;
         this.requirements.hasSay.bool = results.some(b=>b.hasSay);
 
         console.log(results);
         console.log(results.some(r=>r.hasLoop));
-        console.log(results.filter(c=>c.hasExplanation).length = 6);
+        console.log(results.filter(c=>c.hasExplanation).length == 6);
         console.log(results.some(b=>b.hasSay));
 
         return;
