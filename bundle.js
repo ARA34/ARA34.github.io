@@ -520,7 +520,7 @@ module.exports = class {
             var loops = sprite.scripts.filter(s=> s.blocks[0].opcode.includes("event_")).map(s=>s.blocks.filter(b=>b.opcode.includes("control_repeat"))).flat();
             out.hasLoop = loops.some(loop=>loop.subscripts.some(s=>s.blocks.some(block=>block.opcode.includes("motion_") && s.blocks.some(block=>block.opcode.includes("control_wait")))));
             out.hasExplanation = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_sayforsecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone")))); // either sound or say block
-            out.hasSay = sprite.scripts.some(blocks=>blocks.some(block=>block.opcode == "looks_sayforsecs"));
+            out.hasSay = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode == "looks_sayforsecs"));
             return out;
         }
 
