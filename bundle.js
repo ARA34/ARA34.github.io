@@ -511,8 +511,8 @@ module.exports = class {
             out.maxScriptLength = Math.max(...sprite.scripts.filter(s=> s.blocks[0].opcode.includes("event_")).map(s=>s.blocks.length));
             out.nEvents = new Set(sprite.scripts.filter(s=> s.blocks[0].opcode.includes("event_")).filter(s=>s.blocks.length > 1).map(s=>s.blocks[0].opcode + JSON.stringify(s.blocks[0].fields))).size;
             //var loops = sprite.scripts.filter(s=> s.blocks[0].opcode.includes("event_")).map(s=>s.blocks.filter(b=>b.opcode.includes("control_repeat"))).flat();
-            var loops_repeat = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event").map(s=>s.blocks.filter(b=>b.opcode.includes("control_repeat")))).flat();
-            var loops_forever = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event").map(s=>s.blocks.filter(b=>b.opcode.includes("control_forever")))).flat();
+            var loops_repeat = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_").map(s=>s.blocks.filter(b=>b.opcode.includes("control_repeat_until")))).flat();
+            var loops_forever = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_").map(s=>s.blocks.filter(b=>b.opcode.includes("control_forever")))).flat();
             out.hasLoop = loops_repeat.some(loop=>loop.subscripts.some(s=>s.blocks.some(block=>block.opcode.includes("motion_") && s.blocks.some(block=>block.opcode.includes("control_wait")))));
             out.hasAnimation = loops_forever.some(loop=>loop.subscripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_nextcostume") && s.blocks.some(block=>block.opcode.includes("control_wait")))));
             out.hasExplanation = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_sayforsecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone")))); // either sound or say block
