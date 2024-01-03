@@ -53,7 +53,7 @@ module.exports = class {
         this.requirements.events.bool = results.filter(r=>r.nEvents >= 3).length > 0;
         this.requirements.repeat_loop.bool = results.some(r=>r.hasLoop);
         // this.reqiuirements.loop.bool = results.some(r=>r.hasLoop);
-        this.requirements.animation_loop.bool = results.some(r=r.hasAnimation);
+        this.requirements.animation_loop.bool = results.some(r=>r.hasAnimation);
         this.requirements.explains.bool = (results.length >= 6) ? this.requirements.explains.bool = results.filter(c=>c.hasExplanation == true).length == 6 : false;
 
         console.log(results);
