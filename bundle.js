@@ -514,7 +514,7 @@ module.exports = class {
         this.requirements.explains.bool = (arrows.length >=1) ? this.requirements.explains.bool = results.filter(c=>c.hasExplanation == true).length == arrows.length : false;
 
         console.log(results);
-        
+        console.log(arrows.length)
         return;
     }
 }
