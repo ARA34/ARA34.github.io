@@ -33,7 +33,8 @@ module.exports = class {
             
             var loops_forever = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_")).map(s=>s.blocks.filter(b=>b.opcode.includes("control_forever"))).flat();
             out.hasAnimation = loops_forever.some(loop=>loop.subscripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_nextcostume") && s.blocks.some(block=>block.opcode.includes("control_wait")))));
-            out.hasExplanation = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_sayforsecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone"))));
+            //out.hasExplanation = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_sayforsecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone"))));
+            out.hasExplanation = (sprite.name.includes("Sprite")) ? sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_forsaysecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone")))) : false;
             return out;
         }
 
