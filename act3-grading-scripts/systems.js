@@ -40,10 +40,10 @@ module.exports = class {
         var results = sprites.map(procSprite);
         this.requirements.animation_loop.bool = results.some(r=>r.hasAnimation);
         //this.requirements.explains.bool = (results.length >= 6) ? this.requirements.explains.bool = results.filter(c=>c.hasExplanation == true).length == 6 : false;
-        this.requirements.explains.bool = (arrows.length >=1) ? this.requirements.explains.bool = results.filter(c=>c.hasExplanation == true).length == arrows.length : false;
-        console.log(arrows.length)
+        this.requirements.explains.bool = (arrows.length >=1) ? results.filter(c=>c.hasExplanation == true).length == arrows.length : false;
 
         console.log(results);
+        console.log(arrows.length)
         
         return;
     }
