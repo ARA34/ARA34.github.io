@@ -505,17 +505,18 @@ module.exports = class {
             var loops_forever = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_")).map(s=>s.blocks.filter(b=>b.opcode.includes("control_forever"))).flat();
             out.hasAnimation = loops_forever.some(loop=>loop.subscripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_nextcostume") && s.blocks.some(block=>block.opcode.includes("control_wait")))));
             //out.hasExplanation = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_sayforsecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone"))));
-            out.hasExplanation = (sprite.name.includes("Sprite")) ? sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_forsaysecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone")))) : false;
+            out.hasExplanation.bool = (sprite.name.includes("Sprite")) ? sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_forsaysecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone")))) : false;
             return out;
         }
 
         var results = sprites.map(procSprite);
         this.requirements.animation_loop.bool = results.some(r=>r.hasAnimation);
         //this.requirements.explains.bool = (results.length >= 6) ? this.requirements.explains.bool = results.filter(c=>c.hasExplanation == true).length == 6 : false;
-        this.requirements.explains.bool = (arrows.length >=1) ? results.filter(c=>c.hasExplanation == true).length == arrows.length : false;
+        this.requirements.explains.bool = (arrows.length >=1) ? results.filter(c=>c.hasExplanation).length == arrows.length : false;
 
         console.log(results);
-        console.log(arrows.length)
+        console.log(results.filter(c=>c.hasExplanation).length);
+        console.log(arrows.length);
         return;
     }
 }
