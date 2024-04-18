@@ -10989,7 +10989,7 @@ let actOneGraders = {
     //namePoem:      { name: 'M3 - Name Poem',         file: require('./act1-grading-scripts/name-poem') },
     //ofrenda:       { name: 'M4 - Ofrenda',           file: require('./act1-grading-scripts/ofrenda') },
     //aboutMe:       { name: 'M5 - About Me',          file: require('./act1-grading-scripts/aboutMe') },
-    //animalParade:  { name: 'M6 - Animal Parade',     file: require('./act1-grading-scripts/animal-parade') },
+    animalParade:  { name: 'M6 - Animal Parade',     file: require('./act1-grading-scripts/animal-parade') },
     //danceParty:    { name: 'M7 - Dance Party',       file: require('./act1-grading-scripts/dance-party') },
     //knockKnock:    { name: 'M8 - Knock Knock',       file: require('./act1-grading-scripts/knockKnock') },
     //finalProject:  { name: 'M9 - Interactive Story', file: require('./act1-grading-scripts/final-project') },
