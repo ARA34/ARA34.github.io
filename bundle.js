@@ -467,225 +467,328 @@ module.exports = class {
     }
 }
 
+// systems and testProject
+
 },{"../grading-scripts-s3/scratch3":26}],7:[function(require,module,exports){
-    //start from here
-/*
-Place holder code for systems grading script
-Adapted from final-project.js
-*/
-
-require('../grading-scripts-s3/scratch3')
-
-module.exports = class {
-    constructor() {
-        this.requirements = {};
-        this.extensions = {};
-    }
-
-     initReqs() {
-        this.requirements.explains = { bool: false, str: "At least sound block or say block to explain each arrow."}; //working
-        this.requirements.animation_loop = { bool: false, str: "At least one sprite is animated with the blocks given on worksheet."} //done 
-
-    }
-
-
-    grade(fileObj, user) {
-        var project = new Project(fileObj, null);
-        this.initReqs();
-        if (!is(fileObj)) return;
-
-        let stage = project.targets.find(t => t.isStage);
-     
-       let sprites = project.targets.filter(t=> !t.isStage); //important
-       let arrows = sprites.filter(t=>t.name.includes("Sprite"));
-
-        function procSprite(sprite){
-            var out = {hasAnimation: false, hasExplanation:false, explains:false};
-            
-            var loops_forever = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_")).map(s=>s.blocks.filter(b=>b.opcode.includes("control_forever"))).flat();
-            out.hasAnimation = loops_forever.some(loop=>loop.subscripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_nextcostume") && s.blocks.some(block=>block.opcode.includes("control_wait")))));
-            //out.hasExplanation = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_sayforsecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone"))));
-            out.hasExplanation = (sprite.name.includes("Sprite")) ? sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_sayforsecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone")))) : false;
-            return out;
+    /*
+    Act 1 Events Ofrenda Autograder
+    Intital version and testing: Saranya Turimella, Summer 2019
+    */
+    require('../grading-scripts-s3/scratch3')
+    
+    module.exports = class {
+        constructor() {
+            this.requirements = {};
+            this.extensions = {};
         }
-
-        var results = sprites.map(procSprite);
-        this.requirements.animation_loop.bool = results.some(r=>r.hasAnimation);
-        //this.requirements.explains.bool = (results.length >= 6) ? this.requirements.explains.bool = results.filter(c=>c.hasExplanation == true).length == 6 : false;
-        this.requirements.explains.bool = (arrows.length >=1) ? results.filter(c=>c.hasExplanation).length == arrows.length : false;
-
-        console.log(results);
-        console.log(results.filter(c=>c.hasExplanation).length);
-        console.log(arrows.length);
-        return;
-    }
-}
-// end here
- 
-},{"../grading-scripts-s3/scratch3":26}],8:[function(require,module,exports){
-
-/* 
-testProject_1 Autograder
-Initial Version and testing: Saranya Turimella
-*/
-
-require('../grading-scripts-s3/scratch3') // might not need check back on this
-
-module.exports = class {
-    constructor() {
-        this.requirements = {};
-        this.extensions = {};
-    }
-
-    initReqs() {
-        this.requirements.julianSaysHaveFun = { bool: false, str: 'Julian the cat says "Have fun!"' };
-        //this.requirements.fredMoves = { bool: false, str: 'Fred the fish moves all the way across the stage' };
-        //this.requirements.helenChangesColorFaster = { bool: false, str: 'Helen the crab changes colors more quickly' };
-        //this.requirements.helenDifferentColor = { bool: false, str: 'Helen changes to a different color when clicked' };
-    }
-
-
-    grade(fileObj, user) {
-        var project = new Project(fileObj, null);
-        this.initReqs();
-
-        if (!is(fileObj)) return;
-
-        let havefunJulian = false;
-        let haveFunMisc = false;
-        let julianMoves = false;
-        let miscMoves = false;
-        let helenColor = false;
-        let miscColor = false;
-        let helenSpeed = false;
-        let miscSpeed = false;
-        let numMoveJulian = 0;
-        let distanceMoveJulian = 0;
-        let distanceMoveMisc = 0;
-
-        let requiredSteps = 150;
-
-        for (let target of project.targets) {
-            if (target.isStage) { continue; }
-            else {
-                // looks in sprite names fred for a say block, move block
-                if (target.name === 'Julian') {
-                    for (let script of target.scripts) {
-                        for (let block of script.allBlocks()) {
-                            if ((block.opcode === 'looks_sayforsecs')) {
-                                let dialogue = (block.textInput('MESSAGE')).toLowerCase();
-                                let punctuationless = dialogue.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
-                                let finalString = punctuationless.replace(/\s{2,}/g, " ");
-                                finalString = finalString.replace(/\s+/g, '');
-                                if (finalString === 'havefun') {
-                                    havefunJulian = true; 
-                                }
-                            }
-
-                            if (block.opcode === 'motion_movesteps') {
-                                numMoveJulian++;
-                                distanceMoveJulian += block.floatInput('STEPS');
-                            }
-                        }
-                    }
-                    // if a move block is added, the boolean of fred moving is set to true
-                    if (distanceMoveJulian > requiredSteps) {
-                        julianMoves = true;
-                    }
-                }
-
-                // looks through helen to find the  speed that she changes costuems at, if it is less than one
-                // boolean that means she changes costumes faster is set to true
-                else if (target.name === 'Helen') {
-                    for (let script of target.scripts) {
-                        for (let block of script.allBlocks()) {
-                            if (block.opcode === 'control_repeat') {
-                                let subscript = block.subscripts[0];
-                                for (let block of subscript.blocks) {
-                                    if (block.opcode = 'control_wait') {
-                                        if (block.floatInput('DURATION') < 1) {
-                                            helenSpeed = true;
+    
+        initReqs() {
+            this.requirements.leftCostume = { bool: false, str: 'The left costume has been changed' }; // done
+            this.requirements.leftChanged = { bool: false, str: 'The left sprite has new dialogue' }; // done
+            this.requirements.middleSay = { bool: false, str: 'The middle sprite says something when clicked' }; // done
+            this.requirements.rightSay = { bool: false, str: 'The right sprite says something when clicked' }; // done
+    
+            // done
+            /*
+            this.requirements.speaking1 = { bool: false, str: '1 sprite uses the say block' };
+            this.requirements.speaking2 = {bool: false, str: '2 sprites use the say block'};
+            this.requirements.speaking3 = {bool: false, str: '3 sprites use the say block'};
+            this.requirements.interactive1 = { bool: false, str: '1 sprite is interactive' };
+            this.requirements.interactive2 = {bool: false, str: '2 sprites are interactie'};
+            this.requirements.costume1 = {bool: false, str: '1 sprite has a new costume'};
+            this.requirements.costume2 = {bool: false, str: '2 sprites have a new costume'};
+            this.requirements.costume3 = {bool: false, str: '3 sprites have a new costume'};
+            */
+            
+           
+            // // extensions
+            this.extensions.leftSpaceSay = { bool: false, str: 'The left sprite says something when the space key is pressed' };
+            this.extensions.catrinaTurn = { bool: false, str: 'Catrina turns when an arrow key is pressed' };
+            this.extensions.middleSound = { bool: false, str: 'The middle sprite makes a sound when a letter key is pressed' };
+            this.extensions.rightAnyKey = { bool: false, str: 'The right sprite does something when any key is pressed' };
+        }
+    
+    
+        grade(fileObj, user) {
+            var project = new Project(fileObj, null);
+            var original = new Project(require('../act1-grading-scripts/originalOfrenda-test'), null);
+    
+            this.initReqs();
+            if (!is(fileObj)) return;
+    
+            console.log(project.sprites.find(s => s.name ==='Left'));
+    
+            var allSprites = project.sprites;
+    
+            var leftSprite;
+            var middleSprite;
+            var rightSprite;
+    
+            var candidates = allSprites.filter(s => s.name.toLowerCase().includes('left'));
+    
+    
+            function euclideanDistance(x1, y1, x2, y2) {
+                return Math.pow(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2), 0.5);
+            }
+            if(candidates.length == 1){
+                leftSprite = candidates[0];
+            } else {
+                // function distToLeft(s) {return Math.pow(Math.pow(s.x - -71, 2) + Math.pow(s.y - 56, 2), 0.5) }
+                function distToLeft(s) {return euclideanDistance(s.x, s.y, -71, 56)};
+    
+                allSprites.sort((a, b) => distToLeft(a) - distToLeft(b));
+                leftSprite = allSprites[0];
+            }
+            allSprites = allSprites.filter(s => s.name != leftSprite.name);
+    
+            candidates = allSprites.filter(s => s.name.toLowerCase().includes('middle'));
+    
+            if(candidates.length == 1){
+                middleSprite = candidates[0];
+            } else {
+                function distToMiddle(s) {return euclideanDistance(s.x, s.y, 6, 53)};
+    
+                allSprites.sort((a, b) => distToMiddle(a) - distToMiddle(b));
+                middleSprite = allSprites[0];
+            }
+    
+            allSprites = allSprites.filter(s => s.name != middleSprite.name);
+    
+            candidates = allSprites.filter(s => s.name.toLowerCase().includes('right'));
+    
+            if(candidates.length == 1){
+                rightSprite = candidates[0];
+            } else {
+                function distToRight(s) {return euclideanDistance(s.x, s.y, 71, 54)};
+    
+                allSprites.sort((a, b) => distToRight(a) - distToRight(b));
+                rightSprite = allSprites[0];
+            }
+    
+            allSprites = allSprites.filter(s => s.name != rightSprite.name);
+    
+            this.requirements.leftCostume.bool = leftSprite.costumes[leftSprite.currentCostume].assetId != '8900e1f586f49453f2e7501e3fe4cfdd';
+            var leftScriptSayContents = leftSprite.scripts.filter(s => s.blocks[0].opcode.includes("event_whenthisspriteclicked")).map(s => s.blocks.filter(b => b.opcode.includes('looks_say')).map(b=>b.inputs['MESSAGE'][1][1]) ).filter(arr => arr.length > 0);
+            var originalMessages = ["Hi There!", "I loved to cook with my granchildren."];
+            this.requirements.leftChanged.bool = !leftScriptSayContents.some(script=>script.some(message=> originalMessages.includes(message)));
+    
+            var onClickMiddleScripts = middleSprite.scripts.filter(s => s.blocks[0].opcode.includes("event_whenthisspriteclicked"));
+            if(onClickMiddleScripts.length > 0){
+                this.requirements.middleSay.bool = onClickMiddleScripts.some(s => s.blocks.some(block => block.opcode.includes("looks_say")));
+    
+            }
+    
+            var onClickRightScripts = rightSprite.scripts.filter(s => s.blocks[0].opcode.includes("event_whenthisspriteclicked"));
+            if(onClickRightScripts.length > 0){
+                this.requirements.rightSay.bool = onClickRightScripts.some(s => s.blocks.some(block => block.opcode.includes("looks_say")));
+            }
+    
+            var leftWhenSpacePressedScripts = leftSprite.scripts.filter(s => s.blocks[0].opcode.includes("event_whenkeypressed") && s.blocks[0].fields.KEY_OPTION[0] ==="space");
+            if(leftWhenSpacePressedScripts.length > 0){
+                this.extensions.leftSpaceSay.bool = leftWhenSpacePressedScripts.some(s => s.blocks.some(block => block.opcode.includes("looks_say")));
+            }
+    
+            // We check all remaning sprites to see if any have event_whenkeypressed blocks set to listen to an arrow
+            var catrinaCandidates = allSprites;
+            var catrinasArrowScripts = catrinaCandidates.map(catrina => catrina.scripts.filter(s => s.blocks[0].opcode.includes("event_whenkeypressed") && s.blocks[0].fields.KEY_OPTION[0].includes("arrow")));
+            // For each sprite with a event when arrow pressed block, we check if any also contain a motion turn block
+            this.extensions.catrinaTurn.bool = catrinasArrowScripts.some(catrinaScripts => catrinaScripts.some(script=> script.blocks.filter(block => block.opcode.includes("motion_turn")).length > 0));
+    
+    
+            var middleLetterPressedScripts = middleSprite.scripts.filter(s=> s.blocks[0].opcode === "event_whenkeypressed" && "abcdefghijklmnopqrstuvwxyz".includes(s.blocks[0].fields.KEY_OPTION[0]));
+            this.extensions.middleSound.bool = middleLetterPressedScripts.some(s => s.blocks.some(block => block.opcode.includes("sound_play")));
+    
+            var rightAnyPressedScripts = rightSprite.scripts.filter(s=> s.blocks[0].opcode === "event_whenkeypressed" && s.blocks[0].fields.KEY_OPTION[0] === "any");
+            this.extensions.rightAnyKey.bool = rightAnyPressedScripts.some(s=> s.blocks.length > 1);
+            console.log([leftSprite, middleSprite, rightSprite])
+        }
+    } 
+    },{"../act1-grading-scripts/originalOfrenda-test":9,"../grading-scripts-s3/scratch3":26}],8:[function(require,module,exports){
+    
+    /*
+    On the Farm Autograde: Intial Version and testing: Saranya Turimella, Summer 2019
+    */
+    
+    require('../grading-scripts-s3/scratch3')
+    
+    module.exports = class {
+        constructor() {
+            this.requirements = {};
+            this.extensions = {};
+        }
+    
+        initReqs() {
+            this.requirements.scriptForBunnyMoves = { bool: false, str: 'When Bunny is clicked it moves' };
+            this.requirements.scriptForBunnySounds = { bool: false, str: 'When Bunny is clicked it makes a sound' };
+            this.requirements.scriptForBunnySaysOrThinks = { bool: false, str: 'When Bunny is clicked it says or thinks something' };
+            this.requirements.scriptInOrderBunny = {bool: false, str: 'When Bunny is clicked the blocks are used in the in the order specified: move, make a sound, say/think something'};
+    
+            this.requirements.scriptForHeddyMoves = { bool: false, str: 'When Heddy is clicked it moves' };
+            this.requirements.scriptForHeddySounds = { bool: false, str: 'When Heddy is clicked it makes a sound' };
+            this.requirements.scriptForHeddySaysOrThinks = { bool: false, str: 'When Heddy is clicked it says or thinks something' };
+            this.requirements.scriptInOrderHeddy = {bool: false, str: 'When Heddy is clicked the blocks are used in the in the order specified: move, make a sound, say/think something'};
+            this.requirements.bunnyOrigin = {bool: false, str: 'Set starting place for Bunny'};
+            this.requirements.heddyOrigin = {bool: false, str: 'Set starting place for Heddy'};
+    
+            this.requirements.rooGlides = { bool: false, str: "Another glide block is added to Roo's script to make it move back to the starting location" };
+            this.extensions.heddyMoves = {bool: false, str: "Make Heddy move to another location"}
+            this.extensions.bunnyMoves = {bool: false, str: "Make Bunny move to another location"}
+            this.extensions.anotherSprite = { bool: false, str: 'Another sprite is added that moves, makes a sound, then does something else when clicked' };
+        }
+    
+        grade(fileObj, user) {
+            var project = new Project(fileObj, null);
+            this.initReqs();
+            if (!is(fileObj)) return;
+    
+            let eventOpcodes = ['event_whenflagclicked', 'event_whenthisspriteclicked'];
+            let sayOpcodes = ['looks_say', 'looks_sayforsecs'];
+            let thinkOpcodes = ['looks_think', 'looks_sayforsecs'];
+            let numGlides = 0;
+    
+            
+            if (project.sprites.length > 2) {
+                for (let target of project.targets) {
+                    if ((target.name !== 'Bunny') && (target.name!== 'Heddy') && (target.name !== 'Roo')) {
+                        for (let script of target.scripts) {
+                            if (script.blocks[0].opcode === 'event_whenthisspriteclicked') {
+                                let motionSatisfied = false;
+                                let soundSatisfied = false;
+                                for(let block of script.blocks){
+                                    if(!motionSatisfied){
+                                        if(block.opcode.includes('motion_')){
+                                            motionSatisfied = true;
                                         }
+                                        continue;
+                                    } else if(!soundSatisfied){
+                                        if(block.opcode.includes('sound_')){
+                                            soundSatisfied = true;
+                                        }
+                                        continue;
+                                    } else{
+                                        this.extensions.anotherSprite.bool = true;
                                     }
                                 }
-                            }
-                            // when helen is clicked, she changes to a different color
-                            if (script.blocks[0].opcode === "event_whenthisspriteclicked") {
-                                for (let block of script.blocks) {
-                                    if (['looks_nextcostume'].includes(block.opcode)) {
-                                        helenColor = true;
-                                    }
-                                }
-
                             }
                         }
                     }
                 }
-                // deals with the cases if the sprite names are changed from fred and helen
+            }
+    
+            let moveIndexBunny = 0;
+            let soundIndexBunny = 0;
+            let sayIndexBunny = 0;
+            let moveIndexHeddy = 0;
+            let soundIndexHeddy = 0;
+            let sayIndexHeddy = 0;
+    
+            let extraMinBlocks = 1;
+    
+            for (let target of project.targets) {
+                if (target.isStage) { continue; }
                 else {
-                    for (let script of target.scripts)
-                    {
-                        for (let block of script.allBlocks()) {
-                            if ((block.opcode === 'looks_sayforsecs')) {
-                                let dialogue1 = block.textInput('MESSAGE').toLowerCase()
-                                let punctuationless1 = dialogue1.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
-                                let finalString1 = punctuationless1.replace(/\s{2,}/g, " ");
-                                finalString1 = finalString1.replace(/\s+/g, '');
-                                // checks that have fun is said
-                                if (finalString1 === 'havefun') {
-                                    haveFunMisc = true;
+                    if (target.name === 'Bunny') {
+                        for (let script of target.scripts) {
+                            // makes sure that it is part of a script that starts with an event block
+                            for (let i = 0; i < script.blocks.length; i++) {
+                                if (script.blocks[0].opcode === 'event_whenthisspriteclicked') {
+                                    if (script.blocks[i].opcode === 'motion_movesteps') {
+                                        moveIndexBunny = i;
+                                        this.requirements.scriptForBunnyMoves.bool = true;
+                                    }
+                                    if (script.blocks[i].opcode === 'sound_playuntildone') {
+                                        soundIndexBunny = i;
+                                        this.requirements.scriptForBunnySounds.bool = true;
+                                    }
+                                    if (sayOpcodes.includes(script.blocks[i].opcode)) {
+                                        sayIndexBunny = i;
+                                        this.requirements.scriptForBunnySaysOrThinks.bool = true;
+                                    }
+                                    if (thinkOpcodes.includes(script.blocks[i].opcode)) {
+                                        sayIndexBunny = i;
+                                        this.requirements.scriptForBunnySaysOrThinks.bool = true;
+                                    }
+                                
+                                    if (moveIndexBunny !== 0 &&
+                                        soundIndexBunny !== 0 &&
+                                        sayIndexBunny !== 0) {
+                                            if (moveIndexBunny < soundIndexBunny && soundIndexBunny < sayIndexBunny) {
+                                                this.requirements.scriptInOrderBunny.bool = true;
+                                                break;
+                                            }
+                                        }
                                 }
                             }
-
-                            // motion block is used
-                            if (block.opcode === 'motion_movesteps') {
-                                distanceMoveMisc += block.floatInput('STEPS');
+                            if(script.blocks[0].opcode === 'event_whenflagclicked') {
+                                this.requirements.bunnyOrigin.bool = script.blocks.map(block => block.opcode).includes('motion_gotoxy')
+                            }else if(script.blocks[0].opcode === 'event_whenthisspriteclicked') {
+                                this.extensions.bunnyMoves.bool = script.blocks.filter(block => block.opcode.includes('motion_')).length > extraMinBlocks;
                             }
-
-                            // speed at which the sprite changes costumes is changed
-                            if (block.opcode === 'control_repeat') {
-                                let subscript = block.subscripts[0];
-                                for (let block of subscript.blocks) {
-                                    if (block.opcode === 'control_wait') {
-                                        if (block.floatInput('DURATION') < 1) {
-                                            miscSpeed = true;
+                        }
+                    }
+                    else if (target.name === 'Heddy') {
+                        for (let script of target.scripts) {
+                            // makes sure that it is part of a script that starts with an event block
+                            for (let i = 0; i < script.blocks.length; i++) {
+                                if (script.blocks[0].opcode === 'event_whenthisspriteclicked') {
+                                    if (script.blocks[i].opcode === 'motion_movesteps') {
+                                        moveIndexHeddy = i;
+                                        this.requirements.scriptForHeddyMoves.bool = true;
+                                    }
+                                    if (script.blocks[i].opcode === 'sound_playuntildone') {
+                                        soundIndexHeddy = i;
+                                        this.requirements.scriptForHeddySounds.bool = true;
+                                    }
+                                    if (sayOpcodes.includes(script.blocks[i].opcode)) {
+                                        sayIndexHeddy = i;
+                                        this.requirements.scriptForHeddySaysOrThinks.bool = true;
+                                    }
+                                    if (thinkOpcodes.includes(script.blocks[i].opcode)) {
+                                        sayIndexHeddy = i;
+                                        this.requirements.scriptForHeddySaysOrThinks.bool = true;
+                                    }
+    
+                                    if (moveIndexHeddy !== 0 &&
+                                        soundIndexHeddy !== 0 &&
+                                        sayIndexHeddy !== 0) {
+                                            if (moveIndexHeddy < soundIndexHeddy && soundIndexHeddy < sayIndexHeddy) {
+                                                this.requirements.scriptInOrderHeddy.bool = true;
+                                                break;
+                                            }
                                         }
+                                }
+                            }
+                            if(script.blocks[0].opcode === 'event_whenflagclicked') {
+                                this.requirements.heddyOrigin.bool = script.blocks.map(block => block.opcode).includes('motion_gotoxy')
+                            } else if(script.blocks[0].opcode === 'event_whenthisspriteclicked') {
+                                this.extensions.heddyMoves.bool = script.blocks.filter(block => block.opcode.includes('motion_')).length > extraMinBlocks;
+                            }
+                        }
+                    }
+    
+                    else if (target.name === 'Roo') {
+                        for (let script of target.scripts) {
+                            // makes sure that it is part of a script that starts with an event block
+                            for (let i = 0; i < script.blocks.length; i++) {
+                                if ("event_whenthisspriteclicked" === script.blocks[0].opcode) {
+                                    if (script.blocks[i].opcode === 'motion_glidesecstoxy') {
+                                        numGlides++;
                                     }
                                 }
                             }
-
-                            // Guide instructs students to add a next costume block
-                            if (block.opcode === 'looks_nextcostume') {
-                                miscColor = true;
-                            }
                         }
-
                     }
-                }
-                if (distanceMoveMisc > requiredSteps) {
-                    miscMoves = true;
+                    
+                    // if a glide block is added to the original project
+                    if (numGlides >= 2) {
+                        this.requirements.rooGlides.bool = true;
+                    }
                 }
             }
         }
-        // for all requirements, if the specific sprite does it or ANY sprite does it, the requirement is set to true
-        if (havefunJulian || haveFunMisc) {
-            this.requirements.julianSaysHaveFun.bool = true;
-        }
-
-        if (julianMoves || miscMoves) {
-            this.requirements.julianMoves.bool = true;
-        }
-
-        if (helenColor || miscColor) {
-            this.requirements.helenDifferentColor.bool = true;
-        }
-        
-        if (helenSpeed || miscSpeed) {
-            this.requirements.helenChangesColorFaster.bool = true;
-        }
     }
-}
-},{"../grading-scripts-s3/scratch3":26}],9:[function(require,module,exports){
+    
+    },{"../grading-scripts-s3/scratch3":26}],9:[function(require,module,exports){
 module.exports={
     "targets": [
         {
@@ -10982,17 +11085,17 @@ let graders = {
 /// Act 1 graders
 let actOneGraders = {
     scavengerHunt: { name: 'M1 - Scavenger Hunt',    file: require('./act1-grading-scripts/scavengerHunt') },
-    systems:       { name: 'A3 - Systems',           file: require('./act3-grading-scripts/systems')       },
-    testProject_1: { name: 'T1 - Testing Project',   file: require('./act3-grading-scripts/testProject_1') },
+    // systems:       { name: 'A3 - Systems',           file: require('./act3-grading-scripts/systems')       },
+    // testProject_1: { name: 'T1 - Testing Project',   file: require('./act3-grading-scripts/testProject_1') },
     // my_vacation   :{ name: "B1 - My Vcation",        file: require('./act2-grading-scripts/my_vacation')   }
-    //onTheFarm:     { name: 'M2 - On the Farm',       file: require('./act1-grading-scripts/onTheFarm') },
-    //namePoem:      { name: 'M3 - Name Poem',         file: require('./act1-grading-scripts/name-poem') },
-    //ofrenda:       { name: 'M4 - Ofrenda',           file: require('./act1-grading-scripts/ofrenda') },
-    //aboutMe:       { name: 'M5 - About Me',          file: require('./act1-grading-scripts/aboutMe') },
+    onTheFarm:     { name: 'M2 - On the Farm',       file: require('./act1-grading-scripts/onTheFarm') },
+    namePoem:      { name: 'M3 - Name Poem',         file: require('./act1-grading-scripts/name-poem') },
+    ofrenda:       { name: 'M4 - Ofrenda',           file: require('./act1-grading-scripts/ofrenda') },
+    aboutMe:       { name: 'M5 - About Me',          file: require('./act1-grading-scripts/aboutMe') },
     animalParade:  { name: 'M6 - Animal Parade',     file: require('./act1-grading-scripts/animal-parade') },
-    //danceParty:    { name: 'M7 - Dance Party',       file: require('./act1-grading-scripts/dance-party') },
-    //knockKnock:    { name: 'M8 - Knock Knock',       file: require('./act1-grading-scripts/knockKnock') },
-    //finalProject:  { name: 'M9 - Interactive Story', file: require('./act1-grading-scripts/final-project') },
+    danceParty:    { name: 'M7 - Dance Party',       file: require('./act1-grading-scripts/dance-party') },
+    knockKnock:    { name: 'M8 - Knock Knock',       file: require('./act1-grading-scripts/knockKnock') },
+    finalProject:  { name: 'M9 - Interactive Story', file: require('./act1-grading-scripts/final-project') },
 };
 
 let allGraders = {};
