@@ -235,3 +235,9 @@ form p {
   width: 100px;
   height: 100px;
 }
+
+.right_image {
+  float: right;
+  width: 100px;
+  height: 100px;
+}
