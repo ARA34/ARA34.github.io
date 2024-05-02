@@ -1982,60 +1982,110 @@ module.exports = class {
 }
 
 },{"./scratch3":26,"./templates/animation-L1-gaming.json":27,"./templates/animation-L1-multicultural.json":28,"./templates/animation-L1-youth-culture.json":29}],12:[function(require,module,exports){
-//START
-/*
-Place holder code for systems grading script
-Adapted from final-project.js
+/* Animation L2 Autograder
+Initial version and testing: Zack Crenshaw, Spring 2019
+Reformatting and minor bug fixes: Marco Anaya, Summer 2019
 */
 
 require('./scratch3');
 
+const loops = ['control_forever', 'control_repeat', 'control_repeat_until'];
+
 module.exports = class {
-    constructor() {
-        this.requirements = {};
-        this.extensions = {};
+    // initializes the requirement objects and a list of event block codes
+    // which will be used below
+    init() {
+        this.requirements = {
+            HaveBackdrop: {bool: false, str: "Background has an image."},
+            atLeastThreeSprites: {bool: false, str: "There are at least 3 sprites."},
+            animatedInPlace1: {bool: false, str: "A sprite is animated in place."},
+            animatedInPlace2: {bool: false, str: "A second sprite is animated in place."},
+            animatedInMotion: {bool: false, str: "A different sprite is animated while moving."}
+        }
+        this.extensions = {
+            moreAnimations: {bool: false, str: "Additional sprites are animated in place or while moving."},
+            moreThanOneAnimation: {bool: false, str: "Student experiments with at least two types of animation."}
+        }
+        // project-wide variables
+        this.animationTypes = [];
     }
 
-     initReqs() {
-        this.requirements.explains = { bool: false, str: "At least sound block or say block to explain each arrow."}; //working
-        this.requirements.animation_loop = { bool: false, str: "At least one sprite is animated with the blocks given on worksheet."} //done 
+    // the main grading function
+    grade(json,user) {
 
-    }
+        if (!is(json)) 
+            return; 
 
+        let project = new Project(json);
+        // initializing requirements and extensions
+        this.init();
+        let sprites = 0
+        let spritesAnimatedInPlace = 0;
+        let spritesAnimatedInMotion = 0;
 
-    grade(fileObj, user) {
-        var project = new Project(fileObj, null);
-        this.initReqs();
-        if (!is(fileObj)) return;
-
-        let stage = project.targets.find(t => t.isStage);
-     
-       let sprites = project.targets.filter(t=> !t.isStage); //important
-       let arrows = sprites.filter(t=>t.name.includes("Sprite"));
-
-        function procSprite(sprite){
-            var out = {hasAnimation: false, hasExplanation:false, explains:false};
-            
-            var loops_forever = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_")).map(s=>s.blocks.filter(b=>b.opcode.includes("control_forever"))).flat();
-            out.hasAnimation = loops_forever.some(loop=>loop.subscripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_nextcostume") && s.blocks.some(block=>block.opcode.includes("control_wait")))));
-            //out.hasExplanation = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_sayforsecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone"))));
-            out.hasExplanation = (sprite.name.includes("Sprite")) ? sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_sayforsecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone")))) : false;
-            return out;
+        // initializes sprite class for each sprite and adds scripts
+        for (let target of project.targets) {
+            if (target.isStage){ 
+                let len = target.costumes.length
+                this.requirements.HaveBackdrop.bool = len > 1 || (len && target.costumes[0] !== 'backdrop1');
+            } else {
+                let report = this.gradeSprite(target);
+                sprites ++;
+                if(report.isAnimated) {
+                    if(report.isMoving) {
+                        spritesAnimatedInMotion += 1;
+                    } else {
+                        spritesAnimatedInPlace += 1
+                    }
+                }
+            }
         }
 
-        var results = sprites.map(procSprite);
-        this.requirements.animation_loop.bool = results.some(r=>r.hasAnimation);
-        //this.requirements.explains.bool = (results.length >= 6) ? this.requirements.explains.bool = results.filter(c=>c.hasExplanation == true).length == 6 : false;
-        this.requirements.explains.bool = (arrows.length >=1) ? results.filter(c=>c.hasExplanation).length == arrows.length : false;
+        this.requirements.animatedInMotion.bool = spritesAnimatedInMotion >= 1
+        this.requirements.animatedInPlace1.bool = spritesAnimatedInPlace >= 1;
+        this.requirements.animatedInPlace2.bool = spritesAnimatedInPlace >= 2;
+        this.requirements.atLeastThreeSprites.bool = sprites >= 3;
 
-        console.log(results);
-        console.log(results.filter(c=>c.hasExplanation).length);
-        console.log(arrows.length);
-        
-        return;
+        this.extensions.moreAnimations.bool = spritesAnimatedInMotion > 1 || spritesAnimatedInPlace > 2;
+
+        //counts the number of animation (motion) blocks used
+        this.extensions.moreThanOneAnimation.bool = (this.animationTypes.length >= 1)
+    }
+    // make animation more strict
+    // helper function for grading an individual sprite
+    gradeSprite(sprite) {
+
+        let isAnimated = false;
+        let isMoving = false;
+
+
+        let loopTracker = {};
+        for (let script of sprite.scripts.filter(s => s.blocks[0].opcode.includes('event_when'))) {
+            script.traverseBlocks((block, level) => {
+                if (loops.includes(block.opcode)) {
+                    loopTracker[block.id] = {}
+                } else if (level > 1) {
+                    let loopID = block.isWithin(b => loops.includes(b.opcode)).id;
+                    loopTracker[loopID].costume = loopTracker[loopID].costume || block.opcode.includes('costume');
+                    loopTracker[loopID].wait = loopTracker[loopID].wait || (block.opcode === 'control_wait');
+                    loopTracker[loopID].move = loopTracker[loopID].move || block.opcode.includes('motion_');
+                    if (block.opcode.includes("motion_")) {
+                        if (!this.animationTypes.includes(block.pcode)) this.animationTypes.push(block.opcode);
+                    } 
+                }
+            }, loops);
+        }
+
+        isAnimated = Object.values(loopTracker).some(l => l.wait && (l.costume || l.move));
+        isMoving =  Object.values(loopTracker).some(l => l.move);
+
+        return {
+            name: sprite.name,
+            isAnimated,
+            isMoving
+        };
     }
 }
-//END
 },{"./scratch3":26}],13:[function(require,module,exports){
 /* Complex Conditionals L1(TIPP&SEE Modify) Autograder
  * Scratch 3 (original) version: Anna Zipp, Summer 2019
@@ -11021,7 +11071,7 @@ let graders = {
     eventsL1:               { name: 'M2 - Events L1',               file: require('./grading-scripts-s3/events-L1-syn') },
     eventsL2_create:        { name: 'M2 - Events L2',               file: require('./grading-scripts-s3/events-L2') },
     animationL1:            { name: 'M3 - Animation L1',            file: require('./grading-scripts-s3/animation-L1') },
-    // animationL2_create:     { name: 'M3 - Animation L2',            file: require('./grading-scripts-s3/animation-L2') },
+    animationL2_create:     { name: 'M3 - Animation L2',            file: require('./grading-scripts-s3/animation-L2') },
     condLoopsL1:            { name: 'M4 - Conditional Loops L1',    file: require('./grading-scripts-s3/cond-loops-L1-syn') },
     condLoopsL2_create:     { name: 'M4 - Conditional Loops L2',    file: require('./grading-scripts-s3/cond-loops-L2') },
     decompL1:               { name: 'M5 - Decomp. by Sequence L1',  file: require('./grading-scripts-s3/decomp-L1') },
@@ -11060,7 +11110,7 @@ for (let graderKeyList of [graders, actOneGraders]) {
 /// Act 3 graders
 let actThreeGraders = {
     scavengerHunt: { name: 'M1 - Scavenger Hunt',    file: require('./act1-grading-scripts/scavengerHunt') },
-    systems:       { name: 'A3 - Systems',           file: require('./act3-grading-scripts/systems') },
+    // systems:       { name: 'A3 - Systems',           file: require('./act3-grading-scripts/systems') },
     // testProject_1: { name: 'T1 - Testing Project',   file: require('./act3-grading-scripts/testProject_1') },
     // my_vacation   :{ name: "B1 - My Vcation",        file: require('./act2-grading-scripts/my_vacation')   }
     //onTheFarm:     { name: 'M2 - On the Farm',       file: require('./act1-grading-scripts/onTheFarm') },
@@ -11606,7 +11656,7 @@ function noError() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-},{"./act1-grading-scripts/aboutMe":1,"./act1-grading-scripts/animal-parade":2,"./act1-grading-scripts/dance-party":3,"./act1-grading-scripts/final-project":4,"./act1-grading-scripts/knockKnock":5,"./act1-grading-scripts/name-poem":6,"./act1-grading-scripts/ofrenda":7,"./act1-grading-scripts/onTheFarm":8,"./act1-grading-scripts/scavengerHunt":10,"./grading-scripts-s3/animation-L1":11,"./act3-grading-scripts/systems":12,"./grading-scripts-s3/complex-conditionals-L1":13,"./grading-scripts-s3/cond-loops-L1-syn":14,"./grading-scripts-s3/cond-loops-L2":15,"./grading-scripts-s3/decomp-L1":17,"./grading-scripts-s3/decomp-L2":18,"./grading-scripts-s3/events-L1-syn":19,"./grading-scripts-s3/events-L2":20,"./grading-scripts-s3/one-way-sync-L1":22,"./grading-scripts-s3/one-way-sync-L2":23,"./grading-scripts-s3/scratch-basics-L1":24,"./grading-scripts-s3/scratch-basics-L2":25,"./grading-scripts-s3/two-way-sync-L1":48}],51:[function(require,module,exports){
+},{"./act1-grading-scripts/aboutMe":1,"./act1-grading-scripts/animal-parade":2,"./act1-grading-scripts/dance-party":3,"./act1-grading-scripts/final-project":4,"./act1-grading-scripts/knockKnock":5,"./act1-grading-scripts/name-poem":6,"./act1-grading-scripts/ofrenda":7,"./act1-grading-scripts/onTheFarm":8,"./act1-grading-scripts/scavengerHunt":10,"./grading-scripts-s3/animation-L1":11,"./grading-scripts-s3/animation-L2":12,"./grading-scripts-s3/complex-conditionals-L1":13,"./grading-scripts-s3/cond-loops-L1-syn":14,"./grading-scripts-s3/cond-loops-L2":15,"./grading-scripts-s3/decomp-L1":17,"./grading-scripts-s3/decomp-L2":18,"./grading-scripts-s3/events-L1-syn":19,"./grading-scripts-s3/events-L2":20,"./grading-scripts-s3/one-way-sync-L1":22,"./grading-scripts-s3/one-way-sync-L2":23,"./grading-scripts-s3/scratch-basics-L1":24,"./grading-scripts-s3/scratch-basics-L2":25,"./grading-scripts-s3/two-way-sync-L1":48}],51:[function(require,module,exports){
 (function (global){(function (){
 'use strict';
 
