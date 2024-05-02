@@ -11128,7 +11128,7 @@ let actThreeGraders = {
 let allGraders3 = {};
 for (let graderKeyList of [graders, actThreeGraders]) {
     for (let graderKey in graderKeyList) {
-        allGraders[graderKey] = graderKeyList[graderKey];
+        allGraders3[graderKey] = graderKeyList[graderKey];
     }
 }
 
