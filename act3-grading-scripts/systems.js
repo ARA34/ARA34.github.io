@@ -3,7 +3,7 @@ Place holder code for systems grading script
 Adapted from final-project.js
 */
 
-require('../grading-scripts-s3/scratch3')
+require('./scratch3');
 
 module.exports = class {
     constructor() {
