@@ -11110,7 +11110,7 @@ for (let graderKeyList of [graders, actOneGraders]) {
 /// Act 3 graders
 let actThreeGraders = {
     scavengerHunt: { name: 'M1 - Scavenger Hunt',    file: require('./act1-grading-scripts/scavengerHunt') },
-    // systems:       { name: 'A3 - Systems',           file: require('./act3-grading-scripts/systems') },
+    systems:       { name: 'A3 - Systems',           file: require('./act3-grading-scripts/systems') },
     // testProject_1: { name: 'T1 - Testing Project',   file: require('./act3-grading-scripts/testProject_1') },
     // my_vacation   :{ name: "B1 - My Vcation",        file: require('./act2-grading-scripts/my_vacation')   }
     //onTheFarm:     { name: 'M2 - On the Farm',       file: require('./act1-grading-scripts/onTheFarm') },
