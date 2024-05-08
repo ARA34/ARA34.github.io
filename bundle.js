@@ -11052,7 +11052,6 @@ for (let graderKeyList of [graders, actOneGraders]) {
         allGraders[graderKey] = graderKeyList[graderKey];
     }
 }
-/// Act 1 graders
 
 /// Act 3 graders
 let actThreeGraders = {
@@ -11076,8 +11075,6 @@ for (let graderKeyList of [graders, actThreeGraders]) {
         allGraders3[graderKey] = graderKeyList[graderKey];
     }
 }
-
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
