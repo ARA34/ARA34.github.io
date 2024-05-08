@@ -11098,15 +11098,6 @@ let actOneGraders = {
     finalProject:  { name: 'M9 - Interactive Story', file: require('./act1-grading-scripts/final-project') },
 };
 
-let allGraders = {};
-for (let graderKeyList of [graders, actOneGraders]) {
-    for (let graderKey in graderKeyList) {
-        allGraders[graderKey] = graderKeyList[graderKey];
-    }
-}
-
-/// Act 1 graders
-
 /// Act 3 graders
 let actThreeGraders = {
     scavengerHunt: { name: 'M1 - Scavenger Hunt',    file: require('./act1-grading-scripts/scavengerHunt') },
@@ -11123,8 +11114,8 @@ let actThreeGraders = {
     //finalProject:  { name: 'M9 - Interactive Story', file: require('./act1-grading-scripts/final-project') },
 };
 
-let allGraders3 = {};
-for (let graderKeyList of [graders, actThreeGraders]) {
+let allGraders = {};
+for (let graderKeyList of [graders, actOneGraders, actThreeGraders]) {
     for (let graderKey in graderKeyList) {
         allGraders[graderKey] = graderKeyList[graderKey];
     }
