@@ -1798,7 +1798,7 @@ module.exports = class {
         }
     }
 }
-},{}], 11:[function(require,module,exports){
+},{"../grading-scripts-s3/scratch3":26}],11:[function(require,module,exports){
 require('./scratch3');
 
 const loops = ['control_forever', 'control_repeat', 'control_repeat_until'];
@@ -11110,7 +11110,7 @@ for (let graderKeyList of [graders, actOneGraders]) {
 /// Act 3 graders
 let actThreeGraders = {
     scavengerHunt: { name: 'M1 - Scavenger Hunt',    file: require('./act1-grading-scripts/scavengerHunt') },
-    systems:       { name: 'A3 - Systems',           file: require('./act3-grading-scripts/systems') }
+    // systems:       { name: 'A3 - Systems',           file: require('./act3-grading-scripts/systems')       },
     // testProject_1: { name: 'T1 - Testing Project',   file: require('./act3-grading-scripts/testProject_1') },
     // my_vacation   :{ name: "B1 - My Vcation",        file: require('./act2-grading-scripts/my_vacation')   }
     //onTheFarm:     { name: 'M2 - On the Farm',       file: require('./act1-grading-scripts/onTheFarm') },
@@ -11126,7 +11126,7 @@ let actThreeGraders = {
 let allGraders3 = {};
 for (let graderKeyList of [graders, actThreeGraders]) {
     for (let graderKey in graderKeyList) {
-        allGraders3[graderKey] = graderKeyList[graderKey];
+        allGraders[graderKey] = graderKeyList[graderKey];
     }
 }
 
