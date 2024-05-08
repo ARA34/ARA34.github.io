@@ -11104,19 +11104,17 @@ for (let graderKeyList of [graders, actOneGraders]) {
         allGraders[graderKey] = graderKeyList[graderKey];
     }
 }
-console.log("one: ", allGraders)
-
 /// Act 1 graders
 
 /// Act 3 graders
 let actThreeGraders = {
     scavengerHunt: { name: 'M1 - Scavenger Hunt',    file: require('./act1-grading-scripts/scavengerHunt') },
-    // systems:       { name: 'A3 - Systems',           file: require('./act3-grading-scripts/systems') },
+    systems:       { name: 'A3 - Systems',           file: require('./act3-grading-scripts/systems') },
     // testProject_1: { name: 'T1 - Testing Project',   file: require('./act3-grading-scripts/testProject_1') },
     // my_vacation   :{ name: "B1 - My Vcation",        file: require('./act2-grading-scripts/my_vacation')   },
-    onTheFarm:     { name: 'M2 - On the Farm',       file: require('./act1-grading-scripts/onTheFarm') },
-    namePoem:      { name: 'M3 - Name Poem',         file: require('./act1-grading-scripts/name-poem') },
-    ofrenda:       { name: 'M4 - Ofrenda',           file: require('./act1-grading-scripts/ofrenda') },
+    // onTheFarm:     { name: 'M2 - On the Farm',       file: require('./act1-grading-scripts/onTheFarm') },
+    // namePoem:      { name: 'M3 - Name Poem',         file: require('./act1-grading-scripts/name-poem') },
+    // ofrenda:       { name: 'M4 - Ofrenda',           file: require('./act1-grading-scripts/ofrenda') },
     // aboutMe:       { name: 'M5 - About Me',          file: require('./act1-grading-scripts/aboutMe') },
     // animalParade:  { name: 'M6 - Animal Parade',     file: require('./act1-grading-scripts/animal-parade') },
     // danceParty:    { name: 'M7 - Dance Party',       file: require('./act1-grading-scripts/dance-party') },
@@ -11127,10 +11125,12 @@ let actThreeGraders = {
 let allGraders3 = {};
 for (let graderKeyList of [graders, actThreeGraders]) {
     for (let graderKey in graderKeyList) {
-        allGraders3[graderKey] = graderKeyList[graderKey];
+        allGraders[graderKey] = graderKeyList[graderKey];
     }
 }
-console.log("Three: ", allGraders3)
+console.log("allGraders: ", allGraders)
+console.log("actThreeGraders: ", actThreeGraders)
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
