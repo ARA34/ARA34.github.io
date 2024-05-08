@@ -11104,6 +11104,7 @@ for (let graderKeyList of [graders, actOneGraders]) {
         allGraders[graderKey] = graderKeyList[graderKey];
     }
 }
+console.log("one: ", allGraders)
 
 /// Act 1 graders
 
@@ -11124,11 +11125,12 @@ let actThreeGraders = {
 };
 
 let allGraders3 = {};
-for (let graderKeyList3 of [graders, actThreeGraders]) {
-    for (let graderKey3 in graderKeyList3) {
-        allGraders3[graderKey3] = graderKeyList3[graderKey3];
+for (let graderKeyList of [graders, actThreeGraders]) {
+    for (let graderKey in graderKeyList) {
+        allGraders3[graderKey] = graderKeyList[graderKey];
     }
 }
+console.log("Three: ", allGraders3)
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -11235,6 +11237,7 @@ window.fillUnitsHTMLAct3 = function() {
         HTMLString += '</label> </a>';
     }
     document.getElementById("unitsHTML").innerHTML = HTMLString;
+    console.log("HTML_STRING")
 }
 /////////////// grader function for act 3 (IMPACT) ////////////////////
 
