@@ -1996,10 +1996,10 @@ module.exports = class {
      initReqs() {
         this.requirements.explains = { bool: false, str: "At least sound block or say block to explain each arrow."};
         this.requirements.animation_loop = { bool: false, str: "At least one sprite is animated with the blocks given on worksheet."}; //done
-        this.requirements.SpriteCategory = { bool: false, str: "I used 3 picture sprites"}; // done
-        this.requirements.EventCategory = { bool: false, str: ""};
-        
-        this.requirements.LoopsCategory = { bool: false, str: ""};
+
+        this.requirements.SpriteCategory = { bool: false, str: "I used 3 picture sprites"};
+        this.requirements.EventCategory = { bool: false, str: "Event category on rubric"};
+        this.requirements.LoopsCategory = { bool: false, str: ""}; // not done
     }
 
 
@@ -2025,7 +2025,7 @@ module.exports = class {
 
         function procSprite(sprite){
             // evaluating a single sprite
-            var out = {hasAnimation: false, hasExplanation:false, explains:false, pictureHas2When: false, arrowHasWhen: false };
+            var out = {hasAnimation: false, hasExplanation: false, explains: false, pictureHas2When: false, arrowHasWhen: false };
             
             var loops_forever = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_")).map(s=>s.blocks.filter(b=>b.opcode.includes("control_forever"))).flat();
             out.hasAnimation = loops_forever.some(loop=>loop.subscripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_nextcostume") && s.blocks.some(block=>block.opcode.includes("control_wait")))));
@@ -2043,12 +2043,15 @@ module.exports = class {
         this.requirements.animation_loop.bool = results.some(r=>r.hasAnimation);
         //this.requirements.explains.bool = (results.length >= 6) ? this.requirements.explains.bool = results.filter(c=>c.hasExplanation == true).length == 6 : false;
         this.requirements.explains.bool = (arrows.length >=1) ? results.filter(c=>c.hasExplanation).length == arrows.length : false;
-        this.requirements.SpriteCategory = pictureSprites.length >= 3;
+        this.requirements.SpriteCategory.bool = pictureSprites.length >= 3;
         if (pictureSprites.length >= 1){
             let picturesHave2When = results.filter(c=>c.pictureHas2When).length == pictureSprites.length;
             let arrowsHaveWhen = results.filter(c=>c.arrowHasWhen).length == arrows.length;
             let backdropHasFlag = stage.scripts.some(s=>s.blocks.some(blocks=>blocks.opcode.includes("event_whenflagclicked")));
-            this.requirements.EventCategory = picturesHave2When && arrowsHaveWhen && backdropHasFlag;
+            console.log("ph2w: ", picturesHave2When)
+            console.log("ahw: ", arrowsHaveWhen)
+            console.log("bhf: ", backdropHasFlag)
+            this.requirements.EventCategory.bool = picturesHave2When && arrowsHaveWhen && backdropHasFlag;
         }
 
         console.log("results: ", results);
