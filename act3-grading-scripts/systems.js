@@ -38,7 +38,7 @@ module.exports = class {
         let stage = project.targets.find(t => t.isStage);
         let sprites = project.targets.filter(t=> !t.isStage);
         let arrows = sprites.filter(t=>t.name.includes("Arrow"));
-        let pictureSprites = sprites.filter(t=> !arrows.incldues(t));
+        let pictureSprites = sprites.filter(t=> !arrows.includes(t));
 
 
         function procSprite(sprite){
@@ -48,7 +48,7 @@ module.exports = class {
             var loops_forever = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_")).map(s=>s.blocks.filter(b=>b.opcode.includes("control_forever"))).flat();
             out.hasAnimation = loops_forever.some(loop=>loop.subscripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_nextcostume") && s.blocks.some(block=>block.opcode.includes("control_wait")))));
             //out.hasExplanation = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_sayforsecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone"))));
-            out.hasExplanation = (arrows.incldues(sprite)) ? sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_sayforsecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone")))) : false;
+            out.hasExplanation = (arrows.includes(sprite)) ? sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_sayforsecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone")))) : false;
             // check if each picture sprite has at leats 2 "when this is clicked"
             var available_scripts = (pictureSprites.includes(sprite)) ? sprite.scripts.filter(s=>s.blocks.some(block=>block.opcode.includes("event_whenthisspriteclicked"))): [];
             out.pictureHas2When = available_scripts.length >= 2;
