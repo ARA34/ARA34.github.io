@@ -2047,7 +2047,7 @@ module.exports = class {
         if (pictureSprites.length >= 1){
             let picturesHave2When = results.filter(c=>c.pictureHas2When).length == pictureSprites.length;
             let arrowsHaveWhen = results.filter(c=>c.arrowHasWhen).length == arrows.length;
-            let backdropHasFlag = stage.scripts.some(s=>s.blocks.some(blocks=>blocks.opcode.incldues("event_whenflagclicked")));
+            let backdropHasFlag = stage.scripts.some(s=>s.blocks.some(blocks=>blocks.opcode.includes("event_whenflagclicked")));
             this.requirements.EventCategory = picturesHave2When && arrowsHaveWhen && backdropHasFlag;
         }
 
