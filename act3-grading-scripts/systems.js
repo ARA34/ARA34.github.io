@@ -71,7 +71,7 @@ module.exports = class {
 
         console.log("results: ", results);
         console.log("arrows_length: ", arrows.length);
-        consoel.log("pictures_length: ", pictureSprites.length);
+        console.log("pictures_length: ", pictureSprites.length);
         // console.log(results.filter(c=>c.hasExplanation).length);
 
         return;
