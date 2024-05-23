@@ -1994,8 +1994,6 @@ module.exports = class {
     }
 
      initReqs() {
-        this.requirements.explains = { bool: false, str: "At least sound block or say block to explain each arrow."};
-        this.requirements.animation_loop = { bool: false, str: "At least one sprite is animated with the blocks given on worksheet."}; //done
 
         this.requirements.SpriteCategory = { bool: false, str: "I used 3 picture sprites"};
         this.requirements.EventCategory = { bool: false, str: "Event category on rubric"};
@@ -2024,23 +2022,18 @@ module.exports = class {
 
         function procSprite(sprite){
             // evaluating a single sprite
-            var out = {hasAnimation: false, hasExplanation: false, explains: false, pictureHas2When: false, arrowHasWhen: false, arrowBlinks: false };
+            var out = { pictureHas2When: false, arrowHasWhen: false, arrowBlinks: false };
+
             
-            var loops_forever = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_")).map(s=>s.blocks.filter(b=>b.opcode.includes("control_forever"))).flat();
-            out.hasAnimation = loops_forever.some(loop=>loop.subscripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_nextcostume") && s.blocks.some(block=>block.opcode.includes("control_wait")))));
-            //out.hasExplanation = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_sayforsecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone"))));
-            out.hasExplanation = (arrows.includes(sprite)) ? sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_sayforsecs") || s.blocks.some(block=>block.opcode.includes("sound_playuntildone")))) : false;
-            // check if each picture sprite has at leats 2 "when this is clicked"
             var available_scripts = (pictureSprites.includes(sprite)) ? sprite.scripts.filter(s=>s.blocks.some(block=>block.opcode.includes("event_whenthisspriteclicked"))): [];
             out.pictureHas2When = available_scripts.length >= 2;
             out.arrowHasWhen = (arrows.includes(sprite)) ? sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("event_whenbroadcastreceived"))) : false;
-            out.arrowBlinks = (arrows.includes(sprite)) ? sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenbroadcastreceived") && s.blocks[1].opcode.includes("control_repeat") && s.blocks.some(block=>block.opcode.includes("control_wait") && s.blocks.some(block=>block.opcode.includes("looks_nextcostume")))) : false;
+            var repeat_loops = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_whenbroadcastreceived")).map(s=>s.blocks.filter(b=>b.opcode.includes("control_repeat"))).flat();
+            out.arrowBlinks = repeat_loops.some(loop=>loop.subscripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_nextcostume") && s.blocks.some(block=>block.opcode.includes("control_wait")))));
             return out;
         }
         var results = sprites.map(procSprite);
-        this.requirements.animation_loop.bool = results.some(r=>r.hasAnimation);
-        //this.requirements.explains.bool = (results.length >= 6) ? this.requirements.explains.bool = results.filter(c=>c.hasExplanation == true).length == 6 : false;
-        this.requirements.explains.bool = (arrows.length >=1) ? results.filter(c=>c.hasExplanation).length == arrows.length : false;
+        
         this.requirements.SpriteCategory.bool = pictureSprites.length >= 3;
         if (pictureSprites.length >= 1){
             let picturesHave2When = results.filter(c=>c.pictureHas2When).length == pictureSprites.length;
@@ -2053,7 +2046,7 @@ module.exports = class {
         console.log("results: ", results);
         console.log("arrows_length: ", arrows.length);
         console.log("pictures_length: ", pictureSprites.length);
-        // console.log(results.filter(c=>c.hasExplanation).length);
+        console.log("arrowBlinks: ", results.filter(c=>c.arrowBlinks).length)
 
         return;
     }
