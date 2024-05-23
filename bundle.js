@@ -2041,7 +2041,7 @@ module.exports = class {
         this.requirements.animation_loop.bool = results.some(r=>r.hasAnimation);
         //this.requirements.explains.bool = (results.length >= 6) ? this.requirements.explains.bool = results.filter(c=>c.hasExplanation == true).length == 6 : false;
         this.requirements.explains.bool = (arrows.length >=1) ? results.filter(c=>c.hasExplanation).length == arrows.length : false;
-        this.requirements.SpriteCategor.bool = pictureSprites.length >= 3;
+        this.requirements.SpriteCategory.bool = pictureSprites.length >= 3;
         if (pictureSprites.length >= 1){
             let picturesHave2When = results.filter(c=>c.pictureHas2When).length == pictureSprites.length;
             let arrowsHaveWhen = results.filter(c=>c.arrowHasWhen).length == arrows.length;
