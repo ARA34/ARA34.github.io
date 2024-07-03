@@ -11072,7 +11072,7 @@ let graders = {
     oneWaySyncL1:           { name: 'M6 - One-Way Sync L1',         file: require('./grading-scripts-s3/one-way-sync-L1') },
     oneWaySyncL2_create:    { name: 'M6 - One-Way Sync L2',         file: require('./grading-scripts-s3/one-way-sync-L2') },
     twoWaySyncL1:           { name: 'M7 - Two-Way Sync L1',         file: require('./grading-scripts-s3/two-way-sync-L1') },
-    complexConditionalsL1:  { name: 'M8 - Complex Conditionals L1', file: require('./grading-scripts-s3/complex-conditionals-L1') },
+    // complexConditionalsL1:  { name: 'M8 - Complex Conditionals L1', file: require('./grading-scripts-s3/complex-conditionals-L1') },
 };
 
 /// Act 1 graders
