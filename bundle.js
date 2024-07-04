@@ -2090,7 +2090,7 @@ module.exports = class{
             var out = {};
             return out;
         }
-        NumVars = 0
+        let NumVars = 0
         for (sprite in allSprites){
             if (sprite.varibales){
                 // NumVars += 1;
