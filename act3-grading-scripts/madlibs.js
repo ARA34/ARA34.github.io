@@ -28,25 +28,35 @@ module.exports = class{
 
         function procSprite(sprite){
             //evaluate a single sprite
-            var out = { initVars: false };
+            var out = { initVars: 0 };
             function checkInitCond(block) {
                 return block.opcode.includes("data_setvariableto") && block.inputs.VALUE.shadow.value.includes(0);
             };
+
+            // given a sprite, check for initalization of vars
+
+            let varScripts = sprite.scripts.filter(block=>block.opcodes.includes());
+            let s = 0;
+            for (s in varScripts) {
+                //for each script in a sprite, count the number of blocks that satsify the condition
+                let b = 0;
+                for (b in s) {
+                    if (checkInitCond(s[b])) {
+                        console.log("cond satisfied");
+                        out.initVars += 1;
+                    }
+                }
+            }
+
             out.initVars = sprite.scripts.some(s=>s.blocks.some(block=>checkInitCond(block)));
             
             return out;
-            
-            //check for var initialization
-        };
-        for (i in allSprites) {
-            console.log(allSprites[i]);
         };
 
-        this.requirements.Sprites = len(allSprites) >= 2;
-        
+        var results = allSprites.map(procSprite);
+
+        this.requirements.Sprites = allSprites.length >= 2;
         console.log("targets: ", allSprites);
-        
-
         return;
     }
 }
