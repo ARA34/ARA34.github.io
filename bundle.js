@@ -2095,13 +2095,13 @@ module.exports = class{
 
         function procSprite(sprite){
             //evaluate a single sprite
-            var out = { initVars: 0 };
-            function checkInitCond(block) {
-                return block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes("0");
-            }
+            var out = { initVars: 0 , askedAndStored: false};
+            // function checkInitCond(block) {
+            //     return block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes("0");
+            // }
 
             // given a sprite, check for initalization of vars
-            let varScripts = sprite.scripts.filter(s=>s.blocks.some(block=>checkInitCond(block)));
+            let varScripts = sprite.scripts.filter(s=>s.blocks.some(block=>block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes("0")));
 
             let s = 0;
             for (s in varScripts) {
@@ -2114,8 +2114,11 @@ module.exports = class{
                     }
                 }
             }
-            //if there are more initVars combine than variables existing - 1, then initAllVars is satified
             
+            out.askedAndStored = sprite.scripts.some()
+            
+
+
             return out;
         };
 
