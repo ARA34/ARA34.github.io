@@ -2084,12 +2084,21 @@ module.exports = class{
         let stage = project.targets.find(t => t.isStage);
         let sprites = project.targets.filter(t => !t.isStage);
 
+        function accumulateVars(sprites) {
+            let numOfVars = 0;
+            let s = 0;
+            for (s in sprites) {
+                numOfVars += sprites[s].variables.length;
+            }
+            return numOfVars;
+        }
+
         function procSprite(sprite){
             //evaluate a single sprite
             var out = { initVars: 0 };
             function checkInitCond(block) {
                 return block.opcode.includes("data_setvariableto") && block.inputs.VALUE.shadow.value.includes(0);
-            };
+            }
 
             // given a sprite, check for initalization of vars
 
@@ -2105,13 +2114,16 @@ module.exports = class{
                     }
                 }
             }
-
+            //if there are more initVars combine than variables existing - 1, then initAllVars is satified
             
             return out;
         };
 
         var results = allSprites.map(procSprite);
-
+        function returnNumVars(exOut) {
+            return exOut.number;
+        }
+        this.requirements.initAllVars = results.map(returnNumVars).reduce((sum, current) => sum + current, 0) >= accumulateVars(allSprites) - 1;
         this.requirements.Sprites = allSprites.length >= 2;
         console.log("targets: ", allSprites);
         return;
