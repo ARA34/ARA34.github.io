@@ -51,7 +51,7 @@ module.exports = class{
                 //for each script in a sprite, count the number of blocks that satsify the condition
                 let b = 0;
                 for (b in varScripts[s]) {
-                    if (checkInitCond(s[b])) {
+                    if (varScripts[s][b].opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes("0")) { // conditions for a set 0 block
                         console.log("cond satisfied"); // DEBUG: Checking the loop works
                         out.initVars += 1;
                     }
