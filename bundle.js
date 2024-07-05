@@ -2103,18 +2103,15 @@ module.exports = class{
             // given a sprite, check for initalization of vars
             let varScripts = sprite.scripts.filter(s=>s.blocks.some(block=>block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes("0")));
 
-            let s = 0;
-            for (s in varScripts) {
+            //sprite -> gs -> s -> b
+            let gs = 0;
+            for (gs in varScripts) {
                 //for each script in a sprite, count the number of blocks that satsify the condition
-                console.log("UND1: ", varScripts[s]);
-                let b = 0;
-                for (b in varScripts[s]) {
-                    console.log("UND2: ", varScripts[s][b]);
-                    let x = 0;
-                    for (x in varScripts[s][b]) {
-                        console.log("UND3: ", varScripts[s][b][x]);
-                        // varScripts[s][b][x] = block
-                        if (varScripts[s][b][x].opcode.includes("data_setvariableto") && varScripts[s][b][x].inputs.VALUE[1].includes("0")) { // conditions for a set 0 block
+                let s = 0;
+                for (s in varScripts[gs]) {
+                    let b = 0;
+                    for (b in varScripts[gs][s]) {
+                        if (varScripts[gs][s][b].opcode.includes("data_setvariableto") && varScripts[gs][s][b].inputs.VALUE[1].includes("0")) { // conditions for a set 0 block
                             console.log("cond satisfied");
                             out.initVars += 1;
                         }
