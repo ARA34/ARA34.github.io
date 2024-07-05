@@ -28,8 +28,13 @@ module.exports = class{
 
         function procSprite(sprite){
             //evaluate a single sprite
-            var out = { spriteHasVar};
+            var out = { };
             return out;
+            
+            //check for var initialization
+
+            
+
         }
 
 
