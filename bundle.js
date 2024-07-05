@@ -2106,12 +2106,17 @@ module.exports = class{
             let s = 0;
             for (s in varScripts) {
                 //for each script in a sprite, count the number of blocks that satsify the condition
+                console.log("UND1: ", varScripts[s]);
                 let b = 0;
                 for (b in varScripts[s]) {
-                    console.log("UND: ", varScripts[s][b]);
-                    if (varScripts[s][b].opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes("0")) { // conditions for a set 0 block
-                        console.log("cond satisfied");
-                        out.initVars += 1;
+                    console.log("UND2: ", varScripts[s][b]);
+                    let x = 0;
+                    for (x in varScripts[s][b]) {
+                        console.log("UND3: ", varScripts[s][b][x]);
+                        if (varScripts[s][b][x].opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes("0")) { // conditions for a set 0 block
+                            console.log("cond satisfied");
+                            out.initVars += 1;
+                        }
                     }
                 }
             }
