@@ -12,7 +12,7 @@ module.exports = class{
 
         this.requirements.Sprites = { bool: false, str: "I had at least one sprite and a backdrop" };
         this.requirements.VarsExistance = { bool: false, str: "I created 3 variables" };
-        this.requirements.initVars = { bool: false, str: "I initialized my varibale values to 0" };
+        this.requirements.initAllVars = { bool: false, str: "I initialized my varibale values to 0" };
         this.requirements.questionsAndVars = {bool: false, str: "I asked questions and store their responses in my variables" };
     }
 
@@ -35,7 +35,7 @@ module.exports = class{
 
             // given a sprite, check for initalization of vars
 
-            let varScripts = sprite.scripts.filter(block=>block.opcodes.includes());
+            let varScripts = sprite.scripts.filter(block=>block.opcodes.includes("data_setvariableto"));
             let s = 0;
             for (s in varScripts) {
                 //for each script in a sprite, count the number of blocks that satsify the condition
@@ -47,7 +47,7 @@ module.exports = class{
                     }
                 }
             }
-            
+            //if there are more initVars combine than variables existing - 1, then initAllVars is satified
             
             return out;
         };
