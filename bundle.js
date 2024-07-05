@@ -2113,7 +2113,8 @@ module.exports = class{
                     let x = 0;
                     for (x in varScripts[s][b]) {
                         console.log("UND3: ", varScripts[s][b][x]);
-                        if (varScripts[s][b][x].opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes("0")) { // conditions for a set 0 block
+                        // varScripts[s][b][x] = block
+                        if (varScripts[s][b][x].opcode.includes("data_setvariableto") && varScripts[s][b][x].inputs.VALUE[1].includes("0")) { // conditions for a set 0 block
                             console.log("cond satisfied");
                             out.initVars += 1;
                         }
