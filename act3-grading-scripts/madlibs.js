@@ -39,7 +39,7 @@ module.exports = class{
             //evaluate a single sprite
             var out = { initVars: 0 };
             function checkInitCond(block) {
-                return block.opcode.includes("data_setvariableto") && block.inputs.VALUE.shadow.value.includes(0);
+                return block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes("0");
             }
 
             // given a sprite, check for initalization of vars
@@ -65,6 +65,7 @@ module.exports = class{
         function returnNumVars(exOut) {
             return exOut.number;
         }
+        this.requirements.VarsExistance = accumulateVars(allSprites) >= 3;
         this.requirements.initAllVars = results.map(returnNumVars).reduce((sum, current) => sum + current, 0) >= accumulateVars(allSprites) - 1;
         this.requirements.Sprites = allSprites.length >= 2;
         console.log("targets: ", allSprites);
