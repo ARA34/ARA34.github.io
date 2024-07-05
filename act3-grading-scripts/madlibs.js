@@ -23,8 +23,8 @@ module.exports = class{
         if (!is(fileObj)) return;
         
         let allSprites = project.targets;
-        let stage = project.targets.find(t => t.isStage);
-        let sprites = project.targets.filter(t => !t.isStage);
+        let stage = project.targets.find(t=>t.isStage);
+        let sprites = project.targets.filter(t=>!t.isStage);
 
         function accumulateVars(sprites) {
             let numOfVars = 0;
@@ -32,6 +32,7 @@ module.exports = class{
             for (s in sprites) {
                 numOfVars += sprites[s].variables.length;
             }
+            console.log(numOfVars); // DEBUG: printing out number of existing vars
             return numOfVars;
         }
 
@@ -49,9 +50,9 @@ module.exports = class{
             for (s in varScripts) {
                 //for each script in a sprite, count the number of blocks that satsify the condition
                 let b = 0;
-                for (b in s) {
+                for (b in varScripts[s]) {
                     if (checkInitCond(s[b])) {
-                        console.log("cond satisfied");
+                        console.log("cond satisfied"); // DEBUG: Checking the loop works
                         out.initVars += 1;
                     }
                 }
@@ -65,11 +66,11 @@ module.exports = class{
         function returnNumVars(exOut) {
             return exOut.number;
         }
+        this.requirements.Sprites = allSprites.length >= 2;
         this.requirements.VarsExistance = accumulateVars(allSprites) >= 3;
         this.requirements.initAllVars = results.map(returnNumVars).reduce((sum, current) => sum + current, 0) >= accumulateVars(allSprites) - 1;
-        this.requirements.Sprites = allSprites.length >= 2;
-        this.requirements.questionsAndVars = results.filter(x=>x.askedAndStored).length >= 1; // There exists one instance of asking & storing
-        console.log("targets: ", allSprites);
+        this.requirements.questionsAndVars = results.filter(o=>o.askedAndStored).length >= 1; // There exists one instance of asking & storing
+        console.log("targets: ", allSprites); // DEBUG: printing out all targets(sprites)
         return;
     }
 }
