@@ -2106,7 +2106,6 @@ module.exports = class{
                 }
             }
 
-            out.initVars = sprite.scripts.some(s=>s.blocks.some(block=>checkInitCond(block)));
             
             return out;
         };
