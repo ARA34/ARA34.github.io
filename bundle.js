@@ -2096,8 +2096,10 @@ module.exports = class{
             
             //check for var initialization
         };
+
+        let i = 0;
         for (i in allSprites) {
-            console.log(allSprites[i]);
+            console.log(allSprites[i]); // sprite
         };
 
         this.requirements.Sprites = len(allSprites) >= 2;
