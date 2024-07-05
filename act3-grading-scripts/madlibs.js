@@ -37,7 +37,7 @@ module.exports = class{
 
         function procSprite(sprite){
             //evaluate a single sprite
-            var out = { initVars: 0 };
+            var out = { initVars: 0, askedAndStored: false};
             // function checkInitCond(block) {
             //     return block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes("0");
             // }
@@ -56,8 +56,8 @@ module.exports = class{
                     }
                 }
             }
-            // out.askedAndStored = sprite.scripts.some()
-            
+            out.askedAndStored = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("sensing_askandwait") && block.opcode.includes("data_setvariableto")));
+
             return out;
         };
 
@@ -68,6 +68,7 @@ module.exports = class{
         this.requirements.VarsExistance = accumulateVars(allSprites) >= 3;
         this.requirements.initAllVars = results.map(returnNumVars).reduce((sum, current) => sum + current, 0) >= accumulateVars(allSprites) - 1;
         this.requirements.Sprites = allSprites.length >= 2;
+        this.requirements.questionsAndVars = results.filter(x=>x.askedAndStored).length >= 1; // There exists one instance of asking & storing
         console.log("targets: ", allSprites);
         return;
     }
