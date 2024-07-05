@@ -28,22 +28,25 @@ module.exports = class{
 
         function procSprite(sprite){
             //evaluate a single sprite
-            var out = {};
+            var out = { spriteHasVar};
             return out;
         }
-        let NumVars = 0
-        for (sprite in allSprites){
-            if (sprite.varibales){
-                // NumVars += 1;
-                console.log(type(sprite.varibales))
-                console.log("numOfVars:", len(sprite.varibales))
-            }
-        }
+
+
+        
+        // let NumVars = 0;
+        // for (sprite in allSprites){
+        //     if (sprite.varibales){
+        //         // NumVars += 1;
+        //         console.log(type(sprite.varibales))
+        //         console.log("numOfVars:", len(sprite.varibales))
+        //     }
+        // }
 
         this.requirements.Sprites = len(allSprites) >= 2;
-        this.requirements.VarsExistance = NumVars >= 3;
+        
         console.log("targets: ", allSprites);
-        console.log("loopVars", NumVars);
+        
 
         return;
     }

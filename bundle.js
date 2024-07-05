@@ -2063,11 +2063,11 @@ require('./scratch3');
 // identifty a varibale and print out its value
 
 module.exports = class{
-    constructor(){
+    constructor() {
         this.requirements = {};
         this.extensions = {};
     }
-    initReqs(){
+    initReqs() {
 
         this.requirements.Sprites = { bool: false, str: "I had at least one sprite and a backdrop" };
         this.requirements.VarsExistance = { bool: false, str: "I created 3 variables" };
@@ -2075,7 +2075,7 @@ module.exports = class{
         this.requirements.questionsAndVars = {bool: false, str: "I asked questions and store their responses in my variables" };
     }
 
-    grade(fileObj, user){
+    grade(fileObj, user) {
         //grading function
         var project = new Project(fileObj, null);
         this.initReqs();
@@ -2085,23 +2085,27 @@ module.exports = class{
         let stage = project.targets.find(t => t.isStage);
         let sprites = project.targets.filter(t => !t.isStage);
 
-        function procSprite(sprite){
+        function procSprite(sprite) {
             //evaluate a single sprite
             var out = {};
             return out;
         }
-        let NumVars = 0
-        for (sprite in allSprites){
-            if (sprite.varibales){
-                // NumVars += 1;
-                console.log(type(sprite.varibales))
-                console.log("numOfVars:", len(sprite.varibales))
-            }
+        let NumVars = 0;
+        // for (sprite in allSprites){
+        //     if (sprite.varibales){
+        //         // NumVars += 1;
+        //         console.log(type(sprite.varibales))
+        //         console.log("numOfVars:", len(sprite.varibales))
+        //     }
+        // }
+        console.log("targets: ", allSprites)
+        console.log(type(allSprites))
+        for (s in allSprites) {
+            console.log(s)
         }
 
         this.requirements.Sprites = len(allSprites) >= 2;
         this.requirements.VarsExistance = NumVars >= 3;
-        console.log("targets: ", allSprites);
         console.log("loopVars", NumVars);
 
         return;
