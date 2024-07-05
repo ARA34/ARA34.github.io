@@ -35,7 +35,7 @@ module.exports = class{
 
             // given a sprite, check for initalization of vars
 
-            let varScripts = sprite.scripts.filter(block=>block.opcodes.includes("data_setvariableto"));
+            let varScripts = sprite.scripts.filter(block=>block.opcode.includes("data_setvariableto"));
             let s = 0;
             for (s in varScripts) {
                 //for each script in a sprite, count the number of blocks that satsify the condition
@@ -44,15 +44,19 @@ module.exports = class{
                     if (checkInitCond(s[b])) {
                         console.log("cond satisfied");
                         out.initVars += 1;
-                    }
-                }
-            }
+                    };
+                };
+            };
             //if there are more initVars combine than variables existing - 1, then initAllVars is satified
             
             return out;
         };
 
         var results = allSprites.map(procSprite);
+        function returnNumber(exOut) {
+            return exOut.number;
+        }
+        this.requirements.initAllVars = results.
 
         this.requirements.Sprites = allSprites.length >= 2;
         console.log("targets: ", allSprites);
