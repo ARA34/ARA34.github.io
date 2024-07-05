@@ -2115,7 +2115,7 @@ module.exports = class{
                 }
             }
             
-            out.askedAndStored = sprite.scripts.some()
+            
             
 
 

@@ -56,7 +56,7 @@ module.exports = class{
                     }
                 }
             }
-            //if there are more initVars combine than variables existing - 1, then initAllVars is satified
+            // out.askedAndStored = sprite.scripts.some()
             
             return out;
         };
