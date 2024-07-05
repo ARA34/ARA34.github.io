@@ -2101,8 +2101,8 @@ module.exports = class{
             }
 
             // given a sprite, check for initalization of vars
-
-            let varScripts = sprite.scripts.filter(block=>block.opcode.includes("data_setvariableto"));
+            let varScripts = sprite.scripts.filter(s=>s.blocks.some(block=>checkInitCond(block)));
+            
             let s = 0;
             for (s in varScripts) {
                 //for each script in a sprite, count the number of blocks that satsify the condition
