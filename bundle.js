@@ -2056,18 +2056,17 @@ module.exports = class {
     }
 }
 },{"./scratch3":26}],13:[function(require,module,exports){
-// madlibs.js test
-//Madlibs Test
+//madlibs.js Test
 require('./scratch3');
 
 // identifty a varibale and print out its value
 
 module.exports = class{
-    constructor() {
+    constructor(){
         this.requirements = {};
         this.extensions = {};
     }
-    initReqs() {
+    initReqs(){
 
         this.requirements.Sprites = { bool: false, str: "I had at least one sprite and a backdrop" };
         this.requirements.VarsExistance = { bool: false, str: "I created 3 variables" };
@@ -2075,7 +2074,7 @@ module.exports = class{
         this.requirements.questionsAndVars = {bool: false, str: "I asked questions and store their responses in my variables" };
     }
 
-    grade(fileObj, user) {
+    grade(fileObj, user){
         //grading function
         var project = new Project(fileObj, null);
         this.initReqs();
@@ -2085,28 +2084,26 @@ module.exports = class{
         let stage = project.targets.find(t => t.isStage);
         let sprites = project.targets.filter(t => !t.isStage);
 
-        function procSprite(sprite) {
+        function procSprite(sprite){
             //evaluate a single sprite
-            var out = {};
+            var out = { initVars: false };
+            function checkInitCond(block) {
+                return block.opcode.includes("data_setvariableto") && block.inputs.VALUE.shadow.value.includes(0);
+            };
+            out.initVars = sprite.scripts.some(s=>s.blocks.some(block=>checkInitCond(block)));
+            
             return out;
-        }
-        let NumVars = 0;
-        // for (sprite in allSprites){
-        //     if (sprite.varibales){
-        //         // NumVars += 1;
-        //         console.log(type(sprite.varibales))
-        //         console.log("numOfVars:", len(sprite.varibales))
-        //     }
-        // }
-        console.log("targets: ", allSprites)
-        console.log(type(allSprites))
-        for (s in allSprites) {
-            console.log(s)
-        }
+            
+            //check for var initialization
+        };
+        for (i in allSprites) {
+            console.log(allSprites[i]);
+        };
 
         this.requirements.Sprites = len(allSprites) >= 2;
-        this.requirements.VarsExistance = NumVars >= 3;
-        console.log("loopVars", NumVars);
+        
+        console.log("targets: ", allSprites);
+        
 
         return;
     }

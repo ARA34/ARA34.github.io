@@ -1,4 +1,4 @@
-//Madlibs Test
+//madlibs.js Test
 require('./scratch3');
 
 // identifty a varibale and print out its value
@@ -28,25 +28,19 @@ module.exports = class{
 
         function procSprite(sprite){
             //evaluate a single sprite
-            var out = { };
+            var out = { initVars: false };
+            function checkInitCond(block) {
+                return block.opcode.includes("data_setvariableto") && block.inputs.VALUE.shadow.value.includes(0);
+            };
+            out.initVars = sprite.scripts.some(s=>s.blocks.some(block=>checkInitCond(block)));
+            
             return out;
             
             //check for var initialization
-
-            
-
-        }
-
-
-        
-        // let NumVars = 0;
-        // for (sprite in allSprites){
-        //     if (sprite.varibales){
-        //         // NumVars += 1;
-        //         console.log(type(sprite.varibales))
-        //         console.log("numOfVars:", len(sprite.varibales))
-        //     }
-        // }
+        };
+        for (i in allSprites) {
+            console.log(allSprites[i]);
+        };
 
         this.requirements.Sprites = len(allSprites) >= 2;
         
