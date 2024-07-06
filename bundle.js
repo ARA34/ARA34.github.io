@@ -2101,7 +2101,7 @@ module.exports = class{
             // }
 
             // given a sprite, check for initalization of vars
-            let varScripts = sprite.scripts.filter(s=>s.blocks.some(block=>block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes('0')))[];
+            let varScripts = sprite.scripts.filter(s=>s.blocks.some(block=>block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes('0')));
             //sprite -> gs -> s -> b
             let gs = 0;
             for (gs in varScripts) {
