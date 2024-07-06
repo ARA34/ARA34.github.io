@@ -2088,7 +2088,7 @@ module.exports = class{
             let numOfVars = 0;
             let s = 0;
             for (s in sprites) {
-                if (!sprites[s].vairbales == null) {
+                if (!sprites[s].variables == null) {
                     numOfVars += Object.keys(sprites[s].varibales).length;
                 }
             }
@@ -2126,7 +2126,7 @@ module.exports = class{
 
         var results = allSprites.map(procSprite);
         function returnNumVars(exOut) {
-            return exOut.number;
+            return exOut.initVars;
         }
         var initVarsSum = results.map(returnNumVars).reduce((sum, current) => sum + current, 0);
         console.log(initVarsSum, accumulateVars(allSprites))
