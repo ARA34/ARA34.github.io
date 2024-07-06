@@ -2088,7 +2088,9 @@ module.exports = class{
             let numOfVars = 0;
             let s = 0;
             for (s in sprites) {
-                numOfVars += Object.keys(sprites[s].varibales).length;
+                if (!sprites[s].vairbales == null) {
+                    numOfVars += Object.keys(sprites[s].varibales).length;
+                }
             }
             return numOfVars;
         }
