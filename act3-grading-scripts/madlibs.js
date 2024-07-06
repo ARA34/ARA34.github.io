@@ -30,29 +30,27 @@ module.exports = class{
             let numOfVars = 0;
             let s = 0;
             for (s in sprites) {
-                numOfVars += sprites[s].variables.length;
+                if (sprites[s].variables != null) {
+                    numOfVars += Object.keys(sprites[s].variables).length;
+                }
             }
-            console.log(numOfVars); // DEBUG: printing out number of existing vars
             return numOfVars;
         }
 
         function procSprite(sprite){
             //evaluate a single sprite
             var out = { initVars: 0, askedAndStored: false};
-            // function checkInitCond(block) {
-            //     return block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes("0");
-            // }
-
             // given a sprite, check for initalization of vars
             let varScripts = sprite.scripts.filter(s=>s.blocks.some(block=>block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes('0')));
             
-            //sprite -> gs -> s -> b
-            for (var gs in varScripts) {
-                //for each script in a sprite, count the number of blocks that satsify the condition
-                for (var s in varScripts[gs]) {
-                    for (var b in varScripts[gs][s]) {
-                        if (varScripts[gs][s][b].opcode.includes("data_setvariableto") && varScripts[gs][s][b].inputs.VALUE[1].includes('0')) { // conditions for a set 0 block
-                            console.log("cond satisfied");
+            let gs = 0;
+            for (gs in varScripts) {
+                //check if scripts property exists in object
+                if (Object.keys(varScripts[gs]).includes("blocks")) {
+                    let gb = 0;
+                    for (gb in varScripts[gs].blocks) {
+                        let currBlock = varScripts[gs].blocks[gb];
+                        if (currBlock.opcode.includes("data_setvariableto") && currBlock.inputs.VALUE[1].includes('0')) {
                             out.initVars += 1;
                         }
                     }
@@ -65,11 +63,13 @@ module.exports = class{
 
         var results = allSprites.map(procSprite);
         function returnNumVars(exOut) {
-            return exOut.number;
+            return exOut.initVars;
         }
+        var initVarsSum = results.map(returnNumVars).reduce((sum, current) => sum + current, 0);
+
         this.requirements.Sprites = allSprites.length >= 2;
         this.requirements.VarsExistance = accumulateVars(allSprites) >= 3;
-        this.requirements.initAllVars = results.map(returnNumVars).reduce((sum, current) => sum + current, 0) >= accumulateVars(allSprites) - 1;
+        this.requirements.initAllVars.bool = initVarsSum >= accumulateVars(allSprites) - 1;
         this.requirements.questionsAndVars = results.filter(o=>o.askedAndStored).length >= 1; // There exists one instance of asking & storing
         console.log("targets: ", allSprites); // DEBUG: printing out all targets(sprites)
         return;

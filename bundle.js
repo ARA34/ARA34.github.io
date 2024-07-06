@@ -2096,17 +2096,11 @@ module.exports = class{
         }
 
         function procSprite(sprite){
-            //evaluate a particular sprite
-            var out = { initVars: 0 , askedAndStored: false};
-            // function checkInitCond(block) {
-            //     return block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes("0");
-            // }
-
+            //evaluate a single sprite
+            var out = { initVars: 0, askedAndStored: false};
             // given a sprite, check for initalization of vars
             let varScripts = sprite.scripts.filter(s=>s.blocks.some(block=>block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes('0')));
-            //sprite -> gs -> s -> b
-            console.log("vs:", varScripts);
-
+            
             let gs = 0;
             for (gs in varScripts) {
                 //check if scripts property exists in object
@@ -2120,6 +2114,7 @@ module.exports = class{
                     }
                 }
             }
+            out.askedAndStored = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("sensing_askandwait") && block.opcode.includes("data_setvariableto")));
 
             return out;
         };
@@ -2129,10 +2124,12 @@ module.exports = class{
             return exOut.initVars;
         }
         var initVarsSum = results.map(returnNumVars).reduce((sum, current) => sum + current, 0);
-        console.log(initVarsSum, accumulateVars(allSprites))
-        this.requirements.initAllVars = initVarsSum >= accumulateVars(allSprites) - 1;
+
         this.requirements.Sprites = allSprites.length >= 2;
-        console.log("targets: ", allSprites);
+        this.requirements.VarsExistance = accumulateVars(allSprites) >= 3;
+        this.requirements.initAllVars.bool = initVarsSum >= accumulateVars(allSprites) - 1;
+        this.requirements.questionsAndVars = results.filter(o=>o.askedAndStored).length >= 1; // There exists one instance of asking & storing
+        console.log("targets: ", allSprites); // DEBUG: printing out all targets(sprites)
         return;
     }
 }
