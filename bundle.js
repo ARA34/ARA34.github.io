@@ -2089,7 +2089,7 @@ module.exports = class{
             let s = 0;
             for (s in sprites) {
                 if (sprites[s].variables != null) {
-                    numOfVars += Object.keys(sprites[s].varibales).length;
+                    numOfVars += Object.keys(sprites[s].variables).length;
                 }
             }
             return numOfVars;
