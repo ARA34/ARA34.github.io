@@ -2088,7 +2088,7 @@ module.exports = class{
             let numOfVars = 0;
             let s = 0;
             for (s in sprites) {
-                numOfVars += sprites[s].variables.length;
+                numOfVars += Object.keys(sprites[s].varibales).length;
             }
             return numOfVars;
         }
@@ -2104,21 +2104,6 @@ module.exports = class{
             let varScripts = sprite.scripts.filter(s=>s.blocks.some(block=>block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes('0')));
             //sprite -> gs -> s -> b
             console.log("vs:", varScripts);
-            // let gs = 0;
-            // for (gs in varScripts) {
-            //     //for each script in a sprite, count the number of blocks that satsify the condition
-            //     let s = 0;
-            //     for (s in varScripts[gs]) {
-            //         let b = 0;
-            //         for (b in varScripts[gs][s]) {
-            //             // console.log("varScripts[gs][s][b]:", varScripts[gs][s][b])
-            //             if (varScripts[gs][s][b].opcode.includes("data_setvariableto") && varScripts[gs][s][b].inputs.VALUE[1].includes('0')) { // conditions for a set 0 block
-            //                 console.log("cond satisfied");
-            //                 out.initVars += 1;
-            //             }
-            //         }
-            //     }
-            // }
 
             let gs = 0;
             for (gs in varScripts) {
@@ -2126,10 +2111,9 @@ module.exports = class{
                 if (Object.keys(varScripts[gs]).includes("blocks")) {
                     let gb = 0;
                     for (gb in varScripts[gs].blocks) {
-                        let currBlock = varScripts[gs].blocks[gb]
+                        let currBlock = varScripts[gs].blocks[gb];
                         if (currBlock.opcode.includes("data_setvariableto") && currBlock.inputs.VALUE[1].includes('0')) {
-                            console.log("cond satisfied")
-                            out.initVars += 1
+                            out.initVars += 1;
                         }
                     }
                 }
@@ -2142,7 +2126,9 @@ module.exports = class{
         function returnNumVars(exOut) {
             return exOut.number;
         }
-        this.requirements.initAllVars = results.map(returnNumVars).reduce((sum, current) => sum + current, 0) >= accumulateVars(allSprites) - 1;
+        var initVarsSum = results.map(returnNumVars).reduce((sum, current) => sum + current, 0);
+        console.log(initVarsSum, accumulateVars(allSprites))
+        this.requirements.initAllVars = initVarsSum >= accumulateVars(allSprites) - 1;
         this.requirements.Sprites = allSprites.length >= 2;
         console.log("targets: ", allSprites);
         return;
