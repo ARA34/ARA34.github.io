@@ -55,7 +55,7 @@ module.exports = class{
                     }
                 }
             }
-            out.askedAndStored = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("sensing_askandwait") && block.opcode.includes("data_setvariableto")));
+            out.askedAndStored = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("sensing_askandwait") && s.blocks.some(block=>block.opcode.includes("data_setvariableto"))));
 
             return out;
         };
