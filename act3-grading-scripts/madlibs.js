@@ -17,7 +17,6 @@ module.exports = class{
     }
 
     grade(fileObj, user){
-        //grading function
         var project = new Project(fileObj, null);
         this.initReqs();
         if (!is(fileObj)) return;
@@ -66,12 +65,10 @@ module.exports = class{
             return exOut.initVars;
         }
         var initVarsSum = results.map(returnNumVars).reduce((sum, current) => sum + current, 0);
-
-        this.requirements.Sprites = allSprites.length >= 2;
-        this.requirements.VarsExistance = accumulateVars(allSprites) >= 3;
+        this.requirements.Sprites.bool = allSprites.length >= 2;
+        this.requirements.VarsExistance.bool = accumulateVars(allSprites) >= 3;
         this.requirements.initAllVars.bool = initVarsSum >= accumulateVars(allSprites) - 1;
-        this.requirements.questionsAndVars = results.filter(o=>o.askedAndStored).length >= 1; // There exists one instance of asking & storing
-        console.log("targets: ", allSprites); // DEBUG: printing out all targets(sprites)
+        this.requirements.questionsAndVars.bool = results.filter(o=>o.askedAndStored).length >= 1; // There exists one instance of asking & storing
         return;
     }
 }
