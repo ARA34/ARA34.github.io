@@ -2418,18 +2418,18 @@ module.exports = class{
             let customScripts = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("procedures_definition") && s.blocks.some(block=>block.opcode.includes("sensing_askandwait")));
             console.log(customScripts, n)
 
-            var catOut = { satisfied: false}
+            var catOut = false
 
             //the customScripts is an Array(2) with the restricted blocks, iterate over these blocks and analyze their insides
 
             let gs = 0;
             for(gs in customScripts) {
-                if (Object.keys(customScripts[gs].includes("blocks"))) {
+                if (Object.keys(customScripts[gs]).includes("blocks")) {
                     //now iterate through the blocks in the script
                     let gb = 0;
                     let scriptPieces = { set: false, move: false, costumeSwitch: false, stampsBall: false}; // TODO: if anyone of these are missing flag it!
                     for (gb in customScripts[gs].blocks) {
-                        let currBlock = varScripts[gs].blocks[gb];
+                        let currBlock = customScripts[gs].blocks[gb];
                         if (currBlock.inputBlocks[0].mutation.proccode == `Category${n}`) {
                             if (currBlock.opcode.includes("data_setvariableto")) { // check for inputs (which var changing, new value)
                                 // sets category to answer
@@ -2447,10 +2447,10 @@ module.exports = class{
                         }
                     }
 
-                catOut.satisfied = Object.values(scriptPieces).filter(c=>c).length == Object.values(scriptPieces).length;
+                catOut = Object.values(scriptPieces).filter(c=>c).length == Object.values(scriptPieces).length;
                 }
             }
-            return catOut.satisfied
+            return catOut
         }
 
         // function accumulateVars(sprites) {
@@ -2473,7 +2473,8 @@ module.exports = class{
 
             
 
-            for (let i = 1; i <= 5; i++) {
+            for (let i = 1; i <= 3; i++) {
+                // where i is the number of functions we want to check for
                 out.foundCats.push(findCategory(sprite,i, null, null, null))
             }
             
@@ -2492,11 +2493,20 @@ module.exports = class{
             //     }
             // }
             // out.askedAndStored = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("sensing_askandwait") && s.blocks.some(block=>block.opcode.includes("data_setvariableto"))));
-
             return out;
         };
 
         var results = allSprites.map(procSprite);
+        function returnCats(exOut) {
+            return exOut.foundCats
+        }
+        var categoryMatrix = results.map(returnCats)
+        
+
+
+
+
+
         // function returnNumVars(exOut) {
         //     return exOut.initVars;
         // }
@@ -2505,6 +2515,11 @@ module.exports = class{
         // this.requirements.VarsExistance.bool = accumulateVars(allSprites) >= 3;
         // this.requirements.initAllVars.bool = initVarsSum >= accumulateVars(allSprites) - 1;
         // this.requirements.questionsAndVars.bool = results.filter(o=>o.askedAndStored).length >= 1; // There exists one instance of asking & storing
+
+        // we look at the column and check if at least one value is true
+        this.requirements.Category1.bool = categoryMatrix.map(c=>c[0]).some(c=>c)
+        this.requirements.Category2.bool = categoryMatrix.map(c=>c[1]).some(c=>c)
+        this.requirements.Category3.bool = categoryMatrix.map(c=>c[2]).some(c=>c)
         return;
     }
 }
