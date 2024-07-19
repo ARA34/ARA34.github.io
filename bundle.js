@@ -2428,11 +2428,10 @@ module.exports = class{
                     //now iterate through the blocks in the script
                     let gb = 0;
                     let scriptPieces = { set: false, move: false, costumeSwitch: false, stampsBall: false}; // TODO: if anyone of these are missing flag it!
-                    for (gb in customScripts[gs].blocks) {
-                        let currBlock = customScripts[gs].blocks[gb];
-                        console.log("here: ",currBlock.inputBlocks[0])
-                        
-                        if (currBlock.inputBlocks[0].mutation.proccode == `category${n}`) {
+                    if (customScripts[gs].blocks[0].mutation.proccode == `category${n}`) {
+                        let gb = 1;
+                        for (gb in customScripts[gs].blocks) {
+                            let currBlock = customScripts[gs].blocks[gb]
                             if (currBlock.opcode.includes("data_setvariableto")) { // check for inputs (which var changing, new value)
                                 // sets category to answer
                                 scriptPieces.set = true;
@@ -2446,8 +2445,27 @@ module.exports = class{
                                 // stamps ball
                                 scriptPieces.stampsBall = true;
                             }
-                        }   
+                        }
                     }
+                    // for (gb in customScripts[gs].blocks) {
+                    //     let currBlock = customScripts[gs].blocks[gb];
+                    //     console.log("here: ",currBlock.inputBlocks[0])
+                    //     if (Object.keys(currBlock.inputBlocks).includes("mutation") && currBlock.inputBlocks[0].mutation.proccode == `category${n}`) {
+                    //         if (currBlock.opcode.includes("data_setvariableto")) { // check for inputs (which var changing, new value)
+                    //             // sets category to answer
+                    //             scriptPieces.set = true;
+                    //         } else if (currBlock.opcode.includes("motion_gotoxy")) { // new x,y
+                    //             // moves the ball
+                    //             scriptPieces.move = true;
+                    //         } else if (currBlock.opcode.includes("looks_switchcostumeto")) { // check for inputs (new costume)
+                    //             // switch costume
+                    //             scriptPieces.costumeSwitch = true;
+                    //         } else if (currBlock.opcode.includes("procedures_call")) { // check the name of custom script is stampball
+                    //             // stamps ball
+                    //             scriptPieces.stampsBall = true;
+                    //         }
+                    //     }   
+                    // }
 
                 catOut = Object.values(scriptPieces).filter(c=>c).length == Object.values(scriptPieces).length;
                 }
