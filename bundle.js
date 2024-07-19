@@ -2430,7 +2430,7 @@ module.exports = class{
                     let scriptPieces = { set: false, move: false, costumeSwitch: false, stampsBall: false}; // TODO: if anyone of these are missing flag it!
                     for (gb in customScripts[gs].blocks) {
                         let currBlock = customScripts[gs].blocks[gb];
-                        console.log("here: ",currBlock.inputBlocks[0].mutation)
+                        console.log("here: ",currBlock.inputBlocks[0])
                         
                         if (currBlock.inputBlocks[0].mutation.proccode == `category${n}`) {
                             if (currBlock.opcode.includes("data_setvariableto")) { // check for inputs (which var changing, new value)
