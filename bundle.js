@@ -2430,7 +2430,9 @@ module.exports = class{
                     let scriptPieces = { set: false, move: false, costumeSwitch: false, stampsBall: false}; // TODO: if anyone of these are missing flag it!
                     for (gb in customScripts[gs].blocks) {
                         let currBlock = customScripts[gs].blocks[gb];
-                        if (currBlock.inputBlocks[0].mutation.proccode == `Category${n}`) {
+                        console.log("here: ",currBlock.inputBlocks[0].mutation)
+                        
+                        if (currBlock.inputBlocks[0].mutation.proccode == `category${n}`) {
                             if (currBlock.opcode.includes("data_setvariableto")) { // check for inputs (which var changing, new value)
                                 // sets category to answer
                                 scriptPieces.set = true;
@@ -2444,7 +2446,7 @@ module.exports = class{
                                 // stamps ball
                                 scriptPieces.stampsBall = true;
                             }
-                        }
+                        }   
                     }
 
                 catOut = Object.values(scriptPieces).filter(c=>c).length == Object.values(scriptPieces).length;
@@ -2466,7 +2468,7 @@ module.exports = class{
 
         function procSprite(sprite){
             //evaluate a single sprite
-            var out = { initVars: 0, askedAndStored: false, foundCats: []};
+            var out = { initVars: 0, askedAndStored: false, loopStructure: false, foundCats: []};
             // given a sprite, check for initalization of vars
             // let varScripts = sprite.scripts.filter(s=>s.blocks.some(block=>block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes('0')));
             
@@ -2493,6 +2495,7 @@ module.exports = class{
             //     }
             // }
             // out.askedAndStored = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("sensing_askandwait") && s.blocks.some(block=>block.opcode.includes("data_setvariableto"))));
+
             return out;
         };
 
