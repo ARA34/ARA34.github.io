@@ -2414,23 +2414,43 @@ module.exports = class{
 
         //ex. findCategory(Ball Sprite, 4, idk, idk, ball-e) -> true
         function findCategory(sprite, n, x, y, costumeName) {
+            // Look for a specific custom function in a sprite
             let customScripts = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("procedures_definition") && s.blocks.some(block=>block.opcode.includes("sensing_askandwait")));
             console.log(customScripts, n)
-            // let gs = 0;
-            // for (gs in customScripts) {
-            //     if (Object.keys(customScripts[gs].includes("blocks"))) {
-            //         console.log("cS Blocks: ",customScripts[gs].blocks);
-            //         // let gb = 0
-            //         // for (gb in customScripts[gs].blocks) {
 
-            //         // }
-            //     }
-            // }
-            // look for a specific category function
+            var catOut = { satisfied: false}
 
+            //the customScripts is an Array(2) with the restricted blocks, iterate over these blocks and analyze their insides
 
+            let gs = 0;
+            for(gs in customScripts) {
+                if (Object.keys(customScripts[gs].includes("blocks"))) {
+                    //now iterate through the blocks in the script
+                    let gb = 0;
+                    let scriptPieces = { set: false, move: false, costumeSwitch: false, stampsBall: false}; // TODO: if anyone of these are missing flag it!
+                    for (gb in customScripts[gs].blocks) {
+                        let currBlock = varScripts[gs].blocks[gb];
+                        if (currBlock.inputBlocks[0].mutation.proccode == `Category${n}`) {
+                            if (currBlock.opcode.includes("data_setvariableto")) { // check for inputs (which var changing, new value)
+                                // sets category to answer
+                                scriptPieces.set = true;
+                            } else if (currBlock.opcode.includes("motion_gotoxy")) { // new x,y
+                                // moves the ball
+                                scriptPieces.move = true;
+                            } else if (currBlock.opcode.includes("looks_switchcostumeto")) { // check for inputs (new costume)
+                                // switch costume
+                                scriptPieces.costumeSwitch = true;
+                            } else if (currBlock.opcode.includes("procedures_call")) { // check the name of custom script is stampball
+                                // stamps ball
+                                scriptPieces.stampsBall = true;
+                            }
+                        }
+                    }
 
-
+                catOut.satisfied = Object.values(scriptPieces).filter(c=>c).length == Object.values(scriptPieces).length;
+                }
+            }
+            return catOut.satisfied
         }
 
         // function accumulateVars(sprites) {
@@ -2450,6 +2470,9 @@ module.exports = class{
             // given a sprite, check for initalization of vars
             // let varScripts = sprite.scripts.filter(s=>s.blocks.some(block=>block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes('0')));
             
+
+            
+
             for (let i = 1; i <= 5; i++) {
                 out.foundCats.push(findCategory(sprite,i, null, null, null))
             }
