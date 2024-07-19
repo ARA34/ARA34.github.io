@@ -2414,7 +2414,7 @@ module.exports = class{
 
         //ex. findCategory(Ball Sprite, 4, idk, idk, ball-e) -> true
         function findCategory(sprite, n, x, y, costumeName) {
-            let customScripts = sprite.scripts.filter(s=>s.blocks.some(block=>block.opcode.includes("procedures_definition")) && s.blocks.some(block=>block.opcode.includes("sensing_askandwait")));
+            let customScripts = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("procedures_definition") && s.blocks.some(block=>block.opcode.includes("sensing_askandwait")));
             console.log(customScripts, n)
             // let gs = 0;
             // for (gs in customScripts) {
