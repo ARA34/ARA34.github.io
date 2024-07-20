@@ -2524,7 +2524,7 @@ module.exports = class{
                             return true;
                         }
                         console.log("if elses done", count == s);
-                    } else if (block.opcode.includes("control_if") && block.inputBlocks.length >= 5) {
+                    } else if (block.opcode.includes("control_if") && block.inputBlocks.length >= 1) {
                         let lastCount = 0;
                         for (let i = 1; i <=5; i++) {
                             if (block.subscripts[0].blocks.some(b=>b.opcode.includes("procedures_call") && b.mutation.proccode == `category${i}`)) {
