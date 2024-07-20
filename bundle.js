@@ -2508,14 +2508,16 @@ module.exports = class{
                 // recursive function for checking structrue with a restriction of n control-if-elses
                 for(const block of someBlocks) {
                     if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
-                        s += 1
+                        // block.inputBlocks
+                        s += 1; // s = 2, WTS count == 2, checking the first category is in the thing
                         let count = 0;
+                        console.log("block.inputBlocks: ", block.inputBlocks);
                         for (let i = 1; i <= s; i++) {
                             if (block.inputBlocks.some(b=>b.opcode.includes("procedures_call") && b.mutation.proccode == `category${i}`)) {
                                 count += 1;
                             }
                         }
-
+                        console.log("if else done", count == s)
                         if (count == s && checkNestedFunctions(block.inputBlocks, s)) {
                             return true;
                         }
