@@ -2581,6 +2581,7 @@ module.exports = class{
         this.requirements.Category1.bool = categoryMatrix.map(c=>c[0]).some(c=>c)
         this.requirements.Category2.bool = categoryMatrix.map(c=>c[1]).some(c=>c)
         this.requirements.Category3.bool = categoryMatrix.map(c=>c[2]).some(c=>c)
+        this.requirements.MainScript.bool = results.filter(c=>c.loopStructure).length >= 1;
         return;
     }
 }
