@@ -2428,7 +2428,7 @@ module.exports = class{
                     //now iterate through the blocks in the script
                     let scriptPieces = { set: false, move: false, costumeSwitch: false, stampsBall: false}; // TODO: if anyone of these are missing flag it!
                     console.log("here: ", customScripts[gs].blocks[0])
-                    if (customScripts[gs].blocks[0].opcode.includes("procedures_definition") && customScripts[gs].blocks[0].mutation.proccode == `category${n}`) {
+                    if (customScripts[gs].blocks[0].opcode.includes("procedures_definition") && customScripts[gs].blocks[0].inputBlocks[0].mutation.proccode == `category${n}`) {
                         let gb = 1;
                         for (gb in customScripts[gs].blocks) {
                             let currBlock = customScripts[gs].blocks[gb]
