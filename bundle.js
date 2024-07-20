@@ -2391,8 +2391,8 @@ module.exports = class{
         this.requirements.Category1 = { bool: false, str: "Completed category 1"};
         this.requirements.Category2 = { bool: false, str: "Completed category 2"};
         this.requirements.Category3 = { bool: false, str: "Completed category 3"};
-        this.requirements.MainScript = { bool: false, str: "The structure of the main script is correct"}
-        this.requirements.CategoryOrder = { bool: false, str: "The ordering of categories is correct within the main script"}
+        this.requirements.MainScript = { bool: false, str: "The structure of the main script is correct"};
+        this.requirements.CategoryOrder = { bool: false, str: "The ordering of categories is correct within the main script"};
     }
 
     grade(fileObj, user){
@@ -2519,6 +2519,7 @@ module.exports = class{
                         if (count == s && checkNestedFunctions(block.inputBlocks, s)) {
                             return true;
                         }
+                        console.log("if elses done", count == s);
                     } else if (block.opcode.includes("control_if") && block.inputBlocks.length >= 5) {
                         let lastCount = 0;
                         for (let i = 1; i <=5; i++) {
@@ -2526,6 +2527,7 @@ module.exports = class{
                                 lastCount += 1
                             }
                         }
+                        console.log("if done", lastCount == 5);
                         return lastCount == 5;
                     }
                 }
@@ -2587,6 +2589,7 @@ module.exports = class{
         this.requirements.Category2.bool = categoryMatrix.map(c=>c[1]).some(c=>c)
         this.requirements.Category3.bool = categoryMatrix.map(c=>c[2]).some(c=>c)
         this.requirements.MainScript.bool = results.filter(c=>c.loopStructure).length >= 1;
+        console.log("categoryStructure length: ",results.filter(c=>c.categoryStructure).length);
         this.requirements.CategoryOrder.bool = results.filter(c=>c.categoryStructure).length == 1;
         return;
     }
