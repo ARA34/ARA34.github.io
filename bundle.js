@@ -2508,13 +2508,13 @@ module.exports = class{
                 // recursive function for checking structrue with a restriction of n control-if-elses
                 console.log("someBlocks: ", someBlocks);
                 for(const block of someBlocks) {
-                    if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
+                    if (block.opcode.includes("control_if_else") && block.subscripts[0].blocks.length >= 1) {
                         // block.inputBlocks
                         s += 1; // s = 2, WTS count == 2, checking the first category is in the thing
                         let count = 0;
                         console.log("block.inputBlocks: ", block.inputBlocks);
                         for (let i = 1; i <= s; i++) {
-                            if (block.inputBlocks.some(b=>b.opcode.includes("procedures_call") && b.mutation.proccode == `category${i}`)) {
+                            if (block.subscripts[0].blocks.some(b=>b.opcode.includes("procedures_call") && b.mutation.proccode == `category${i}`)) {
                                 count += 1;
                             }
                         }
@@ -2527,7 +2527,7 @@ module.exports = class{
                     } else if (block.opcode.includes("control_if") && block.inputBlocks.length >= 5) {
                         let lastCount = 0;
                         for (let i = 1; i <=5; i++) {
-                            if (block.inputBlocks.some(b=>b.opcode.includes("procedures_call") && b.mutation.proccode == `category${i}`)) {
+                            if (block.subscripts[0].blocks.some(b=>b.opcode.includes("procedures_call") && b.mutation.proccode == `category${i}`)) {
                                 lastCount += 1
                             }
                         }
@@ -2538,12 +2538,16 @@ module.exports = class{
                 return false;
             }
 
+
+
             for (const script of validMain) {
                 //similar to previous loop but checking different properties
                 if (script.blocks[1].inputBlocks.length >= 1) {
-                    if (checkNestedFunctions(script.blocks[1].inputBlocks, 0)) {
-                        out.categoryStructure = true;
-                        break;
+                    if (script.blocks[1].subscripts[0].blocks.some(b=>b.opcode.includes("procedures_call") && b.mutation.proccode == `category${1}`)) {
+                        if (checkNestedFunctions(script.blocks[1].inputBlocks, 1)) {
+                            out.categoryStructure = true;
+                            break;
+                        }
                     }
                 }
             }
