@@ -35,26 +35,43 @@ module.exports = class{
 
         //ex. findCategory(Ball Sprite, 4, idk, idk, ball-e) -> true
         function findCategory(sprite, n, x, y, costumeName) {
+            // Look for a specific custom function in a sprite
             let customScripts = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("procedures_definition") && s.blocks.some(block=>block.opcode.includes("sensing_askandwait")));
+            console.log(customScripts, n)
 
-            
+            var catOut = false
+
+            //the customScripts is an Array(2) with the restricted blocks, iterate over these blocks and analyze their insides
 
             let gs = 0;
-            for (gs in customScripts) {
-                if (Object.keys(customScripts[gs].includes("blocks"))) {
-                    console.log("cS Blocks: ",customScripts[gs].blocks);
-
-                    // let gb = 0
-                    // for (gb in customScripts[gs].blocks) {
-
-                    // }
+            for(gs in customScripts) {
+                if (Object.keys(customScripts[gs]).includes("blocks")) {
+                    //now iterate through the blocks in the script
+                    let scriptPieces = { set: false, move: false, costumeSwitch: false, stampsBall: false}; // TODO: if anyone of these are missing flag it!
+                    // console.log("here: ", customScripts[gs].blocks[0])
+                    if (customScripts[gs].blocks[0].opcode.includes("procedures_definition") && customScripts[gs].blocks[0].inputBlocks[0].mutation.proccode == `category${n}`) {
+                        let gb = 1;
+                        for (gb in customScripts[gs].blocks) {
+                            let currBlock = customScripts[gs].blocks[gb]
+                            if (currBlock.opcode.includes("data_setvariableto")) { // check for inputs (which var changing, new value)
+                                // sets category to answer
+                                scriptPieces.set = true;
+                            } else if (currBlock.opcode.includes("motion_gotoxy")) { // new x,y
+                                // moves the ball
+                                scriptPieces.move = true;
+                            } else if (currBlock.opcode.includes("looks_switchcostumeto")) { // check for inputs (new costume)
+                                // switch costume
+                                scriptPieces.costumeSwitch = true;
+                            } else if (currBlock.opcode.includes("procedures_call")) { // check the name of custom script is stampball
+                                // stamps ball
+                                scriptPieces.stampsBall = true;
+                            }
+                        }
+                    }
+                catOut = Object.values(scriptPieces).filter(c=>c).length == Object.values(scriptPieces).length;
                 }
             }
-            // look for a specific category function
-
-
-
-
+            return catOut
         }
 
         // function accumulateVars(sprites) {
@@ -70,11 +87,15 @@ module.exports = class{
 
         function procSprite(sprite){
             //evaluate a single sprite
-            var out = { initVars: 0, askedAndStored: false, foundCats: []};
+            var out = { initVars: 0, askedAndStored: false, loopStructure: false, foundCats: []};
             // given a sprite, check for initalization of vars
             // let varScripts = sprite.scripts.filter(s=>s.blocks.some(block=>block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes('0')));
             
-            for (let i = 1; i <= 5; i++) {
+
+            
+
+            for (let i = 1; i <= 3; i++) {
+                // where i is the number of functions we want to check for
                 out.foundCats.push(findCategory(sprite,i, null, null, null))
             }
             
@@ -98,6 +119,16 @@ module.exports = class{
         };
 
         var results = allSprites.map(procSprite);
+        function returnCats(exOut) {
+            return exOut.foundCats
+        }
+        var categoryMatrix = results.map(returnCats)
+        
+
+
+
+
+
         // function returnNumVars(exOut) {
         //     return exOut.initVars;
         // }
@@ -106,6 +137,11 @@ module.exports = class{
         // this.requirements.VarsExistance.bool = accumulateVars(allSprites) >= 3;
         // this.requirements.initAllVars.bool = initVarsSum >= accumulateVars(allSprites) - 1;
         // this.requirements.questionsAndVars.bool = results.filter(o=>o.askedAndStored).length >= 1; // There exists one instance of asking & storing
+
+        // we look at the column and check if at least one value is true
+        this.requirements.Category1.bool = categoryMatrix.map(c=>c[0]).some(c=>c)
+        this.requirements.Category2.bool = categoryMatrix.map(c=>c[1]).some(c=>c)
+        this.requirements.Category3.bool = categoryMatrix.map(c=>c[2]).some(c=>c)
         return;
     }
 }

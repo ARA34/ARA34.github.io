@@ -2427,7 +2427,7 @@ module.exports = class{
                 if (Object.keys(customScripts[gs]).includes("blocks")) {
                     //now iterate through the blocks in the script
                     let scriptPieces = { set: false, move: false, costumeSwitch: false, stampsBall: false}; // TODO: if anyone of these are missing flag it!
-                    console.log("here: ", customScripts[gs].blocks[0])
+                    // console.log("here: ", customScripts[gs].blocks[0])
                     if (customScripts[gs].blocks[0].opcode.includes("procedures_definition") && customScripts[gs].blocks[0].inputBlocks[0].mutation.proccode == `category${n}`) {
                         let gb = 1;
                         for (gb in customScripts[gs].blocks) {
@@ -2447,26 +2447,6 @@ module.exports = class{
                             }
                         }
                     }
-                    // for (gb in customScripts[gs].blocks) {
-                    //     let currBlock = customScripts[gs].blocks[gb];
-                    //     console.log("here: ",currBlock.inputBlocks[0])
-                    //     if (Object.keys(currBlock.inputBlocks).includes("mutation") && currBlock.inputBlocks[0].mutation.proccode == `category${n}`) {
-                    //         if (currBlock.opcode.includes("data_setvariableto")) { // check for inputs (which var changing, new value)
-                    //             // sets category to answer
-                    //             scriptPieces.set = true;
-                    //         } else if (currBlock.opcode.includes("motion_gotoxy")) { // new x,y
-                    //             // moves the ball
-                    //             scriptPieces.move = true;
-                    //         } else if (currBlock.opcode.includes("looks_switchcostumeto")) { // check for inputs (new costume)
-                    //             // switch costume
-                    //             scriptPieces.costumeSwitch = true;
-                    //         } else if (currBlock.opcode.includes("procedures_call")) { // check the name of custom script is stampball
-                    //             // stamps ball
-                    //             scriptPieces.stampsBall = true;
-                    //         }
-                    //     }   
-                    // }
-
                 catOut = Object.values(scriptPieces).filter(c=>c).length == Object.values(scriptPieces).length;
                 }
             }
@@ -2538,6 +2518,9 @@ module.exports = class{
         // this.requirements.questionsAndVars.bool = results.filter(o=>o.askedAndStored).length >= 1; // There exists one instance of asking & storing
 
         // we look at the column and check if at least one value is true
+        console.log("cat1: ",categoryMatrix.map(c=>c[0]))
+        console.log("cat2: ",categoryMatrix.map(c=>c[1]))
+        console.log("cat3: ",categoryMatrix.map(c=>c[2]))
         this.requirements.Category1.bool = categoryMatrix.map(c=>c[0]).some(c=>c)
         this.requirements.Category2.bool = categoryMatrix.map(c=>c[1]).some(c=>c)
         this.requirements.Category3.bool = categoryMatrix.map(c=>c[2]).some(c=>c)
