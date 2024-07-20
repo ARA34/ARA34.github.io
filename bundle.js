@@ -2508,7 +2508,7 @@ module.exports = class{
                 // recursive function for checking structrue with a restriction of n control-if-elses
                 console.log("someBlocks: ", someBlocks);
                 for(const block of someBlocks) {
-                    if (block.opcode.includes("control_if_else") && block.subscripts[0].blocks.length >= 1) {
+                    if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
                         // block.inputBlocks
                         s += 1; // s = 2, WTS count == 2, checking the first category is in the thing
                         let count = 0;
