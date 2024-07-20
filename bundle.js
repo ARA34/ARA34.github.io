@@ -2388,18 +2388,11 @@ module.exports = class{
         this.extensions = {};
     }
     initReqs(){
-
-        // this.requirements.Sprites = { bool: false, str: "I had at least one sprite and a backdrop" };
-        // this.requirements.VarsExistance = { bool: false, str: "I created 3 variables" };
-        // this.requirements.initAllVars = { bool: false, str: "I initialized my varibale values to 0" };
-        // this.requirements.questionsAndVars = {bool: false, str: "I asked questions and store their responses in my variables" };
-
-
         this.requirements.Category1 = { bool: false, str: "Completed category 1"};
         this.requirements.Category2 = { bool: false, str: "Completed category 2"};
         this.requirements.Category3 = { bool: false, str: "Completed category 3"};
         this.requirements.MainScript = { bool: false, str: "The structure of the main script is correct"}
-        this.requirements.CategoryOrder = { bool: false, str: "The ordering of categories is correct"}
+        this.requirements.CategoryOrder = { bool: false, str: "The ordering of categories is correct within the main script"}
     }
 
     grade(fileObj, user){
@@ -2411,7 +2404,7 @@ module.exports = class{
         let stage = project.targets.find(t=>t.isStage);
         let sprites = project.targets.filter(t=>!t.isStage);
 
-        function findCategory(sprite, n, x, y, costumeName) {
+        function findCategory(sprite, n, x, y, costumeName) { // TODO: check for specifics
             // Look for a specific custom function in a sprite
             let customScripts = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("procedures_definition") && s.blocks.some(block=>block.opcode.includes("sensing_askandwait")));
             // console.log(customScripts, n);
@@ -2461,7 +2454,7 @@ module.exports = class{
         // }
 
         function procSprite(sprite){
-            var out = { initVars: 0, askedAndStored: false, loopStructure: false, foundCats: []};
+            var out = {loopStructure: false, categoryStructure: false, foundCats: []};
             // given a sprite, check for initalization of vars
             // let varScripts = sprite.scripts.filter(s=>s.blocks.some(block=>block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes('0')));
 
@@ -2470,41 +2463,28 @@ module.exports = class{
                 out.foundCats.push(findCategory(sprite,i, null, null, null));
             }
             
-            // let gs = 0;
-            // for (gs in varScripts) {
-            //     //check if scripts property exists in object
-            //     if (Object.keys(varScripts[gs]).includes("blocks")) {
-            //         let gb = 0;
-            //         for (gb in varScripts[gs].blocks) {
-            //             let currBlock = varScripts[gs].blocks[gb];
-            //             if (currBlock.opcode.includes("data_setvariableto") && currBlock.inputs.VALUE[1].includes('0')) {
-            //                 out.initVars += 1;
-            //             }
-            //         }
-            //     }
-            // }
-            // out.askedAndStored = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("sensing_askandwait") && s.blocks.some(block=>block.opcode.includes("data_setvariableto"))));
             var validMain = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_whenbroadcastreceived") && s.blocks[1].opcode.includes("control_if_else"));
 
-            function checkLoopStructure(someBlocks){
-                for(const block of someBlocks) {
-                    if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
-                        if (checkLoopStructure(block.inputBlocks)) {
-                            return true;
-                        }
-                    } else if (block.opcode.includes("control_if")) {
-                        return true;
-                    }
-                }
-                return false;
-            }
+            // function checkLoopStructure(someBlocks){
+            //     for(const block of someBlocks) {
+            //         if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
+            //             if (checkLoopStructure(block.inputBlocks)) {
+            //                 return true;
+            //             }
+            //         } else if (block.opcode.includes("control_if")) {
+            //             return true;
+            //         }
+            //     }
+            //     return false;
+            // }
 
-            function checkLoopStructure2(someBlocks, n){
+            function checkLoopStructure(someBlocks, n){
+                // recursive function for checking structrue with a restriction of n control-if-elses
                 for(const block of someBlocks) {
                     if (n < 3) {
                         if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
                             n += 1;
-                            if (checkLoopStructure2(block.inputBlocks, n)) {
+                            if (checkLoopStructure(block.inputBlocks, n)) {
                                 return true;
                             }
                         }
@@ -2515,14 +2495,57 @@ module.exports = class{
                 return false;
             }
 
-            for (const script of validMain) {
+            for (const script of validMain) { // TOOD: check the conditionals are in order
                 if (script.blocks[1].inputBlocks.length >= 1) {
-                    if (checkLoopStructure2(script.blocks[1].inputBlocks, 0)) {
+                    if (checkLoopStructure(script.blocks[1].inputBlocks, 0)) {
                         out.loopStructure = true;
                         break;
                     }
                 }
             }
+
+            function checkNestedFunctions(someBlocks, s){
+                // recursive function for checking structrue with a restriction of n control-if-elses
+                for(const block of someBlocks) {
+                    if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
+                        s += 1
+                        let count = 0;
+                        for (let i = 1; i <= s; i++) {
+                            if (block.inputBlocks.some(b=>b.opcode.includes("procedures_call") && b.mutation.proccode == `category${i}`)) {
+                                count += 1;
+                            }
+                        }
+
+                        if (count == s && checkNestedFunctions(block.inputBlocks, s)) {
+                            return true;
+                        }
+                    } else if (block.opcode.includes("control_if") && block.inputBlocks.length >= 5) {
+                        let lastCount = 0;
+                        for (let i = 1; i <=5; i++) {
+                            if (block.inputBlocks.some(b=>b.opcode.includes("procedures_call") && b.mutation.proccode == `category${i}`)) {
+                                lastCount += 1
+                            }
+                        }
+                        return lastCount == 5;
+                    }
+                }
+                return false;
+            }
+
+            for (const script of validMain) {
+                //similar to previous loop but checking different properties
+                if (script.blocks[1].inputBlocks.length >= 1) {
+                    if (script.blocks[1].inputBlocks.some(b=>b.opcode.includes("procedures_call") && b.mutation.proccode == `category${1}`)) {
+                        if (checkNestedFunctions(script.blocks[1].inputBlocks, 1)) {
+                            out.categoryStructure = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+
+
             
             // for (var script of validMain) {
             //     if (script.blocks[1].inputBlocks.length >= 1) {
@@ -2546,9 +2569,6 @@ module.exports = class{
             //         }
             //     }
             // }
-            
-
-            // console.log("here: ",sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_whenbroadcastreceived")));
 
             return out;
         };
@@ -2558,21 +2578,6 @@ module.exports = class{
             return exOut.foundCats
         }
         var categoryMatrix = results.map(returnCats)
-        
-
-
-
-
-
-        // function returnNumVars(exOut) {
-        //     return exOut.initVars;
-        // }
-        // var initVarsSum = results.map(returnNumVars).reduce((sum, current) => sum + current, 0);
-        // this.requirements.Sprites.bool = allSprites.length >= 2;
-        // this.requirements.VarsExistance.bool = accumulateVars(allSprites) >= 3;
-        // this.requirements.initAllVars.bool = initVarsSum >= accumulateVars(allSprites) - 1;
-        // this.requirements.questionsAndVars.bool = results.filter(o=>o.askedAndStored).length >= 1; // There exists one instance of asking & storing
-
         // we look at the column and check if at least one value is true
 
         // console.log("cat1: ",categoryMatrix.map(c=>c[0]))
@@ -2582,6 +2587,7 @@ module.exports = class{
         this.requirements.Category2.bool = categoryMatrix.map(c=>c[1]).some(c=>c)
         this.requirements.Category3.bool = categoryMatrix.map(c=>c[2]).some(c=>c)
         this.requirements.MainScript.bool = results.filter(c=>c.loopStructure).length >= 1;
+        this.requirements.CategoryOrder.bool = results.filter(c=>c.categoryStructure).length == 1;
         return;
     }
 }
