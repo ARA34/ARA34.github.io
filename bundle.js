@@ -2539,11 +2539,9 @@ module.exports = class{
             for (const script of validMain) {
                 //similar to previous loop but checking different properties
                 if (script.blocks[1].inputBlocks.length >= 1) {
-                    if (script.blocks[1].inputBlocks.some(b=>b.opcode.includes("procedures_call") && b.mutation.proccode == `category${1}`)) {
-                        if (checkNestedFunctions(script.blocks[1].inputBlocks, 1)) {
-                            out.categoryStructure = true;
-                            break;
-                        }
+                    if (checkNestedFunctions(script.blocks[1].inputBlocks, 0)) {
+                        out.categoryStructure = true;
+                        break;
                     }
                 }
             }
