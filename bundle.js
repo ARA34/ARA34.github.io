@@ -2484,8 +2484,71 @@ module.exports = class{
             //     }
             // }
             // out.askedAndStored = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("sensing_askandwait") && s.blocks.some(block=>block.opcode.includes("data_setvariableto"))));
-            // out.loopStructure = sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenbroadcastreceived") && s=>s.blocks.some(block=>block.opcode.includes()))
-            console.log("here: ",sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_whenbroadcastreceived")));
+            var validMain = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_whenbroadcastreceived") && s.blocks[1].opcode.includes("control_if_else"));
+
+            function checkLoopStructure(someBlocks){
+                for(const block of someBlocks) {
+                    if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
+                        if (checkLoopStructure(block.inputBlocks)) {
+                            return true;
+                        }
+                    } else if (block.opcode.includes("control_if")) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            function checkLoopStructure2(someBlocks, n){
+                for(const block of someBlocks) {
+                    if (n < 3) {
+                        if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
+                            n += 1;
+                            if (checkLoopStructure2(block.inputBlocks, n)) {
+                                return true;
+                            }
+                        }
+                    } else if (block.opcode.includes("control_if")) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            for (const script of validMain) {
+                if (script.blocks[1].inputBlocks.length >= 1) {
+                    if (checkLoopStructure2(script.blocks[1].inputBlocks, 0)) {
+                        out.loopStructure = true;
+                        break;
+                    }
+                }
+            }
+            
+            // for (var script of validMain) {
+            //     if (script.blocks[1].inputBlocks.length >= 1) {
+            //         // script.blocks[1].inputBlocks.some(b=>b.opcode.includes("control_if_else"))
+            //         for (var block of script.blocks[1].inputBlocks) {
+            //             if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
+            //                 for (var block1 of block.inputBlocks) {
+            //                     if (block1.opcode.includes("control_if_else") && block1.inputBlocks.length >= 1) {
+            //                         for (var block2 of block1.inputBlocks) {
+            //                             if (block2.opcode.includes("control_if_else") && block2.inputBlock.length >= 1) {
+            //                                 for (var block3 of block2.inputBlocks) {
+            //                                     if (block3.opcode.includes("control_if")) {
+            //                                         out.loopStructure = true;
+            //                                     }
+            //                                 }
+            //                             }
+            //                         }
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+            
+
+            // console.log("here: ",sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_whenbroadcastreceived")));
 
             return out;
         };
@@ -2511,7 +2574,7 @@ module.exports = class{
         // this.requirements.questionsAndVars.bool = results.filter(o=>o.askedAndStored).length >= 1; // There exists one instance of asking & storing
 
         // we look at the column and check if at least one value is true
-        
+
         // console.log("cat1: ",categoryMatrix.map(c=>c[0]))
         // console.log("cat2: ",categoryMatrix.map(c=>c[1]))
         // console.log("cat3: ",categoryMatrix.map(c=>c[2]))
