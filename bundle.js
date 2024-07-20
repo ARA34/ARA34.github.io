@@ -2446,8 +2446,8 @@ module.exports = class{
                                 scriptPieces.stampsBall = true;
                             }
                         }
+                        catOut = Object.values(scriptPieces).filter(c=>c).length == Object.values(scriptPieces).length;
                     }
-                catOut = Object.values(scriptPieces).filter(c=>c).length == Object.values(scriptPieces).length;
                 }
             }
             return catOut
@@ -2477,6 +2477,7 @@ module.exports = class{
                 // where i is the number of functions we want to check for
                 out.foundCats.push(findCategory(sprite,i, null, null, null))
             }
+
             
             
             // let gs = 0;
