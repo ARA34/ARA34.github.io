@@ -2506,6 +2506,7 @@ module.exports = class{
 
             function checkNestedFunctions(someBlocks, s){
                 // recursive function for checking structrue with a restriction of n control-if-elses
+                console.log("someBlocks: ", someBlocks);
                 for(const block of someBlocks) {
                     if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
                         // block.inputBlocks
@@ -2518,6 +2519,7 @@ module.exports = class{
                             }
                         }
                         console.log("if else done", count == s)
+                        
                         if (count == s && checkNestedFunctions(block.inputBlocks, s)) {
                             return true;
                         }
