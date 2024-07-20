@@ -2411,16 +2411,12 @@ module.exports = class{
         let stage = project.targets.find(t=>t.isStage);
         let sprites = project.targets.filter(t=>!t.isStage);
 
-
-        //ex. findCategory(Ball Sprite, 4, idk, idk, ball-e) -> true
         function findCategory(sprite, n, x, y, costumeName) {
             // Look for a specific custom function in a sprite
             let customScripts = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("procedures_definition") && s.blocks.some(block=>block.opcode.includes("sensing_askandwait")));
-            console.log(customScripts, n)
+            // console.log(customScripts, n);
 
-            var catOut = false
-
-            //the customScripts is an Array(2) with the restricted blocks, iterate over these blocks and analyze their insides
+            var catOut = false;
 
             let gs = 0;
             for(gs in customScripts) {
@@ -2450,7 +2446,7 @@ module.exports = class{
                     }
                 }
             }
-            return catOut
+            return catOut;
         }
 
         // function accumulateVars(sprites) {
@@ -2465,20 +2461,14 @@ module.exports = class{
         // }
 
         function procSprite(sprite){
-            //evaluate a single sprite
             var out = { initVars: 0, askedAndStored: false, loopStructure: false, foundCats: []};
             // given a sprite, check for initalization of vars
             // let varScripts = sprite.scripts.filter(s=>s.blocks.some(block=>block.opcode.includes("data_setvariableto") && block.inputs.VALUE[1].includes('0')));
-            
-
-            
 
             for (let i = 1; i <= 3; i++) {
                 // where i is the number of functions we want to check for
-                out.foundCats.push(findCategory(sprite,i, null, null, null))
+                out.foundCats.push(findCategory(sprite,i, null, null, null));
             }
-
-            
             
             // let gs = 0;
             // for (gs in varScripts) {
@@ -2494,6 +2484,8 @@ module.exports = class{
             //     }
             // }
             // out.askedAndStored = sprite.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("sensing_askandwait") && s.blocks.some(block=>block.opcode.includes("data_setvariableto"))));
+            // out.loopStructure = sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenbroadcastreceived") && s=>s.blocks.some(block=>block.opcode.includes()))
+            console.log("here: ",sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_whenbroadcastreceived")));
 
             return out;
         };
@@ -2519,9 +2511,10 @@ module.exports = class{
         // this.requirements.questionsAndVars.bool = results.filter(o=>o.askedAndStored).length >= 1; // There exists one instance of asking & storing
 
         // we look at the column and check if at least one value is true
-        console.log("cat1: ",categoryMatrix.map(c=>c[0]))
-        console.log("cat2: ",categoryMatrix.map(c=>c[1]))
-        console.log("cat3: ",categoryMatrix.map(c=>c[2]))
+        
+        // console.log("cat1: ",categoryMatrix.map(c=>c[0]))
+        // console.log("cat2: ",categoryMatrix.map(c=>c[1]))
+        // console.log("cat3: ",categoryMatrix.map(c=>c[2]))
         this.requirements.Category1.bool = categoryMatrix.map(c=>c[0]).some(c=>c)
         this.requirements.Category2.bool = categoryMatrix.map(c=>c[1]).some(c=>c)
         this.requirements.Category3.bool = categoryMatrix.map(c=>c[2]).some(c=>c)
