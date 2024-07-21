@@ -2484,7 +2484,7 @@ module.exports = class{
                 if (someBlocks.length >= 1) {
                     for(const block of someBlocks) {
                         if (n < 3) {
-                            if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
+                            if (Object.keys(block).includes("opcode") && block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
                                 n += 1;
                                 if (checkLoopStructure(block.inputBlocks, n)) {
                                     return true;
