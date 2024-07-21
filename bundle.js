@@ -2442,17 +2442,6 @@ module.exports = class{
             return catOut;
         }
 
-        // function accumulateVars(sprites) {
-        //     let numOfVars = 0;
-        //     let s = 0;
-        //     for (s in sprites) {
-        //         if (sprites[s].variables != null) {
-        //             numOfVars += Object.keys(sprites[s].variables).length;
-        //         }
-        //     }
-        //     return numOfVars;
-        // }
-
         function procSprite(sprite){
             var out = {loopStructure: false, categoryStructure: false, foundCats: []};
             // given a sprite, check for initalization of vars
@@ -2465,18 +2454,6 @@ module.exports = class{
             
             var validMain = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_whenbroadcastreceived") && s.blocks[1].opcode.includes("control_if_else"));
 
-            // function checkLoopStructure(someBlocks){
-            //     for(const block of someBlocks) {
-            //         if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
-            //             if (checkLoopStructure(block.inputBlocks)) {
-            //                 return true;
-            //             }
-            //         } else if (block.opcode.includes("control_if")) {
-            //             return true;
-            //         }
-            //     }
-            //     return false;
-            // }
 
             function checkLoopStructure(someBlocks, n){
                 // recursive function for checking structrue with a restriction of n control-if-elses
@@ -2596,8 +2573,6 @@ module.exports = class{
         return;
     }
 }
-
-
 
 
 
