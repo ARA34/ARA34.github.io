@@ -2480,16 +2480,18 @@ module.exports = class{
 
             function checkLoopStructure(someBlocks, n){
                 // recursive function for checking structrue with a restriction of n control-if-elses
-                for(const block of someBlocks) {
-                    if (n < 3) {
-                        if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
-                            n += 1;
-                            if (checkLoopStructure(block.inputBlocks, n)) {
-                                return true;
+                if (someBlocks.length >= 1) {
+                    for(const block of someBlocks) {
+                        if (n < 3) {
+                            if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
+                                n += 1;
+                                if (checkLoopStructure(block.inputBlocks, n)) {
+                                    return true;
+                                }
                             }
+                        } else if (block.opcode.includes("control_if")) {
+                            return true;
                         }
-                    } else if (block.opcode.includes("control_if")) {
-                        return true;
                     }
                 }
                 return false;
@@ -2508,7 +2510,7 @@ module.exports = class{
                 // recursive function for checking structrue with a restriction of n control-if-elses
                 console.log("someBlocks: ", someBlocks);
                 for(const block of someBlocks) {
-                    if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1) {
+                    if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1 && block.subscripts[0].blocks.length >= 2) {
                         // block.inputBlocks
                         s += 1; // s = 2, WTS count == 2, checking the first category is in the thing
                         let count = 0;
@@ -2524,7 +2526,7 @@ module.exports = class{
                             return true;
                         }
                         console.log("if elses done", count == s);
-                    } else if (block.opcode.includes("control_if") && block.inputBlocks.length >= 1) {
+                    } else if (block.opcode.includes("control_if") && block.inputBlocks.length >= 1 && block.subscripts[0].blocks.length >= 2) {
                         let lastCount = 0;
                         for (let i = 1; i <=5; i++) {
                             if (block.subscripts[0].blocks.some(b=>b.opcode.includes("procedures_call") && b.mutation.proccode == `category${i}`)) {
