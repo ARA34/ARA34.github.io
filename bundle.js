@@ -2480,6 +2480,7 @@ module.exports = class{
 
             function checkLoopStructure(someBlocks, n){
                 // recursive function for checking structrue with a restriction of n control-if-elses
+                console.log("someblocks: ", someBlocks);
                 if (someBlocks.length >= 1) {
                     for(const block of someBlocks) {
                         if (n < 3) {
