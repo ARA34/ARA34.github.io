@@ -2511,7 +2511,7 @@ module.exports = class{
                 // recursive function for checking structrue with a restriction of n control-if-elses
                 console.log("someBlocks: ", someBlocks);
                 for(const block of someBlocks) {
-                    if (block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1 && block.subscripts[0].blocks.length >= 2) {
+                    if ( Object.keys(block).includes("opcode") && block.opcode.includes("control_if_else") && block.inputBlocks.length >= 1 && block.subscripts[0].blocks.length >= 2) {
                         // block.inputBlocks
                         s += 1; // s = 2, WTS count == 2, checking the first category is in the thing
                         let count = 0;
@@ -2521,12 +2521,9 @@ module.exports = class{
                                 count += 1;
                             }
                         }
-                        console.log("if else done", count == s)
-                        
                         if (count == s && checkNestedFunctions(block.inputBlocks, s)) {
                             return true;
                         }
-                        console.log("if elses done", count == s);
                     } else if (block.opcode.includes("control_if") && block.inputBlocks.length >= 1 && block.subscripts[0].blocks.length >= 2) {
                         let lastCount = 0;
                         for (let i = 1; i <=5; i++) {
@@ -2534,7 +2531,6 @@ module.exports = class{
                                 lastCount += 1
                             }
                         }
-                        console.log("if done", lastCount == 5);
                         return lastCount == 5;
                     }
                 }
@@ -2554,9 +2550,6 @@ module.exports = class{
                     }
                 }
             }
-
-
-
             
             // for (var script of validMain) {
             //     if (script.blocks[1].inputBlocks.length >= 1) {
