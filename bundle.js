@@ -2042,13 +2042,13 @@ module.exports = class {
         if (pictureSprites.length >= 1){
             let picturesHave2When = results.filter(c=>c.pictureHas2When).length == pictureSprites.length;
             let arrowsHaveWhen = results.filter(c=>c.arrowHasWhen).length == arrows.length;
-            let backdropHasFlag = stage.scripts.some(s=>s.blocks.some(blocks=>blocks.opcode.includes("event_whenflagclicked")));
+            let backdropValidation = stage.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("event_whenflagclicked")) && s.blocks.some(block=>block.opcode.includes("sound_playuntildone")));
 
             console.log("picturesHave2Wheen: ", picturesHave2When);
             console.log("arrowsHaveWhen: ", arrowsHaveWhen);
-            console.log("backdropHasFlag: ", backdropHasFlag);
+            console.log("backdropValidation: ", backdropValidation);
 
-            this.requirements.EventCategory.bool = picturesHave2When && arrowsHaveWhen && backdropHasFlag;
+            this.requirements.EventCategory.bool = picturesHave2When && arrowsHaveWhen && backdropValidation;
         }
         this.requirements.LoopsCategory.bool = (arrows.length >= 1) ? results.filter(c=>c.arrowBlinks).length == arrows.length : false;
 
