@@ -2048,7 +2048,7 @@ module.exports = class {
 
             this.requirements.picturesHave2When.bool = results.filter(c=>c.pictureHas2When).length == pictureSprites.length;
             this.requirements.arrowsHaveWhen.bool = results.filter(c=>c.arrowHasWhen).length == arrows.length;
-            this.requirements.backdropValidatio.bool = stage.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("event_whenflagclicked")) && s.blocks.some(block=>block.opcode.includes("sound_playuntildone")));
+            this.requirements.backdropValidation.bool = stage.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("event_whenflagclicked")) && s.blocks.some(block=>block.opcode.includes("sound_playuntildone")));
             // this.requirements.EventCategory.bool = picturesHave2When && arrowsHaveWhen && backdropValidation;
         }
         this.requirements.LoopsCategory.bool = (arrows.length >= 1) ? results.filter(c=>c.arrowBlinks).length == arrows.length : false;
