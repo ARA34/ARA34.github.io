@@ -1996,8 +1996,10 @@ module.exports = class {
      initReqs() {
 
         this.requirements.SpriteCategory = { bool: false, str: "I used 3 picture sprites"};
-        this.requirements.EventCategory = { bool: false, str: "Event category on rubric"};
-        this.requirements.LoopsCategory = { bool: false, str: "Loops category on rubric"};
+        this.requirements.picturesHave2When = {bool: false, str: "Each picture sprite has at least 2 'When this sprite is clicked' blocks"};
+        this.requirements.arrowsHaveWhen = {bool: false, str: "Each arrow has a 'When I recieve' block"};
+        this.requirements.backdropValidation = {bool: false, str: "The backdrop has a green flag with voice recorded instructions"};
+        this.requirements.LoopsCategory = { bool: false, str: "The arrows blink when the right sprite is clicked"};
     }
 
 
@@ -2040,15 +2042,14 @@ module.exports = class {
         
         this.requirements.SpriteCategory.bool = pictureSprites.length >= 3;
         if (pictureSprites.length >= 1){
-            let picturesHave2When = results.filter(c=>c.pictureHas2When).length == pictureSprites.length;
-            let arrowsHaveWhen = results.filter(c=>c.arrowHasWhen).length == arrows.length;
-            let backdropValidation = stage.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("event_whenflagclicked")) && s.blocks.some(block=>block.opcode.includes("sound_playuntildone")));
+            console.log("picturesHave2When: ", results.filter(c=>c.pictureHas2When).length == pictureSprites.length);
+            console.log("arrowsHaveWhen: ", results.filter(c=>c.arrowHasWhen).length == arrows.length);
+            console.log("backdropValidation: ", stage.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("event_whenflagclicked")) && s.blocks.some(block=>block.opcode.includes("sound_playuntildone"))));
 
-            console.log("picturesHave2Wheen: ", picturesHave2When);
-            console.log("arrowsHaveWhen: ", arrowsHaveWhen);
-            console.log("backdropValidation: ", backdropValidation);
-
-            this.requirements.EventCategory.bool = picturesHave2When && arrowsHaveWhen && backdropValidation;
+            this.requirements.picturesHave2When.bool = results.filter(c=>c.pictureHas2When).length == pictureSprites.length;
+            this.requirements.arrowsHaveWhen.bool = results.filter(c=>c.arrowHasWhen).length == arrows.length;
+            this.requirements.backdropValidatio.bool = stage.scripts.some(s=>s.blocks.some(block=>block.opcode.includes("event_whenflagclicked")) && s.blocks.some(block=>block.opcode.includes("sound_playuntildone")));
+            // this.requirements.EventCategory.bool = picturesHave2When && arrowsHaveWhen && backdropValidation;
         }
         this.requirements.LoopsCategory.bool = (arrows.length >= 1) ? results.filter(c=>c.arrowBlinks).length == arrows.length : false;
 
