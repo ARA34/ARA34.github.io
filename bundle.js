@@ -2043,14 +2043,19 @@ module.exports = class {
             let picturesHave2When = results.filter(c=>c.pictureHas2When).length == pictureSprites.length;
             let arrowsHaveWhen = results.filter(c=>c.arrowHasWhen).length == arrows.length;
             let backdropHasFlag = stage.scripts.some(s=>s.blocks.some(blocks=>blocks.opcode.includes("event_whenflagclicked")));
+
+            console.log("picturesHave2Wheen: ", picturesHave2When);
+            console.log("arrowsHaveWhen: ", arrowsHaveWhen);
+            console.log("backdropHasFlag: ", backdropHasFlag);
+
             this.requirements.EventCategory.bool = picturesHave2When && arrowsHaveWhen && backdropHasFlag;
         }
         this.requirements.LoopsCategory.bool = (arrows.length >= 1) ? results.filter(c=>c.arrowBlinks).length == arrows.length : false;
 
         console.log("results: ", results);
-        console.log("arrows_length: ", arrows.length);
-        console.log("pictures_length: ", pictureSprites.length);
-        console.log("arrowBlinks: ", results.filter(c=>c.arrowBlinks).length)
+        // console.log("arrows_length: ", arrows.length);
+        // console.log("pictures_length: ", pictureSprites.length);
+        // console.log("arrowBlinks: ", results.filter(c=>c.arrowBlinks).length)
 
         return;
     }
