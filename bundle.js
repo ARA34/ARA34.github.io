@@ -2857,7 +2857,7 @@ module.exports = class {
             // evaluating a single sprite
             var out = { spriteResets: false, spriteLoops: false, spriteSays: false };
             out.spriteResets = (sprites.includes(sprite)) ? sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenflagclicked") && s.blocks.some(b=>b.opcode.includes("looks_switchcostumeto") && s.blocks.some(b=>b.opcode.includes("motion_")))): false;
-            out.spriteLoops = (sprites.includes(sprite)) ? sprite.scripts.some((s=>s.blocks[0].opcode.includes("event_whenthisspriteclicked") || s.blocks[0].opcode.includes("event_whenkeypressed")) && s.blocks.length >= 3): false;
+            out.spriteLoops = (sprites.includes(sprite)) ? sprite.scripts.some((s=>s.blocks[0].opcode.includes("event_whenthisspriteclicked") || s.blocks[0].opcode.includes("event_whenkeypressed")) && s.blocks.some(b=>b.opcode.includes("control_repeat"))): false; //check for 3 or more blocks
             out.spriteSays = (sprites.includes(sprite)) ? sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_sa"))) : false;
             return out;
         }
@@ -2866,7 +2866,7 @@ module.exports = class {
         this.requirements.imagesPresent.bool = stage.length >= 1 && sprites.length >= 2;
         this.requirements.Resets.bool = results.filter(c=>c.spriteResets).length >= 2;
         this.requirements.Loops.bool = results.filter(c=>c.spriteLoops).length >= 2;
-        this.requirements.myVacation.bool = results.filter(c=>c.spriteSays) >= 2;
+        this.requirements.myVacation.bool = results.filter(c=>c.spriteSays) >= 1;
         console.log("Reminder! 2nd and 3rd requirements must be fulfilled for scripts in sprites only (No backdrops)");
         console.log("-- DEBUG --");
         console.log("imagesPresent: ", stage.length, sprites.length);
