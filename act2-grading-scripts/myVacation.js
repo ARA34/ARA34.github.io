@@ -3,7 +3,7 @@ Place holder code for myVacation grading script
 Previously [Previous Project Placeholder]
 */
 
-require('./scratch3');
+require('../grading-scripts-s3/scratch3')
 
 module.exports = class {
     constructor() {
