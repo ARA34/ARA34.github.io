@@ -31,7 +31,7 @@ module.exports = class {
             // evaluating a single sprite
             var out = { spriteResets: false, spriteLoops: false, spriteSays: false };
             out.spriteResets = (sprites.includes(sprite)) ? sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenflagclicked") && s.blocks.some(b=>b.opcode.includes("looks_switchcostumeto") && s.blocks.some(b=>b.opcode.includes("motion_")))): false;
-            out.spriteLoops = (sprites.includes(sprite)) ? sprite.scripts.some((s=>s.blocks[0].opcode.includes("event_whenthisspriteclicked") || s.blocks[0].opcode.includes("event_whenkeypressed")) && s.blocks.some(b=>b.opcode.includes("control_repeat"))): false; //check for 3 or more blocks
+            out.spriteLoops = (sprites.includes(sprite)) ? sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenthisspriteclicked") || s.blocks[0].opcode.includes("event_whenkeypressed") && s.blocks.some(b=>b.opcode.includes("control_repeat"))): false; //check for 3 or more blocks
             out.spriteSays = (sprites.includes(sprite)) ? sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_sa"))) : false;
             return out;
         }
