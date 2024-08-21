@@ -2820,7 +2820,7 @@ module.exports = class{
 //         return false;
 //     }
 // }
-},{'./scratch3':26}],15:[function(require,module,exports){
+},{"./scratch3":26}],15:[function(require,module,exports){
 
 /*
 Place holder code for myVacation grading script
