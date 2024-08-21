@@ -11380,7 +11380,7 @@ let graders = {
     animationL1:            { name: 'M3 - Animation L1',            file: require('./grading-scripts-s3/animation-L1') },
     // animationL2_create:     { name: 'M3 - Animation L2',            file: require('./grading-scripts-s3/animation-L2') },
     // condLoopsL1:            { name: 'M4 - Conditional Loops L1',    file: require('./grading-scripts-s3/cond-loops-L1-syn') },
-    condLoopsL2_create:     { name: 'M4 - Conditional Loops L2',    file: require('./grading-scripts-s3/cond-loops-L2') },
+    // condLoopsL2_create:     { name: 'M4 - Conditional Loops L2',    file: require('./grading-scripts-s3/cond-loops-L2') },
     decompL1:               { name: 'M5 - Decomp. by Sequence L1',  file: require('./grading-scripts-s3/decomp-L1') },
     decompL2_create:        { name: 'M5 - Decomp. by Sequence L2',  file: require('./grading-scripts-s3/decomp-L2') },
     oneWaySyncL1:           { name: 'M6 - One-Way Sync L1',         file: require('./grading-scripts-s3/one-way-sync-L1') },
@@ -11405,6 +11405,8 @@ let actOneGraders = {
 /// Act 2 graders(DESIGN)
 let actTwoGraders = {
     myVacation:       { name: 'D1 - My Vacation',   file: require('./act2-grading-scripts/myVacation')  }, //#15
+//     madlibs:       { name: 'I2 - Madlibs',             file: require('./act3-grading-scripts/madlibs')  }, //#13
+//     graphProject:  { name: 'I3 - Graph Project',       file: require('./act3-grading-scripts/graphProject')  }, //#14
 };
 
 /// Act 3 graders(IMPACT)
