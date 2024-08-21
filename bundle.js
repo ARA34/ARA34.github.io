@@ -2820,15 +2820,16 @@ module.exports = class{
 //         return false;
 //     }
 // }
+},{'./scratch3':26}],15:[function(require,module,exports){
 
-},{"./grader":21,"./scratch3":26,"./templates/conditional-loops-L1-gaming":30,"./templates/conditional-loops-L1-multicultural":31,"./templates/conditional-loops-L1-youth-culture":32}],15:[function(require,module,exports){
-/* Conditional Loops L2 Autograder
-Scratch 2 (original) version: Max White, Summer 2018
-Scratch 3 updates: Elizabeth Crowdus, Spring 2019
-Scratch 3 updates: Saranya Turimella, Summer 2019
-Static analysis code (info object) added for Block Usage CSVs and Graphs: Anna Zipp, Autumn 2019
+/*
+Place holder code for myVacation grading script
+
+Previously [Conditional Loops L2 Autograder]
+Additional requires if any: "./grader":21,"./scratch3":26,"./templates/conditional-loops-L1-gaming":30,"./templates/conditional-loops-L1-multicultural":31,"./templates/conditional-loops-L1-youth-culture":32
 */
-require('../grading-scripts-s3/scratch3')
+
+require('./scratch3');
 
 module.exports = class {
     constructor() {
@@ -2836,196 +2837,250 @@ module.exports = class {
         this.extensions = {};
     }
 
-    initReqs() {
-        this.requirements.stop = { bool: false, str: 'Sprite stops when touching another sprite or another color' }; // done
-        this.requirements.speak = { bool: false, str: 'Sprite says something or makes a sound when it stops' }; // done
-        this.requirements.moves = { bool: false, str: 'Sprite moves across the stage in a looping fashion' }; // done
-        this.extensions.touchingNewSprite = { bool: false, str: 'The sprite stops when it touches a new sprite added from the sprite library' };
-        this.extensions.repeatBlock = { bool: false, str: 'Repeat blocks added to animate another sprite' }; // done
-
-/*
-//        this.extensions.addCostume = { bool: false, str: 'Another costume is added to the current mode of transportation' }; // done
-//       this.extensions.nextCostume = { bool: false, str: 'The sprite is animated with a "next costume" block' }; // done
-*/
-
-    
-        this.info = {
-            blocks: 0,
-            sprites: 0,
-            spritesWith1Script: 0,
-            spritesWith2Scripts: 0,
-            guidingUser: false,
-            blockTypes: new Set([]),
-            strings: [],
-            score: 0 //requirement score
-        }
+     initReqs() {
+        this.requirements.imagesPresent = { bool: false, str: "I used a backdrop and 2 sprites" }; // done
+        this.requirements.Resets = {bool: false, str: "Beginning: Reset position and costume of at least two sprites when the green flag is pressed." }; // done
+        this.requirements.Loops = {bool: false, str: "Middle: Repeat loops used to make two sprites move" }; // done
+        this.requirements.myVacation = {bool: false, str: "End: Sprite said what I did during my vacation" }; // done
     }
+
 
     grade(fileObj, user) {
         var project = new Project(fileObj, null);
         this.initReqs();
+        if (!is(fileObj)) return;
 
-        let numRepeat = 0;
-         
-        let allCostumes = 0;
-        let sprites = [];
-        let objectTouching = null;
-        let touching = null;
-        let moveOptions = ['motion_changexby', 'motion_changeyby', 'motion_movesteps', 'motion_glidesecstoxy', 'motion_glideto', 'motion_goto', 'motion_gotoxy']
-        let soundOptions = ['sound_playuntildone', 'sound_play', 'looks_say', 'looks_sayforsecs']
+        let stage = project.targets.find(t=>t.isStage);
+        let sprites = project.targets.filter(t=>!t.isStage);
+
+        function procSprite(sprite){
+            // evaluating a single sprite
+            var out = { spriteResets: false, spriteLoops: false, spriteSays: false };
+            out.spriteResets = (sprites.includes(sprite)) ? sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenflagclicked") && s.blocks.some(b=>b.opcode.includes("looks_switchcostumeto") && s.blocks.some(b=>b.opcode.includes("motion_")))): false;
+            out.spriteLoops = (sprites.includes(sprite)) ? sprite.scripts.some((s=>s.blocks[0].opcode.includes("event_whenthisspriteclicked") || s.blocks[0].opcode.includes("event_whenkeypressed")) && s.blocks.length >= 3): false;
+            out.spriteSays = (sprites.includes(sprite)) ? sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_sa"))) : false;
+            return out;
+        }
+        var results = sprites.map(procSprite);
+
+        this.requirements.imagesPresent.bool = stage.length >= 1 && sprites.length >= 2;
+        this.requirements.Resets.bool = results.filter(c=>c.spriteResets).length >= 2;
+        this.requirements.Loops.bool = results.filter(c=>c.spriteLoops).length >= 2;
+        this.requirements.myVacation.bool = results.filter(c=>c.spriteSays) >= 2;
+        console.log("Reminder! 2nd and 3rd requirements must be fulfilled for scripts in sprites only (No backdrops)");
+        console.log("-- DEBUG --");
+        console.log("imagesPresent: ", stage.length, sprites.length);
+        console.log("Resets: ", results.filter(c=>c.spriteResets));
+        console.log("Loops: ", results.filter(c=>c.spriteLoops));
+        console.log("myVacation: ", results.filter(c=>c.spriteSays));
         
-        // static analysis variables
-        var validScripts = 0;
-        var events = [];
-
-        for (let target of project.targets) {
-            if (target.isStage) {
-                continue;
-            }
-            else {
-                sprites.push(target.name);
-                for (let script of target.scripts) {
-                    // a script that starts with an event block
-                    if (script.blocks[0].opcode.includes('event_')) {
-                        for (let i = 0; i < script.blocks.length; i++) {
-                            // checking to see if a repeat block is used
-                            
-                            if (script.blocks[i].opcode.includes('control_repeat')) {
-                                //console.log(target.name)
-                                numRepeat++;
-
-                                //checks to see if a sound is is made once the loop is over
-                                let nextBlock = script.blocks[i].next;
-                               
-                                let condition = (script.blocks[i]).conditionBlock;
-                                if (condition != undefined) {
-                                        if (condition.opcode === 'sensing_touchingobject') {
-                                            touching = condition.inputs.TOUCHINGOBJECTMENU[1];
-                                            objectTouching = target.blocks[touching].fields.TOUCHINGOBJECTMENU[0];
-                        // Diana added this, which disables another check.
-                                            this.requirements.stop.bool = true;
-                                
-                                        }
-                                        // checks that it stops when touching a color
-                                        else if ((condition.opcode === 'sensing_touchingcolor') ||
-                                            (condition.opcode === 'sensing_coloristouchingcolor')) {
-                                            this.requirements.stop.bool = true;
-                                        }   
-                                }
-                                
-                                // if the next block is a sound block, set the requirement
-                                if (nextBlock != null && soundOptions.includes(target.blocks[nextBlock].opcode)) {
-                                    this.requirements.speak.bool = true;
-                                }
-
-                                let substack = script.blocks[i].inputs.SUBSTACK[1];
-                                
-                                if (substack) {
-                                // there is only one block in the loop and that is a move block
-                                    if (moveOptions.includes(target.blocks[substack].opcode)) {
-                                    
-                                        this.requirements.moves.bool = true;
-                                    } else {
-                                        // there are multiple blocks in the loop, iterate through them to see 
-                                        while (target.blocks[substack].next !== null) {
-                                        
-                                            
-                                            if (moveOptions.includes(target.blocks[substack].opcode)) {
-                                                
-                                                this.requirements.moves.bool = true;
-                                            }
-/*
-                                            if ((target.blocks[substack].opcode === 'looks_switchcostumeto') || (target.blocks[substack].opcode === 'looks_nextcostume')) {
-                                                this.extensions.nextCostume.bool = true;
-                                            }
-*/
-                                            substack = target.blocks[substack].next;
-                                        }
-                                    }
-                                }
-
-
-                            }
-                     
-                        }
-                    }
-                }
-                allCostumes += target.costumes.length;
-
-                // Static analysis code
-                this.info.sprites++; 
-                //iterating through each of the sprite's scripts that start with an event block
-                for (var script of target.scripts.filter(s => s.blocks[0].opcode.includes("event_when"))) { 
-                    // search through each block and execute the given callback function
-                    // that determines what to look for and what to do (through side effects) for each block
-                    script.traverseBlocks((block, level) => {
-                        var opcode = block.opcode;
-
-                        if (opcode in this.info.blockTypes) {
-                            // do nothing
-                        } else {
-                            this.info.blockTypes.add(opcode);
-                            this.info.blocks++;
-                        }
-
-                        if (opcode.includes('say')) {
-                            let string = block.inputs.MESSAGE[1][1].toLowerCase();
-                            this.info.strings.push(string);
-                            if (!this.info.guidingUser) {
-                                for (let keyword of ['press', 'click']) {
-                                    if (string.includes(keyword)) {
-                                        this.info.guidingUser = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        
-                    });
-
-                    var event = script.blocks[0];
-                    // adds to list of unique events and scripts
-                    if (!events.includes(event.opcode)) {
-                        events.push(event.opcode);
-                        if (script.blocks.length > 1) {
-                            validScripts++;
-                        }
-                    }
-                    if (validScripts >=2) {
-                        this.info.spritesWith2Scripts++;
-                    } else if (validScripts >= 1) {
-                        this.info.spritesWith1Script++;
-                    }
-                }
-
-            }
-        }
-
-        if(sprites.includes(objectTouching)) {
-            this.requirements.stop.bool = true;
-        }
-       
-/*
-        if (allCostumes > 12) {
-            this.extensions.addCostume.bool = true;
-        }       
-*/
-        
-        if (numRepeat > 1) {
-            this.extensions.repeatBlock.bool = true;
-        }
-        
-        if (project.sprites.length > 2) {
-            if ((objectTouching !== 'Sign') || (objectTouching !== 'Stop')) {
-                this.extensions.touchingNewSprite.bool = true;
-            }
-        }
-
-        // Static analysis code
-        delete this.info.strings;
-        this.info.score = Object.values(this.requirements).reduce((sum, r) => sum + (r.bool? 1 : 0), 0);
+        return;
     }
 }
+/* Conditional Loops L2 Autograder
+Scratch 2 (original) version: Max White, Summer 2018
+Scratch 3 updates: Elizabeth Crowdus, Spring 2019
+Scratch 3 updates: Saranya Turimella, Summer 2019
+Static analysis code (info object) added for Block Usage CSVs and Graphs: Anna Zipp, Autumn 2019
+// */
+// require('../grading-scripts-s3/scratch3')
+
+// module.exports = class {
+//     constructor() {
+//         this.requirements = {};
+//         this.extensions = {};
+//     }
+
+//     initReqs() {
+//         this.requirements.stop = { bool: false, str: 'Sprite stops when touching another sprite or another color' }; // done
+//         this.requirements.speak = { bool: false, str: 'Sprite says something or makes a sound when it stops' }; // done
+//         this.requirements.moves = { bool: false, str: 'Sprite moves across the stage in a looping fashion' }; // done
+//         this.extensions.touchingNewSprite = { bool: false, str: 'The sprite stops when it touches a new sprite added from the sprite library' };
+//         this.extensions.repeatBlock = { bool: false, str: 'Repeat blocks added to animate another sprite' }; // done
+
+// /*
+// //        this.extensions.addCostume = { bool: false, str: 'Another costume is added to the current mode of transportation' }; // done
+// //       this.extensions.nextCostume = { bool: false, str: 'The sprite is animated with a "next costume" block' }; // done
+// */
+
+    
+//         this.info = {
+//             blocks: 0,
+//             sprites: 0,
+//             spritesWith1Script: 0,
+//             spritesWith2Scripts: 0,
+//             guidingUser: false,
+//             blockTypes: new Set([]),
+//             strings: [],
+//             score: 0 //requirement score
+//         }
+//     }
+
+//     grade(fileObj, user) {
+//         var project = new Project(fileObj, null);
+//         this.initReqs();
+
+//         let numRepeat = 0;
+         
+//         let allCostumes = 0;
+//         let sprites = [];
+//         let objectTouching = null;
+//         let touching = null;
+//         let moveOptions = ['motion_changexby', 'motion_changeyby', 'motion_movesteps', 'motion_glidesecstoxy', 'motion_glideto', 'motion_goto', 'motion_gotoxy']
+//         let soundOptions = ['sound_playuntildone', 'sound_play', 'looks_say', 'looks_sayforsecs']
+        
+//         // static analysis variables
+//         var validScripts = 0;
+//         var events = [];
+
+//         for (let target of project.targets) {
+//             if (target.isStage) {
+//                 continue;
+//             }
+//             else {
+//                 sprites.push(target.name);
+//                 for (let script of target.scripts) {
+//                     // a script that starts with an event block
+//                     if (script.blocks[0].opcode.includes('event_')) {
+//                         for (let i = 0; i < script.blocks.length; i++) {
+//                             // checking to see if a repeat block is used
+                            
+//                             if (script.blocks[i].opcode.includes('control_repeat')) {
+//                                 //console.log(target.name)
+//                                 numRepeat++;
+
+//                                 //checks to see if a sound is is made once the loop is over
+//                                 let nextBlock = script.blocks[i].next;
+                               
+//                                 let condition = (script.blocks[i]).conditionBlock;
+//                                 if (condition != undefined) {
+//                                         if (condition.opcode === 'sensing_touchingobject') {
+//                                             touching = condition.inputs.TOUCHINGOBJECTMENU[1];
+//                                             objectTouching = target.blocks[touching].fields.TOUCHINGOBJECTMENU[0];
+//                         // Diana added this, which disables another check.
+//                                             this.requirements.stop.bool = true;
+                                
+//                                         }
+//                                         // checks that it stops when touching a color
+//                                         else if ((condition.opcode === 'sensing_touchingcolor') ||
+//                                             (condition.opcode === 'sensing_coloristouchingcolor')) {
+//                                             this.requirements.stop.bool = true;
+//                                         }   
+//                                 }
+                                
+//                                 // if the next block is a sound block, set the requirement
+//                                 if (nextBlock != null && soundOptions.includes(target.blocks[nextBlock].opcode)) {
+//                                     this.requirements.speak.bool = true;
+//                                 }
+
+//                                 let substack = script.blocks[i].inputs.SUBSTACK[1];
+                                
+//                                 if (substack) {
+//                                 // there is only one block in the loop and that is a move block
+//                                     if (moveOptions.includes(target.blocks[substack].opcode)) {
+                                    
+//                                         this.requirements.moves.bool = true;
+//                                     } else {
+//                                         // there are multiple blocks in the loop, iterate through them to see 
+//                                         while (target.blocks[substack].next !== null) {
+                                        
+                                            
+//                                             if (moveOptions.includes(target.blocks[substack].opcode)) {
+                                                
+//                                                 this.requirements.moves.bool = true;
+//                                             }
+// /*
+//                                             if ((target.blocks[substack].opcode === 'looks_switchcostumeto') || (target.blocks[substack].opcode === 'looks_nextcostume')) {
+//                                                 this.extensions.nextCostume.bool = true;
+//                                             }
+// */
+//                                             substack = target.blocks[substack].next;
+//                                         }
+//                                     }
+//                                 }
+
+
+//                             }
+                     
+//                         }
+//                     }
+//                 }
+//                 allCostumes += target.costumes.length;
+
+//                 // Static analysis code
+//                 this.info.sprites++; 
+//                 //iterating through each of the sprite's scripts that start with an event block
+//                 for (var script of target.scripts.filter(s => s.blocks[0].opcode.includes("event_when"))) { 
+//                     // search through each block and execute the given callback function
+//                     // that determines what to look for and what to do (through side effects) for each block
+//                     script.traverseBlocks((block, level) => {
+//                         var opcode = block.opcode;
+
+//                         if (opcode in this.info.blockTypes) {
+//                             // do nothing
+//                         } else {
+//                             this.info.blockTypes.add(opcode);
+//                             this.info.blocks++;
+//                         }
+
+//                         if (opcode.includes('say')) {
+//                             let string = block.inputs.MESSAGE[1][1].toLowerCase();
+//                             this.info.strings.push(string);
+//                             if (!this.info.guidingUser) {
+//                                 for (let keyword of ['press', 'click']) {
+//                                     if (string.includes(keyword)) {
+//                                         this.info.guidingUser = true;
+//                                         break;
+//                                     }
+//                                 }
+//                             }
+//                         }
+                        
+//                     });
+
+//                     var event = script.blocks[0];
+//                     // adds to list of unique events and scripts
+//                     if (!events.includes(event.opcode)) {
+//                         events.push(event.opcode);
+//                         if (script.blocks.length > 1) {
+//                             validScripts++;
+//                         }
+//                     }
+//                     if (validScripts >=2) {
+//                         this.info.spritesWith2Scripts++;
+//                     } else if (validScripts >= 1) {
+//                         this.info.spritesWith1Script++;
+//                     }
+//                 }
+
+//             }
+//         }
+
+//         if(sprites.includes(objectTouching)) {
+//             this.requirements.stop.bool = true;
+//         }
+       
+// /*
+//         if (allCostumes > 12) {
+//             this.extensions.addCostume.bool = true;
+//         }       
+// */
+        
+//         if (numRepeat > 1) {
+//             this.extensions.repeatBlock.bool = true;
+//         }
+        
+//         if (project.sprites.length > 2) {
+//             if ((objectTouching !== 'Sign') || (objectTouching !== 'Stop')) {
+//                 this.extensions.touchingNewSprite.bool = true;
+//             }
+//         }
+
+//         // Static analysis code
+//         delete this.info.strings;
+//         this.info.score = Object.values(this.requirements).reduce((sum, r) => sum + (r.bool? 1 : 0), 0);
+//     }
+// }
 
 },{"../grading-scripts-s3/scratch3":26}],16:[function(require,module,exports){
 (function (global){(function (){
@@ -11325,7 +11380,7 @@ let graders = {
     animationL1:            { name: 'M3 - Animation L1',            file: require('./grading-scripts-s3/animation-L1') },
     // animationL2_create:     { name: 'M3 - Animation L2',            file: require('./grading-scripts-s3/animation-L2') },
     // condLoopsL1:            { name: 'M4 - Conditional Loops L1',    file: require('./grading-scripts-s3/cond-loops-L1-syn') },
-    condLoopsL2_create:     { name: 'M4 - Conditional Loops L2',    file: require('./grading-scripts-s3/cond-loops-L2') },
+    // condLoopsL2_create:     { name: 'M4 - Conditional Loops L2',    file: require('./grading-scripts-s3/cond-loops-L2') },
     decompL1:               { name: 'M5 - Decomp. by Sequence L1',  file: require('./grading-scripts-s3/decomp-L1') },
     decompL2_create:        { name: 'M5 - Decomp. by Sequence L2',  file: require('./grading-scripts-s3/decomp-L2') },
     oneWaySyncL1:           { name: 'M6 - One-Way Sync L1',         file: require('./grading-scripts-s3/one-way-sync-L1') },
@@ -11337,7 +11392,6 @@ let graders = {
 /// Act 1 graders (CREATE)
 let actOneGraders = {
     scavengerHunt: { name: 'M1 - Scavenger Hunt',    file: require('./act1-grading-scripts/scavengerHunt') },
-    // my_vacation   :{ name: "B1 - My Vacation",        file: require('./act2-grading-scripts/my_vacation')   }
     onTheFarm:     { name: 'M2 - On the Farm',       file: require('./act1-grading-scripts/onTheFarm') },
     namePoem:      { name: 'M3 - Name Poem',         file: require('./act1-grading-scripts/name-poem') },
     ofrenda:       { name: 'M4 - Ofrenda',           file: require('./act1-grading-scripts/ofrenda') },
@@ -11348,6 +11402,11 @@ let actOneGraders = {
     finalProject:  { name: 'M9 - Interactive Story', file: require('./act1-grading-scripts/final-project') },
 };
 
+/// Act 2 graders(DESIGN)
+let actTwoGraders = {
+    myVacation:       { name: 'D1 - My Vacation',   file: require('./act2-grading-scripts/myVacation')  }, //#15
+};
+
 /// Act 3 graders(IMPACT)
 let actThreeGraders = {
     systems:       { name: 'I1 - Connection Circle',   file: require('./act3-grading-scripts/systems')  }, //#12
@@ -11356,7 +11415,7 @@ let actThreeGraders = {
 };
 
 let allGraders = {};
-for (let graderKeyList of [graders, actOneGraders, actThreeGraders]) {
+for (let graderKeyList of [graders, actOneGraders, actTwoGraders, actThreeGraders]) {
     for (let graderKey in graderKeyList) {
         allGraders[graderKey] = graderKeyList[graderKey];
     }
@@ -11442,7 +11501,7 @@ window.fillUnitsHTML = function() {
     document.getElementById("unitsHTML").innerHTML = HTMLString;
 }
 
-/////////////// grader function for act 1 ////////////////////
+/////////////// grader function for act 1 (CREATE) ////////////////////
 window.fillUnitsHTMLAct1 = function() {
     let HTMLString = '';
     for (let graderKey in actOneGraders) {
@@ -11454,7 +11513,22 @@ window.fillUnitsHTMLAct1 = function() {
     }
     document.getElementById("unitsHTML").innerHTML = HTMLString;
 }
-////////////// grader function for act 1 ////////////////////
+////////////// grader function for act 1 (CREATE) END ////////////////////
+
+
+/////////////// grader function for act 2 (DESIGN) ////////////////////
+window.fillUnitsHTMLAct2 = function() {
+    let HTMLString = '';
+    for (let graderKey in actTwoGraders) {
+        HTMLString += '<a onclick="drop_handler(\'' + graderKey + '\')" class = unitselector>'
+        HTMLString += '<label class = "unitlabel">';
+        HTMLString += '<img src="pictures/' + graderKey + '.png">';
+        HTMLString += actTwoGraders[graderKey].name;
+        HTMLString += '</label> </a>';
+    }
+    document.getElementById("unitsHTML").innerHTML = HTMLString;
+}
+/////////////// grader function for act 2 (DESGIN) END ////////////////////
 
 /////////////// grader function for act 3 (IMPACT) ////////////////////
 window.fillUnitsHTMLAct3 = function() {
@@ -11468,7 +11542,7 @@ window.fillUnitsHTMLAct3 = function() {
     }
     document.getElementById("unitsHTML").innerHTML = HTMLString;
 }
-/////////////// grader function for act 3 (IMPACT) ////////////////////
+/////////////// grader function for act 3 (IMPACT) END ////////////////////
 
 
 
@@ -11888,7 +11962,7 @@ function noError() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-},{"./act1-grading-scripts/aboutMe":1,"./act1-grading-scripts/animal-parade":2,"./act1-grading-scripts/dance-party":3,"./act1-grading-scripts/final-project":4,"./act1-grading-scripts/knockKnock":5,"./act1-grading-scripts/name-poem":6,"./act1-grading-scripts/ofrenda":7,"./act1-grading-scripts/onTheFarm":8,"./act1-grading-scripts/scavengerHunt":10,"./grading-scripts-s3/animation-L1":11,"./act3-grading-scripts/systems":12,"./act3-grading-scripts/madlibs":13,"./act3-grading-scripts/graphProject":14,"./grading-scripts-s3/cond-loops-L2":15,"./grading-scripts-s3/decomp-L1":17,"./grading-scripts-s3/decomp-L2":18,"./grading-scripts-s3/events-L1-syn":19,"./grading-scripts-s3/events-L2":20,"./grading-scripts-s3/one-way-sync-L1":22,"./grading-scripts-s3/one-way-sync-L2":23,"./grading-scripts-s3/scratch-basics-L1":24,"./grading-scripts-s3/scratch-basics-L2":25,"./grading-scripts-s3/two-way-sync-L1":48}],51:[function(require,module,exports){
+},{"./act1-grading-scripts/aboutMe":1,"./act1-grading-scripts/animal-parade":2,"./act1-grading-scripts/dance-party":3,"./act1-grading-scripts/final-project":4,"./act1-grading-scripts/knockKnock":5,"./act1-grading-scripts/name-poem":6,"./act1-grading-scripts/ofrenda":7,"./act1-grading-scripts/onTheFarm":8,"./act1-grading-scripts/scavengerHunt":10,"./grading-scripts-s3/animation-L1":11,"./act3-grading-scripts/systems":12,"./act3-grading-scripts/madlibs":13,"./act3-grading-scripts/graphProject":14,"./act2-grading-scripts/myVacation":15,"./grading-scripts-s3/decomp-L1":17,"./grading-scripts-s3/decomp-L2":18,"./grading-scripts-s3/events-L1-syn":19,"./grading-scripts-s3/events-L2":20,"./grading-scripts-s3/one-way-sync-L1":22,"./grading-scripts-s3/one-way-sync-L2":23,"./grading-scripts-s3/scratch-basics-L1":24,"./grading-scripts-s3/scratch-basics-L2":25,"./grading-scripts-s3/two-way-sync-L1":48}],51:[function(require,module,exports){
 (function (global){(function (){
 'use strict';
 
