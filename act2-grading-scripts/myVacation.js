@@ -40,7 +40,7 @@ module.exports = class {
         this.requirements.imagesPresent.bool = stage.length >= 1 && sprites.length >= 2;
         this.requirements.Resets.bool = results.filter(c=>c.spriteResets).length >= 2;
         this.requirements.Loops.bool = results.filter(c=>c.spriteLoops).length >= 2;
-        this.requirements.myVacation.bool = results.filter(c=>c.spriteSays) >= 1;
+        this.requirements.myVacation.bool = results.filter(c=>c.spriteSays).length >= 1;
         console.log("Reminder! 2nd and 3rd requirements must be fulfilled for scripts in sprites only (No backdrops)");
         console.log("-- DEBUG --");
         console.log("imagesPresent: ", stage.length, sprites.length);
