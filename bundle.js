@@ -11503,7 +11503,7 @@ window.fillUnitsHTML = function() {
     document.getElementById("unitsHTML").innerHTML = HTMLString;
 }
 
-/////////////// grader function for act 1 (CREATE) ////////////////////
+/////////////// grader function for Act 1 (CREATE) ////////////////////
 window.fillUnitsHTMLAct1 = function() {
     let HTMLString = '';
     for (let graderKey in actOneGraders) {
@@ -11515,10 +11515,10 @@ window.fillUnitsHTMLAct1 = function() {
     }
     document.getElementById("unitsHTML").innerHTML = HTMLString;
 }
-////////////// grader function for act 1 (CREATE) END ////////////////////
+////////////// grader function for Act 1 (CREATE) END ////////////////////
 
 
-/////////////// grader function for act 2 (DESIGN) ////////////////////
+/////////////// grader function for Act 2 (DESIGN) ////////////////////
 window.fillUnitsHTMLAct2 = function() {
     let HTMLString = '';
     for (let graderKey in actTwoGraders) {
@@ -11530,9 +11530,9 @@ window.fillUnitsHTMLAct2 = function() {
     }
     document.getElementById("unitsHTML").innerHTML = HTMLString;
 }
-/////////////// grader function for act 2 (DESGIN) END ////////////////////
+/////////////// grader function for Act 2 (DESGIN) END ////////////////////
 
-/////////////// grader function for act 3 (IMPACT) ////////////////////
+/////////////// grader function for Act 3 (IMPACT) ////////////////////
 window.fillUnitsHTMLAct3 = function() {
     let HTMLString = '';
     for (let graderKey in actThreeGraders) {
@@ -11544,7 +11544,7 @@ window.fillUnitsHTMLAct3 = function() {
     }
     document.getElementById("unitsHTML").innerHTML = HTMLString;
 }
-/////////////// grader function for act 3 (IMPACT) END ////////////////////
+/////////////// grader function for Act 3 (IMPACT) END ////////////////////
 
 
 
