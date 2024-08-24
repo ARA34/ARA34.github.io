@@ -1840,7 +1840,7 @@ module.exports = class {
         const middleY = -35;
         const middleOffset = 92;
         this.requirements.RedFinishes.bool = (redBoatSprite != null) ? redBoatSprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenkeypressed") && s.blocks.some(b=>b.opcode.includes("control_repeat") && validTimes.includes(b.inputs.TIMES[1][1]))): false;
-        this.requirements.FishMoves.bool = (fishSprite != null) ? fishSprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenkeypressed") && s.blocks.some(b=>b.opcode.includes("control_repeat") && b.subscripts[0].blocks.some(b=>b.opcode.includes("motion_movesteps")))): false;
+        this.requirements.FishMoves.bool = (fishSprite != null) ? fishSprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenkeypressed") && s.blocks.some(b=>b.opcode.includes("control_repeat") && b.subscripts.length >= 1 && b.subscripts[0].blocks.some(b=>b.opcode.includes("motion_movesteps")))): false;
         this.requirements.FishResets.bool = (fishSprite != null) ? fishSprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenflagclicked") && s.blocks.some(b=>b.opcode.includes("motion_gotoxy") && -74 <= Number(b.inputs.X[1][1]) <= 100 && -127 <= Number(b.inputs.Y[1][1]) <= 57)): false;
 
         // function procSprite(sprite){
