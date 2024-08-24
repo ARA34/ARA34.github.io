@@ -1985,7 +1985,7 @@ Place holder code for connection circle (previously systems) grading script
 Adapted from final-project.js
 */
 
-require('./scratch3');
+// require('./scratch3');
 
 module.exports = class {
     constructor() {
@@ -2061,9 +2061,9 @@ module.exports = class {
         return;
     }
 }
-},{"./scratch3":26}],13:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 //madlibs.js Test
-require('./scratch3');
+// require('./scratch3');
 
 // identifty a varibale and print out its value
 
@@ -2382,9 +2382,9 @@ module.exports = class{
 //     }
 // }
 
-},{"./scratch3":26}],14:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 //graphProject.js (previously home to condLoopsL1)
-require('./scratch3');
+// require('./scratch3');
 
 // identifty a varibale and print out its value
 
@@ -2863,7 +2863,7 @@ module.exports = class {
         }
         var results = sprites.map(procSprite);
 
-        this.requirements.imagesPresent.bool = stage.length >= 1 && sprites.length >= 2;
+        this.requirements.imagesPresent.bool = stage.costumes.length >= 2 && sprites.length >= 2;
         this.requirements.Resets.bool = results.filter(c=>c.spriteResets).length >= 2;
         this.requirements.Loops.bool = results.filter(c=>c.spriteLoops).length >= 2;
         this.requirements.myVacation.bool = results.filter(c=>c.spriteSays).length >= 1;

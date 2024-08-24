@@ -37,7 +37,7 @@ module.exports = class {
         }
         var results = sprites.map(procSprite);
 
-        this.requirements.imagesPresent.bool = stage.length >= 1 && sprites.length >= 2;
+        this.requirements.imagesPresent.bool = stage.costumes.length >= 2 && sprites.length >= 2;
         this.requirements.Resets.bool = results.filter(c=>c.spriteResets).length >= 2;
         this.requirements.Loops.bool = results.filter(c=>c.spriteLoops).length >= 2;
         this.requirements.myVacation.bool = results.filter(c=>c.spriteSays).length >= 1;
