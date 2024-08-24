@@ -35,8 +35,7 @@ let actOneGraders = {
 /// Act 2 graders(DESIGN)
 let actTwoGraders = {
     myVacation:       { name: 'D1 - My Vacation',   file: require('./act2-grading-scripts/myVacation')  }, //#15
-//     madlibs:       { name: 'I2 - Madlibs',             file: require('./act3-grading-scripts/madlibs')  }, //#13
-//     graphProject:  { name: 'I3 - Graph Project',       file: require('./act3-grading-scripts/graphProject')  }, //#14
+    dragonBoat:       { name: 'D2 - Dragon Boat',   file: require('./act2-grading-scripts/dragonBoat')  }
 };
 
 /// Act 3 graders(IMPACT)
