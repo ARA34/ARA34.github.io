@@ -1946,9 +1946,8 @@ module.exports = class {
         function checkOperand(operand, value) {
             // return map(operand.filter(o=>Array.isArray(o).length == 2)[1] == value).includes(true);
             console.log("operand: ", operand);
-            console.log("valid arrays ", operand.filter(o=>Array.isArray(o).length == 2));
-            return operand.filter(o=>Array.isArray(o).length == 2).map(o=>o[1] == value).includes(true);
-            
+            console.log("valid arrays ", operand.filter(o=>Array.isArray(o)).filter(s=>s.length == 2));
+            return operand.filter(o=>Array.isArray(o)).filter(s=>s.length == 2).map(l=>l[1] == value).includes(true);
         }
 
         function procSprite(sprite){
