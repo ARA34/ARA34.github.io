@@ -25,9 +25,11 @@ module.exports = class {
 
         let stage = project.targets.find(t=>t.isStage);
         let sprites = project.targets.filter(t=>!t.isStage);
+        
 
         function checkOperand(operand, value) {
-            return operand.filter(o=>Array.isArray(o)).map([1] == value).includes(true);
+            // return map(operand.filter(o=>Array.isArray(o).length == 2)[1] == value).includes(true);
+            return operand.filter(o=>Array.isArray(o).length == 2).map(o=>o[1] == value).includes(true);
         }
 
         function procSprite(sprite){
