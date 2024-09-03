@@ -35,16 +35,13 @@ module.exports = class {
         let explainerSprite = project.targets.find(t=>t.name.toLowerCase() == "sprite");
 
         this.requirements.invasiveSprite.bool = invasiveSprite != null; //NUANCE: sprite must be named invasive
-        this.requirements.invasiveExplained.bool = (invasiveSprite != null)? invasiveSprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play"))):false; // NUANCE: sprite must be named invasive 
-        this.requirements.ecosystemExplained.bool = (explainerSprite != null)? explainerSprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play"))):false; // NUANCE: sprite must be named sprite 
+        this.requirements.invasiveExplained.bool = (invasiveSprite != null) ? invasiveSprite.scripts.some(s=>s.blocks[0].opcode.includes("event_") && s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play"))): false; //NUANCE: Sprite must be named invasive
+        this.requirements.ecosystemExplained.bool = (explainerSprite != null) ? explainerSprite.scripts.some(s=>s.blocks[0].opcode.includes("event_") && s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play"))): false; //NUANCE: Sprite must be named sprite
         this.requirements.backdropPresent.bool = stage.costumes.length >= 1; //NUANCE: can't tell that the image is of ecosystem
         
         console.log("-- DEBUG --");
         console.log("IMPORTANT: Invasive sprite must be named 'invasive'");
         console.log("IMPORTANT: Explainer sprite must be named 'sprite'");
-
-        
-
 
         return;
     }

@@ -1807,7 +1807,7 @@ module.exports = class {
 }
 },{"../grading-scripts-s3/scratch3":29}],11:[function(require,module,exports){
 /*
-Place holder code for dragonBoat Quest grading script
+dragonBoat Quest grading script
 Alex Reyes Aranda Summer 2024
 */
 
@@ -1915,7 +1915,7 @@ module.exports = class {
 }
 },{"../grading-scripts-s3/scratch3":29}],13:[function(require,module,exports){
 /*
-Place holder code for diceQuest grading script
+diceQuest grading script
 Alex Reyes Aranda Summer 2024
 */
 
@@ -1928,9 +1928,12 @@ module.exports = class {
     }
 
      initReqs() {
-        this.requirements.dieFourSet = { bool: false, str: "When die number=4, increase score by 4."};
-        this.requirements.dieFiveSet = { bool: false, str: "When die number=5, increase score by 5."};
-        this.requirements.dieSixSet =  { bool: false, str: "When die number=6 condition in program."};
+        this.requirements.dieFourSet = { bool: false, str: "When die number=4, increase score by 4."}; //done
+        this.requirements.dieFiveSet = { bool: false, str: "When die number=5, increase score by 5."}; //done
+        this.requirements.dieSixSet =  { bool: false, str: "When die number=6 condition in program."}; //done
+
+        this.extensions.bigDie = { bool: false, str: "Have the die get bigger everytime the score increases and then reset when 6 is rolled."}; //IP
+        this.extensions.talkingDie = { bool: false, str: "Have the die say how many points are added or when resets to 0."}; //IP
     }
 
 
@@ -1962,8 +1965,8 @@ module.exports = class {
             //if or if else are ok control blocks
             console.log("sprite scripts: ", sprite.scripts);
 
-            if (sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if")))) {
-                let controlBlock = sprite.scripts.find(s=>s.blocks.some(b=>b.opcode.includes("control_if")));
+            if (sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_") && s.blocks.some(b=>b.opcode.includes("control_if")))) {
+                let controlBlock = sprite.scripts.find(s=>s.blocks.some(b=>b.opcode.includes("control_if"))).blocks.find(b=>b.opcode.includes("control_if"));
                 console.log("controlBlock: ", controlBlock);
                 out.hasFour = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '4')));
                 out.hasFive = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '5')));
@@ -2222,16 +2225,13 @@ module.exports = class {
         let explainerSprite = project.targets.find(t=>t.name.toLowerCase() == "sprite");
 
         this.requirements.invasiveSprite.bool = invasiveSprite != null; //NUANCE: sprite must be named invasive
-        this.requirements.invasiveExplained.bool = (invasiveSprite != null)? invasiveSprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play"))):false; // NUANCE: sprite must be named invasive 
-        this.requirements.ecosystemExplained.bool = (explainerSprite != null)? explainerSprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play"))):false; // NUANCE: sprite must be named sprite 
+        this.requirements.invasiveExplained.bool = (invasiveSprite != null) ? invasiveSprite.scripts.some(s=>s.blocks[0].opcode.includes("event_") && s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play"))): false; //NUANCE: Sprite must be named invasive
+        this.requirements.ecosystemExplained.bool = (explainerSprite != null) ? explainerSprite.scripts.some(s=>s.blocks[0].opcode.includes("event_") && s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play"))): false; //NUANCE: Sprite must be named sprite
         this.requirements.backdropPresent.bool = stage.costumes.length >= 1; //NUANCE: can't tell that the image is of ecosystem
         
         console.log("-- DEBUG --");
         console.log("IMPORTANT: Invasive sprite must be named 'invasive'");
         console.log("IMPORTANT: Explainer sprite must be named 'sprite'");
-
-        
-
 
         return;
     }
@@ -11374,6 +11374,10 @@ function checkbox(bool) {
     return (bool) ? ('✔️') : ('⬜️');
 }
 
+function checkStar(bool) {
+    return (bool) ? ('*') : ('⬜️'); //Pending
+}
+
 /* Adds results to reports_list and prints. */
 function report(projectID, requirements, extensions, projectAuthor) {
     let ret_list = [];
@@ -11393,7 +11397,7 @@ function report(projectID, requirements, extensions, projectAuthor) {
         ret_list.push(projectMode ? '\nIf you are done early:' : 'Extensions:')
         for (let x in extensions) {
             if (extensions[x].bool) complete_exts++;
-            ret_list.push(checkbox(extensions[x].bool) + ' - ' + extensions[x].str);
+            ret_list.push(checkStar(extensions[x].bool) + ' - ' + extensions[x].str);
         }
     }
     ret_list.push('');

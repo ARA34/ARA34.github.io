@@ -1,5 +1,5 @@
 /*
-Place holder code for diceQuest grading script
+diceQuest grading script
 Alex Reyes Aranda Summer 2024
 */
 
@@ -12,9 +12,12 @@ module.exports = class {
     }
 
      initReqs() {
-        this.requirements.dieFourSet = { bool: false, str: "When die number=4, increase score by 4."};
-        this.requirements.dieFiveSet = { bool: false, str: "When die number=5, increase score by 5."};
-        this.requirements.dieSixSet =  { bool: false, str: "When die number=6 condition in program."};
+        this.requirements.dieFourSet = { bool: false, str: "When die number=4, increase score by 4."}; //done
+        this.requirements.dieFiveSet = { bool: false, str: "When die number=5, increase score by 5."}; //done
+        this.requirements.dieSixSet =  { bool: false, str: "When die number=6 condition in program."}; //done
+
+        this.extensions.bigDie = { bool: false, str: "Have the die get bigger everytime the score increases and then reset when 6 is rolled."}; //IP
+        this.extensions.talkingDie = { bool: false, str: "Have the die say how many points are added or when resets to 0."}; //IP
     }
 
 
@@ -46,8 +49,8 @@ module.exports = class {
             //if or if else are ok control blocks
             console.log("sprite scripts: ", sprite.scripts);
 
-            if (sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if")))) {
-                let controlBlock = sprite.scripts.find(s=>s.blocks.some(b=>b.opcode.includes("control_if")));
+            if (sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_") && s.blocks.some(b=>b.opcode.includes("control_if")))) {
+                let controlBlock = sprite.scripts.find(s=>s.blocks.some(b=>b.opcode.includes("control_if"))).blocks.find(b=>b.opcode.includes("control_if"));
                 console.log("controlBlock: ", controlBlock);
                 out.hasFour = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '4')));
                 out.hasFive = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '5')));
