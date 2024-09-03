@@ -1,5 +1,5 @@
 /*
-Place holder code for dragonBoat grading script
+Place holder code for dragonBoat Quest grading script
 Alex Reyes Aranda Summer 2024
 */
 
