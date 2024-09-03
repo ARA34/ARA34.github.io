@@ -19,7 +19,7 @@ module.exports = class {
         this.requirements.invasiveSprite = { bool: false, str: "I uploaded a picture of my invasive species as a sprite"};
         this.requirements.invasiveExplained = { bool: false, str: "My invasive species sprite explains why it's harmful to my area's ecosystem through text or audio"};
         this.requirements.ecosystemExplained = { bool: false, str: "I  have a sprite that explains how to protect my area's ecosystem from the invasive species through text or audio."};
-        this.requirements.backdropPresent = { bool: false, str: "I have a backdrop that shows my area's ecosystem."}; //done
+        this.requirements.backdropPresent = { bool: false, str: "I have a backdrop that shows my area's ecosystem."};
         
     }
 

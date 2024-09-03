@@ -1928,7 +1928,7 @@ module.exports = class {
     }
 
      initReqs() {
-        this.requirements.dieFourSet = { bool: false, str: "When die number = 4, increase score by 4."};
+        this.requirements.dieFourSet = { bool: false, str: "When die number=4, increase score by 4."};
         this.requirements.dieFiveSet = { bool: false, str: "When die number=5, increase score by 5."};
         this.requirements.dieSixSet = { bool: false, str: "When die number=6 condition in program."};
     }
@@ -1943,20 +1943,20 @@ module.exports = class {
         let sprites = project.targets.filter(t=>!t.isStage);
         
 
-        function checkOperand(operand, value) {
-            // return map(operand.filter(o=>Array.isArray(o).length == 2)[1] == value).includes(true);
-            console.log("operand: ", operand);
-            console.log("valid arrays ", operand.filter(o=>Array.isArray(o)).filter(s=>s.length == 2));
-            return operand.filter(o=>Array.isArray(o)).filter(s=>s.length == 2).map(l=>l[1] == value).includes(true);
+        
+        function checkNestedArray(inputArray, value) {
+            // used for operand checking and varibale changing block
+            return inputArray.filter(a=>Array.isArray(a)).filter(a=>a.length == 2).map(a=>a[1] == value).includes(true)
         }
 
         function procSprite(sprite){
             // evaluating a single sprite
             var out = { hasFour: false, hasFive: false, hasSix: false};
             //if or if else are ok control blocks
-            out.hasFour = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && (checkOperand(b.conditionBlock.inputs.OPERAND1, "4") || checkOperand(b.conditionBlock.inputs.OPERAND2, "4"))));
-            out.hasFive = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && (checkOperand(b.conditionBlock.inputs.OPERAND1, "5") || checkOperand(b.conditionBlock.inputs.OPERAND2, "5"))));
-            out.hasSix = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && (checkOperand(b.conditionBlock.inputs.OPERAND1, "6") || checkOperand(b.conditionBlock.inputs.OPERAND2, "6"))));
+            console.log("sprite scripts: ", sprite.scripts);
+            out.hasFour = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && (checkNestedArray(b.conditionBlock.inputs.OPERAND1, '4') || checkNestedArray(b.conditionBlock.inputs.OPERAND2, '4'))));
+            out.hasFive = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && (checkNestedArray(b.conditionBlock.inputs.OPERAND1, '5') || checkNestedArray(b.conditionBlock.inputs.OPERAND2, '5'))));
+            out.hasSix = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && (checkNestedArray(b.conditionBlock.inputs.OPERAND1, '6') || checkNestedArray(b.conditionBlock.inputs.OPERAND2, '6'))));
             return out;
         }
         var results = sprites.map(procSprite);
@@ -1966,6 +1966,9 @@ module.exports = class {
         
         console.log("-- DEBUG --");
         console.log("remeber to have values inside your conditions");
+        console.log("four: ", results.filter(o=>o.hasFour));
+        console.log("five: ", results.filter(o=>o.hasFive));
+        console.log("six: ", results.filter(o=>o.hasSix));
 
         return;
     }
@@ -2189,7 +2192,7 @@ module.exports = class {
         this.requirements.invasiveSprite = { bool: false, str: "I uploaded a picture of my invasive species as a sprite"};
         this.requirements.invasiveExplained = { bool: false, str: "My invasive species sprite explains why it's harmful to my area's ecosystem through text or audio"};
         this.requirements.ecosystemExplained = { bool: false, str: "I  have a sprite that explains how to protect my area's ecosystem from the invasive species through text or audio."};
-        this.requirements.backdropPresent = { bool: false, str: "I have a backdrop that shows my area's ecosystem."}; //done
+        this.requirements.backdropPresent = { bool: false, str: "I have a backdrop that shows my area's ecosystem."};
         
     }
 
