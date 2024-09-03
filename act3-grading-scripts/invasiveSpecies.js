@@ -31,22 +31,18 @@ module.exports = class {
 
         let stage = project.targets.find(t=>t.isStage);
         let sprites = project.targets.filter(t=>!t.isStage);
-        
-        function procSprite(sprite){
-            // evaluating a single sprite
-            var out = { invasiveExplains: false, ecosystemExplains: false };
-            out.invasiveExplains = (sprites.length >= 2) ? sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play"))): false;
-            out.ecosystemExplains = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play")));
-            return out;
-        }
-        var results = sprites.map(procSprite);
+        let invasiveSprite = project.targets.find(t=>t.name.toLowerCase() == "invasive");
+        let explainerSprite = project.targets.find(t=>t.name.toLowerCase() == "sprite");
 
-        this.requirements.invasiveSprite.bool = sprites.length >= 2;
-        this.requirements.invasiveExplained.bool = results.filter(o=>o.invasiveExplains).length >= 1;
-        this.requirements.ecosystemExplained.bool = results.filter(o=>o.ecosystemExplains).length >= 1;
-        this.requirements.backdropPresent.bool = stage.costumes.length >= 2;
+        this.requirements.invasiveSprite.bool = invasiveSprite != null; //NUANCE: sprite must be named invasive
+        this.requirements.invasiveExplained.bool = (invasiveSprite != null)? invasiveSprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play"))):false; // NUANCE: sprite must be named invasive 
+        this.requirements.ecosystemExplained.bool = (explainerSprite != null)? explainerSprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play"))):false; // NUANCE: sprite must be named sprite 
+        this.requirements.backdropPresent.bool = stage.costumes.length >= 1; //NUANCE: can't tell that the image is of ecosystem
         
         console.log("-- DEBUG --");
+        console.log("IMPORTANT: Invasive sprite must be named 'invasive'");
+        console.log("IMPORTANT: Explainer sprite must be named 'sprite'");
+
         
 
 

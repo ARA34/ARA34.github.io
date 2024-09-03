@@ -1930,7 +1930,7 @@ module.exports = class {
      initReqs() {
         this.requirements.dieFourSet = { bool: false, str: "When die number=4, increase score by 4."};
         this.requirements.dieFiveSet = { bool: false, str: "When die number=5, increase score by 5."};
-        this.requirements.dieSixSet = { bool: false, str: "When die number=6 condition in program."};
+        this.requirements.dieSixSet =  { bool: false, str: "When die number=6 condition in program."};
     }
 
 
@@ -1943,10 +1943,17 @@ module.exports = class {
         let sprites = project.targets.filter(t=>!t.isStage);
         
 
-        
         function checkNestedArray(inputArray, value) {
             // used for operand checking and varibale changing block
-            return inputArray.filter(a=>Array.isArray(a)).filter(a=>a.length == 2).map(a=>a[1] == value).includes(true)
+            return inputArray.filter(a=>Array.isArray(a)).filter(a=>a.length == 2).map(a=>a[1] == value).includes(true);
+        }
+
+        function hasNumber(b, value) {
+            //b.conditionBlock.inputs.OPERAND1
+            //b.conditionBlock.inputs.OPERAND2
+            let checkExistence = ((b.conditionBlock.inputs.OPERAND1 && b.conditionBlock.inputs.OPERAND2) != null) ? checkNestedArray(b.conditionBlock.inputs.OPERAND1, value) || checkNestedArray(b.conditionBlock.inputs.OPERAND2, value): false;
+            let checkValue = (checkExistence) ? b.inputBlocks.some(b1=>b1.opcode.includes("data_changevariableby") && checkNestedArray(b1.inputs.VALUE, value)): false;
+            return checkExistence && checkValue;
         }
 
         function procSprite(sprite){
@@ -1954,9 +1961,16 @@ module.exports = class {
             var out = { hasFour: false, hasFive: false, hasSix: false};
             //if or if else are ok control blocks
             console.log("sprite scripts: ", sprite.scripts);
-            out.hasFour = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && (checkNestedArray(b.conditionBlock.inputs.OPERAND1, '4') || checkNestedArray(b.conditionBlock.inputs.OPERAND2, '4'))));
-            out.hasFive = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && (checkNestedArray(b.conditionBlock.inputs.OPERAND1, '5') || checkNestedArray(b.conditionBlock.inputs.OPERAND2, '5'))));
-            out.hasSix = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && (checkNestedArray(b.conditionBlock.inputs.OPERAND1, '6') || checkNestedArray(b.conditionBlock.inputs.OPERAND2, '6'))));
+
+            if (sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if")))) {
+                let controlBlock = sprite.scripts.find(s=>s.blocks.some(b=>b.opcode.includes("control_if")));
+                console.log("controlBlock: ", controlBlock);
+                out.hasFour = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '4')));
+                out.hasFive = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '5')));
+                out.hasSix = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '6')));
+            }
+
+            //b.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && checkNestedArray(b.conditionBlock.inputs.OPERAND1, '4')||checkNestedArray(b.conditionBlock.inputs.OPERAND2, '4')))
             return out;
         }
         var results = sprites.map(procSprite);
@@ -2204,22 +2218,18 @@ module.exports = class {
 
         let stage = project.targets.find(t=>t.isStage);
         let sprites = project.targets.filter(t=>!t.isStage);
-        
-        function procSprite(sprite){
-            // evaluating a single sprite
-            var out = { invasiveExplains: false, ecosystemExplains: false };
-            out.invasiveExplains = (sprites.length >= 2) ? sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play"))): false;
-            out.ecosystemExplains = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play")));
-            return out;
-        }
-        var results = sprites.map(procSprite);
+        let invasiveSprite = project.targets.find(t=>t.name.toLowerCase() == "invasive");
+        let explainerSprite = project.targets.find(t=>t.name.toLowerCase() == "sprite");
 
-        this.requirements.invasiveSprite.bool = sprites.length >= 2;
-        this.requirements.invasiveExplained.bool = results.filter(o=>o.invasiveExplains).length >= 1;
-        this.requirements.ecosystemExplained.bool = results.filter(o=>o.ecosystemExplains).length >= 1;
-        this.requirements.backdropPresent.bool = stage.costumes.length >= 2;
+        this.requirements.invasiveSprite.bool = invasiveSprite != null; //NUANCE: sprite must be named invasive
+        this.requirements.invasiveExplained.bool = (invasiveSprite != null)? invasiveSprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play"))):false; // NUANCE: sprite must be named invasive 
+        this.requirements.ecosystemExplained.bool = (explainerSprite != null)? explainerSprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play"))):false; // NUANCE: sprite must be named sprite 
+        this.requirements.backdropPresent.bool = stage.costumes.length >= 1; //NUANCE: can't tell that the image is of ecosystem
         
         console.log("-- DEBUG --");
+        console.log("IMPORTANT: Invasive sprite must be named 'invasive'");
+        console.log("IMPORTANT: Explainer sprite must be named 'sprite'");
+
         
 
 
