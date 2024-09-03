@@ -29,18 +29,20 @@ module.exports = class {
         function checkOperand(operand, value) {
             return map(operand.filter(o=>Array.isArray(o).length == 2)[1] == value).includes(true);
         }
-        
+
         function procSprite(sprite){
             // evaluating a single sprite
             var out = { hasFour: false, hasFive: false, hasSix: false};
             //if or if else are ok control blocks
-            out.hasFour = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if_else") && (checkOperand(b.conditionBlock.inputs.OPERAND1, "4") || checkOperand(b.conditionBlock.inputs.OPERAND2, "4"))));
+            out.hasFour = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && (checkOperand(b.conditionBlock.inputs.OPERAND1, "4") || checkOperand(b.conditionBlock.inputs.OPERAND2, "4"))));
+            out.hasFive = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && (checkOperand(b.conditionBlock.inputs.OPERAND1, "5") || checkOperand(b.conditionBlock.inputs.OPERAND2, "5"))));
+            out.hasSix = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && (checkOperand(b.conditionBlock.inputs.OPERAND1, "6") || checkOperand(b.conditionBlock.inputs.OPERAND2, "6"))));
             return out;
         }
         var results = sprites.map(procSprite);
         this.requirements.dieFourSet.bool = results.filter(o=>o.hasFour).length >= 1;
-        // this.requirements.dieFiveSet.bool = results.filter(o=>o.hasFive).length >= 1;
-        // this.requirements.dieSixSet.bool = results.filter(o=>o.hasSix).length >= 1;
+        this.requirements.dieFiveSet.bool = results.filter(o=>o.hasFive).length >= 1;
+        this.requirements.dieSixSet.bool = results.filter(o=>o.hasSix).length >= 1;
         
         console.log("-- DEBUG --");
         console.log("remeber to have values inside your conditions");

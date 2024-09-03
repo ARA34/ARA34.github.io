@@ -36,18 +36,15 @@ module.exports = class {
         function procSprite(sprite){
             // evaluating a single sprite
             var out = { invasiveExplains: false, ecosystemExplains: false };
-            out.invasiveExplains = (sprites.length >= 2) ? sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_") || b.opcode.includes())): false;
-            out.ecosystemExplains = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes() || b.opcode.includes()));
-
-
+            out.invasiveExplains = (sprites.length >= 2) ? sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play"))): false;
+            out.ecosystemExplains = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play")));
             return out;
         }
         var results = sprites.map(procSprite);
 
         this.requirements.invasiveSprite.bool = sprites.length >= 2;
-
-        this.requirements.invasiveExplained.bool = 
-        this.requirements.ecosystemExplained.bool = 
+        this.requirements.invasiveExplained.bool = results.filter(o=>o.invasiveExplains).length >= 1;
+        this.requirements.ecosystemExplained.bool = results.filter(o=>o.ecosystemExplains).length >= 1;
         this.requirements.backdropPresent.bool = stage.costumes.length >= 2;
         
         console.log("-- DEBUG --");
