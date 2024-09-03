@@ -1945,8 +1945,10 @@ module.exports = class {
 
         function checkOperand(operand, value) {
             // return map(operand.filter(o=>Array.isArray(o).length == 2)[1] == value).includes(true);
+            console.log("operand: ", operand);
             console.log("valid arrays ", operand.filter(o=>Array.isArray(o).length == 2));
             return operand.filter(o=>Array.isArray(o).length == 2).map(o=>o[1] == value).includes(true);
+            
         }
 
         function procSprite(sprite){
@@ -2201,7 +2203,6 @@ module.exports = class {
         let stage = project.targets.find(t=>t.isStage);
         let sprites = project.targets.filter(t=>!t.isStage);
         
-        console.log(scratch3.speak)
         function procSprite(sprite){
             // evaluating a single sprite
             var out = { invasiveExplains: false, ecosystemExplains: false };

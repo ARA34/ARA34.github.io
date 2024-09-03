@@ -32,7 +32,6 @@ module.exports = class {
         let stage = project.targets.find(t=>t.isStage);
         let sprites = project.targets.filter(t=>!t.isStage);
         
-        console.log(scratch3.speak)
         function procSprite(sprite){
             // evaluating a single sprite
             var out = { invasiveExplains: false, ecosystemExplains: false };
