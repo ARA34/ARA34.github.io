@@ -27,16 +27,14 @@ module.exports = class {
         let sprites = project.targets.filter(t=>!t.isStage);
 
         function checkOperand(operand, value) {
-            if (!operand.filter(o=>Array.isArray(o)).length == 0) {
-                return operand.includes(value);
-            }
+            return map(operand.filter(o=>Array.isArray(o).length == 2)[1] == value).includes(true);
         }
-
+        
         function procSprite(sprite){
             // evaluating a single sprite
             var out = { hasFour: false, hasFive: false, hasSix: false};
             //if or if else are ok control blocks
-            out.hasFour = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && (checkOperand(b.conditionBlock.inputs.OPERAND1, "4") || checkOperand(b.conditionBlock.inputs.OPERAND2, "4"))));
+            out.hasFour = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_if_else") && (checkOperand(b.conditionBlock.inputs.OPERAND1, "4") || checkOperand(b.conditionBlock.inputs.OPERAND2, "4"))));
             return out;
         }
         var results = sprites.map(procSprite);
