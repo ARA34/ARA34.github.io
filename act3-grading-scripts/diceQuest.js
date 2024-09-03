@@ -27,7 +27,7 @@ module.exports = class {
         let sprites = project.targets.filter(t=>!t.isStage);
 
         function checkOperand(operand, value) {
-            return map(operand.filter(o=>Array.isArray(o).length == 2)[1] == value).includes(true);
+            return operand.filter(o=>Array.isArray(o)).map([1] == value).includes(true);
         }
 
         function procSprite(sprite){
