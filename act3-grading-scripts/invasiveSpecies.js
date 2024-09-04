@@ -12,17 +12,11 @@ module.exports = class {
     }
 
      initReqs() {
-        //upleaded picture of IS as sprite
-        //IS sprite explains why with audio or text
-        //There is another sprite with text or audio
-        //backdrop is present
         this.requirements.invasiveSprite = { bool: false, str: "I uploaded a picture of my invasive species as a sprite"};
         this.requirements.invasiveExplained = { bool: false, str: "My invasive species sprite explains why it's harmful to my area's ecosystem through text or audio"};
         this.requirements.ecosystemExplained = { bool: false, str: "I  have a sprite that explains how to protect my area's ecosystem from the invasive species through text or audio."};
-        this.requirements.backdropPresent = { bool: false, str: "I have a backdrop that shows my area's ecosystem."};
-        
+        this.requirements.backdropPresent = { bool: false, str: "I have a backdrop that shows my area's ecosystem."};   
     }
-
 
     grade(fileObj, user) {
         var project = new Project(fileObj, null);
