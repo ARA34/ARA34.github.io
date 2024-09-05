@@ -39,8 +39,29 @@ module.exports = class {
             //b.conditionBlock.inputs.OPERAND1
             //b.conditionBlock.inputs.OPERAND2
             let checkExistence = ((b.conditionBlock.inputs.OPERAND1 && b.conditionBlock.inputs.OPERAND2) != null) ? checkNestedArray(b.conditionBlock.inputs.OPERAND1, value) || checkNestedArray(b.conditionBlock.inputs.OPERAND2, value): false;
-            let checkValue = (checkExistence && b.inputBlocks != null) ? b.inputBlocks.some(b1=>b1.opcode.includes("data_changevariableby") && checkNestedArray(b1.inputs.VALUE, value)): false;
+            let checkValue = (checkExistence && b.inputBlocks.length >= 1) ? b.inputBlocks.some(b1=>b1.opcode.includes("data_changevariableby") && checkNestedArray(b1.inputs.VALUE, value)): false;
             return checkExistence && checkValue;
+
+        }
+
+        function recurse(block_in, find_opcode) {
+            //basecase 1: there are no blocks inside the subscripts - false
+            //basecase 2: there is no block we are looking for (change variable first part) - false
+            //basecase 3: There is a change variabnle >= 6 (end of program) - true
+            //input: subscripts
+            //output: bool
+            //
+            if (block_in.conditionBlock && hasNumber(block_in, '6')) {
+                if (block_in.subscripts.length == 1 && block_in.subscripts[0].blocks.some(b=>b.opcode.includes("data_changevariableby")) && block_in.subscripts[0].some(b=>b.opcode.includes(find_opcode))) {
+                    console.log("hit true");
+                    return true;
+                }
+            }
+            if (block_in.subscripts.scripts.some(s=>s.blocks.length == 0)) {
+                console.log("hit false")
+                return false;
+            }
+            return recurse(block_in.subscripts[1].blocks.find(b=>b.opcode.includes("control_if")), find_opcode);
         }
 
         function procSprite(sprite){
@@ -48,8 +69,8 @@ module.exports = class {
             var out = { hasFour: false, hasFive: false, hasSix: false, biggerDie: false, speakingDie: false};
             //if or if else are ok control blocks
             let dieResetsFlag = sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenflagclicked") && s.blocks.some(b=>b.opcode.includes("looks_setsizeto")));
-            let numberListExpand = [];
-            let numberListSpeak = [];
+            // let numberListExpand = [];
+            // let numberListSpeak = [];
 
             if (sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_") && s.blocks.some(b=>b.opcode.includes("control_if")))) {
                 let controlBlock = sprite.scripts.find(s=>s.blocks.some(b=>b.opcode.includes("control_if"))).blocks.find(b=>b.opcode.includes("control_if"));
@@ -58,14 +79,21 @@ module.exports = class {
                 out.hasFive = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '5')));
                 out.hasSix = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '6')));
 
-                var dieResetsSix = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '6') && b.inputBlocks.some(b1=>b1.opcode.includes("looks_setsizeto"))));
-                for (let i=1; i <= 6; i++) {
-                    numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("looks_changesizeby"))));
-                    numberListSpeak.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say"))));
-                }
+                var dieResetsSix = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '6') && b.subscripts.some(s=>s.blocks.some(b1=>b1.opcode.includes("looks_setsizeto")))));
+                // for (let i=1; i <= 6; i++) {
+
+                //     // numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("looks_changesizeby"))));
+                //     // numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.))
+                //     numberListSpeak.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say"))));
+                // }
+                out.biggerDie = (dieResetsFlag || dieResetsSix) && recurse(controlBlock, "looks_changesizeby");
+                out.speakingDie = recurse(controlBlock, "looks_say");
             }
-            out.biggerDie = (dieResetsFlag || dieResetsSix) && !numberListExpand.includes(false);
-            out.speakingDie = !numberListSpeak.includes(false);
+            console.log("DRF: ", dieResetsFlag);
+            console.log("DRS: ", dieResetsSix);
+            
+            // out.biggerDie = (dieResetsFlag || dieResetsSix) && !numberListExpand.includes(false);
+            // out.speakingDie = !numberListSpeak.includes(false);
             return out;
         }
         var results = sprites.map(procSprite);
