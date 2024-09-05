@@ -1976,11 +1976,11 @@ module.exports = class {
 
                 var dieResetsSix = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '6') && b.inputBlocks.some(b1=>b1.opcode.includes("looks_setsizeto"))));
                 for (let i=1; i <= 6; i++) {
-                    numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.inputBlocks.some(b1=>b1.opcode.includes("looks_changesizeby")))));
-                    numberListSpeak.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.inputBlocks.some(b1=>b1.opcode.includes("looks_say")))));
+                    numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.subscripts.some(s1=>s1.blocks.some(b1=>b1.opcode.includes("looks_changesizeby"))))));
+                    numberListSpeak.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.subscripts.some(s1=>s1.blocks.some(b1=>b1.opcode.includes("looks_say"))))));
                 }
             }
-            out.biggerDie = (dieResetsFlag || dieResetsSix) && !validNumberList.includes(false);
+            out.biggerDie = (dieResetsFlag || dieResetsSix) && !numberListExpand.includes(false);
             out.speakingDie = !numberListSpeak.includes(false);
             return out;
         }
