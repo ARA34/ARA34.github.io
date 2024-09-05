@@ -2011,11 +2011,11 @@ module.exports = class {
 
                 // out.biggerDie = (dieResetsFlag || dieResetsSix) && recurse(controlBlock, "looks_changesizeby");
                 // out.speakingDie = recurse(controlBlock, "looks_say");
+                out.biggerDie = (dieResetsFlag || dieResetsSix) && !numberListExpand.includes(false);
             }
             console.log("DRF: ", dieResetsFlag);
             console.log("DRS: ", dieResetsSix);
             
-            out.biggerDie = (dieResetsFlag || dieResetsSix) && !numberListExpand.includes(false);
             // out.speakingDie = !numberListSpeak.includes(false);
             return out;
         }
