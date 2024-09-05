@@ -1961,9 +1961,11 @@ module.exports = class {
 
         function procSprite(sprite){
             // evaluating a single sprite
-            var out = { hasFour: false, hasFive: false, hasSix: false};
+            var out = { hasFour: false, hasFive: false, hasSix: false, biggerDie: false, speakingDie: false};
             //if or if else are ok control blocks
-            console.log("sprite scripts: ", sprite.scripts);
+            let dieResetsFlag = sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenflagclicked") && s.blocks.some(b=>b.opcode.includes("looks_setsizeto")));
+            let numberListExpand = [];
+            let numberListSpeak = [];
 
             if (sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_") && s.blocks.some(b=>b.opcode.includes("control_if")))) {
                 let controlBlock = sprite.scripts.find(s=>s.blocks.some(b=>b.opcode.includes("control_if"))).blocks.find(b=>b.opcode.includes("control_if"));
@@ -1971,15 +1973,25 @@ module.exports = class {
                 out.hasFour = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '4')));
                 out.hasFive = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '5')));
                 out.hasSix = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '6')));
-            }
 
-            //b.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && checkNestedArray(b.conditionBlock.inputs.OPERAND1, '4')||checkNestedArray(b.conditionBlock.inputs.OPERAND2, '4')))
+                var dieResetsSix = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '6') && b.inputBlocks.some(b1=>b1.opcode.includes("looks_setsizeto"))));
+                for (i=1; i <= 6; i++) {
+                    numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.inputBlocks.some(b1=>b1.opcode.includes("looks_changesizeby")))));
+                    numberListSpeak.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.inputBlocks.some(b1=>b1.opcode.includes("looks_say")))));
+                }
+            }
+            out.biggerDie = (dieResetsFlag || dieResetsSix) && !validNumberList.includes(false);
+            out.speakingDie = !numberListSpeak.includes(false);
             return out;
         }
         var results = sprites.map(procSprite);
         this.requirements.dieFourSet.bool = results.filter(o=>o.hasFour).length >= 1;
         this.requirements.dieFiveSet.bool = results.filter(o=>o.hasFive).length >= 1;
         this.requirements.dieSixSet.bool = results.filter(o=>o.hasSix).length >= 1;
+        
+        this.extensions.bigDie.bool = results.filter(o=>o.biggerDie).includes(true);
+        this.extensions.talkingDie.bool = results.filter(o=>o.speakingDie).includes(true);
+
         
         console.log("-- DEBUG --");
         console.log("remeber to have values inside your conditions");
@@ -2202,17 +2214,11 @@ module.exports = class {
     }
 
      initReqs() {
-        //upleaded picture of IS as sprite
-        //IS sprite explains why with audio or text
-        //There is another sprite with text or audio
-        //backdrop is present
         this.requirements.invasiveSprite = { bool: false, str: "I uploaded a picture of my invasive species as a sprite"};
         this.requirements.invasiveExplained = { bool: false, str: "My invasive species sprite explains why it's harmful to my area's ecosystem through text or audio"};
         this.requirements.ecosystemExplained = { bool: false, str: "I  have a sprite that explains how to protect my area's ecosystem from the invasive species through text or audio."};
-        this.requirements.backdropPresent = { bool: false, str: "I have a backdrop that shows my area's ecosystem."};
-        
+        this.requirements.backdropPresent = { bool: false, str: "I have a backdrop that shows my area's ecosystem."};   
     }
-
 
     grade(fileObj, user) {
         var project = new Project(fileObj, null);
