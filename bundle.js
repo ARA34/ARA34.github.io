@@ -1973,7 +1973,7 @@ module.exports = class {
                     return true;
                 }
             }
-            if (block_in.subscripts.scripts.some(s=>s.blocks.length == 0)) {
+            if (block_in.subscripts.some(s=>s.blocks.length == 0)) {
                 console.log("hit false")
                 return false;
             }
