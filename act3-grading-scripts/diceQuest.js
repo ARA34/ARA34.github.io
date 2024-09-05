@@ -74,7 +74,9 @@ module.exports = class {
         this.requirements.dieSixSet.bool = results.filter(o=>o.hasSix).length >= 1;
         
         this.extensions.bigDie.bool = results.filter(o=>o.biggerDie).includes(true);
+        console.log(results.filter(o=>o.biggerDie));
         this.extensions.talkingDie.bool = results.filter(o=>o.speakingDie).includes(true);
+        console.log(results.filter(o=>o.speakingDie));
 
         
         console.log("-- DEBUG --");
