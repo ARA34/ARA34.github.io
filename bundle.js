@@ -1955,7 +1955,7 @@ module.exports = class {
             //b.conditionBlock.inputs.OPERAND1
             //b.conditionBlock.inputs.OPERAND2
             let checkExistence = ((b.conditionBlock.inputs.OPERAND1 && b.conditionBlock.inputs.OPERAND2) != null) ? checkNestedArray(b.conditionBlock.inputs.OPERAND1, value) || checkNestedArray(b.conditionBlock.inputs.OPERAND2, value): false;
-            let checkValue = (checkExistence) ? b.inputBlocks.some(b1=>b1.opcode.includes("data_changevariableby") && checkNestedArray(b1.inputs.VALUE, value)): false;
+            let checkValue = (checkExistence && b.inputBlocks != null) ? b.inputBlocks.some(b1=>b1.opcode.includes("data_changevariableby") && checkNestedArray(b1.inputs.VALUE, value)): false;
             return checkExistence && checkValue;
         }
 
@@ -1976,8 +1976,8 @@ module.exports = class {
 
                 var dieResetsSix = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '6') && b.inputBlocks.some(b1=>b1.opcode.includes("looks_setsizeto"))));
                 for (let i=1; i <= 6; i++) {
-                    numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.subscripts.some(s1=>s1.blocks.some(b1=>b1.opcode.includes("looks_changesizeby"))))));
-                    numberListSpeak.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.subscripts.some(s1=>s1.blocks.some(b1=>b1.opcode.includes("looks_say"))))));
+                    numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("looks_changesizeby"))));
+                    numberListSpeak.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say"))));
                 }
             }
             out.biggerDie = (dieResetsFlag || dieResetsSix) && !numberListExpand.includes(false);
