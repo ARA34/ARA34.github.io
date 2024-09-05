@@ -1946,16 +1946,16 @@ module.exports = class {
         let sprites = project.targets.filter(t=>!t.isStage);
         
 
-        function checkNestedArray(inputArray, value) {
+        function checkNestedArray(array_in, value) {
             // used for operand checking and varibale changing block
-            return inputArray.filter(a=>Array.isArray(a)).filter(a=>a.length == 2).map(a=>a[1] == value).includes(true);
+            return array_in.filter(a=>Array.isArray(a)).filter(a=>a.length == 2).map(a=>a[1] == value).includes(true);
         }
 
         function hasNumber(b, value) {
             //b.conditionBlock.inputs.OPERAND1
             //b.conditionBlock.inputs.OPERAND2
             let checkExistence = ((b.conditionBlock.inputs.OPERAND1 && b.conditionBlock.inputs.OPERAND2) != null) ? checkNestedArray(b.conditionBlock.inputs.OPERAND1, value) || checkNestedArray(b.conditionBlock.inputs.OPERAND2, value): false;
-            let checkValue = (checkExistence && b.inputBlocks.length >= 1) ? b.inputBlocks.some(b1=>b1.opcode.includes("data_changevariableby") && checkNestedArray(b1.inputs.VALUE, value)): false;
+            let checkValue = (checkExistence && b.inputBlocks.length >= 1) ? b.subscripts.some(s=>s.blocks.some(b1=>b1.opcode.includes("data_changevariableby") && checkNestedArray(b1.inputs.VALUE, value))): false;
             return checkExistence && checkValue;
 
         }
