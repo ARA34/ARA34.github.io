@@ -1968,7 +1968,7 @@ module.exports = class {
             //output: bool
             //
             if (block_in.conditionBlock && hasNumber(block_in, '6')) {
-                if (block_in.subscripts.length == 1 && block_in.subscripts[0].blocks.some(b=>b.opcode.includes("data_changevariableby")) && block_in.subscripts[0].some(b=>b.opcode.includes(find_opcode))) {
+                if (block_in.subscripts.length == 1 && block_in.subscripts[0].blocks.some(b=>b.opcode.includes("data_changevariableby")) && block_in.subscripts[0].blocks.some(b=>b.opcode.includes(find_opcode))) {
                     console.log("hit true");
                     return true;
                 }
