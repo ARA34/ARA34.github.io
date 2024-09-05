@@ -2002,13 +2002,20 @@ module.exports = class {
                 //     // numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.))
                 //     numberListSpeak.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say"))));
                 // }
-                out.biggerDie = (dieResetsFlag || dieResetsSix) && recurse(controlBlock, "looks_changesizeby");
-                out.speakingDie = recurse(controlBlock, "looks_say");
+                let numberListExpand = [];
+                for (let i=1; i<=6; i++) {
+                    console.log("number", i, " :", controlBlock.subscriptsRecursive.map(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()))));
+                    numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.subscripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_changesizeby"))))));
+                }
+
+
+                // out.biggerDie = (dieResetsFlag || dieResetsSix) && recurse(controlBlock, "looks_changesizeby");
+                // out.speakingDie = recurse(controlBlock, "looks_say");
             }
             console.log("DRF: ", dieResetsFlag);
             console.log("DRS: ", dieResetsSix);
             
-            // out.biggerDie = (dieResetsFlag || dieResetsSix) && !numberListExpand.includes(false);
+            out.biggerDie = (dieResetsFlag || dieResetsSix) && !numberListExpand.includes(false);
             // out.speakingDie = !numberListSpeak.includes(false);
             return out;
         }
