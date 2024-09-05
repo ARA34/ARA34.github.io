@@ -59,7 +59,7 @@ module.exports = class {
                 out.hasSix = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '6')));
 
                 var dieResetsSix = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '6') && b.inputBlocks.some(b1=>b1.opcode.includes("looks_setsizeto"))));
-                for (i=1; i <= 6; i++) {
+                for (let i=1; i <= 6; i++) {
                     numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.inputBlocks.some(b1=>b1.opcode.includes("looks_changesizeby")))));
                     numberListSpeak.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.inputBlocks.some(b1=>b1.opcode.includes("looks_say")))));
                 }
