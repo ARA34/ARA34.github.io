@@ -89,8 +89,8 @@ module.exports = class {
                 let numberListExpand = [];
                 numberListExpand.push(hasNumber(controlBlock, '1'));
                 for (let i=2; i<=6; i++) {
-                    console.log("number", i, " :", controlBlock.subscriptsRecursive.map(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()))));
-                    numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.subscripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_changesizeby"))))).includes(true));
+                    console.log("number", i, " :", controlBlock.subscriptsRecursive.map(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.subscripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_changesizeby"))))));
+                    numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.subscripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_changesizeby"))))));
                 }
 
 
