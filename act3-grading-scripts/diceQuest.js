@@ -87,16 +87,22 @@ module.exports = class {
                 //     numberListSpeak.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say"))));
                 // }
                 let numberListExpand = [];
-                numberListExpand.push(hasNumber(controlBlock, '1'));
+                let numberListSpeak = [];
+                numberListExpand.push(hasNumber(controlBlock, '1') && controlBlock.subscripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_changesizeby"))));
+                numberListExpand.push(hasNumber(controlBlock, '1') && controlBlock.subscripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say"))));
                 for (let i=2; i<=6; i++) {
+                    if (i != 6) {
+                        numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.subscripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_changesizeby"))))));
+                    }
                     console.log("number", i, " :", controlBlock.subscriptsRecursive.map(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.subscripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_changesizeby"))))));
-                    numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.subscripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_changesizeby"))))));
+                    numberListSpeak.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.subscripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say"))))));
                 }
 
 
                 // out.biggerDie = (dieResetsFlag || dieResetsSix) && recurse(controlBlock, "looks_changesizeby");
                 // out.speakingDie = recurse(controlBlock, "looks_say");
                 out.biggerDie = (dieResetsFlag || dieResetsSix) && !numberListExpand.includes(false);
+                out.speakingDie = !numberListSpeak.includes(false);
             }
             console.log("DRF: ", dieResetsFlag);
             console.log("DRS: ", dieResetsSix);
@@ -109,9 +115,9 @@ module.exports = class {
         this.requirements.dieFiveSet.bool = results.filter(o=>o.hasFive).length >= 1;
         this.requirements.dieSixSet.bool = results.filter(o=>o.hasSix).length >= 1;
         
-        this.extensions.bigDie.bool = results.filter(o=>o.biggerDie).includes(true);
+        this.extensions.bigDie.bool = results.filter(o=>o.biggerDie).length >= 1;
         console.log(results.filter(o=>o.biggerDie));
-        this.extensions.talkingDie.bool = results.filter(o=>o.speakingDie).includes(true);
+        this.extensions.talkingDie.bool = results.filter(o=>o.speakingDie).length >= 1;
         console.log(results.filter(o=>o.speakingDie));
 
         
