@@ -1928,12 +1928,12 @@ module.exports = class {
     }
 
      initReqs() {
-        this.requirements.dieFourSet = { bool: false, str: "When die number=4, increase score by 4."}; //done
-        this.requirements.dieFiveSet = { bool: false, str: "When die number=5, increase score by 5."}; //done
-        this.requirements.dieSixSet =  { bool: false, str: "When die number=6 condition in program."}; //done
+        this.requirements.dieFourSet = { bool: false, str: "When die number=4, increase score by 4."};
+        this.requirements.dieFiveSet = { bool: false, str: "When die number=5, increase score by 5."};
+        this.requirements.dieSixSet =  { bool: false, str: "When die number=6 condition in program."};
 
-        this.extensions.bigDie = { bool: false, str: "Have the die get bigger everytime the score increases and then reset when 6 is rolled."}; //IP
-        this.extensions.talkingDie = { bool: false, str: "Have the die say how many points are added or when resets to 0."}; //IP
+        this.extensions.bigDie = { bool: false, str: "Have the die get bigger everytime the score increases and then reset when 6 is rolled."};
+        this.extensions.talkingDie = { bool: false, str: "Have the die say how many points are added or when resets to 0."};
     }
 
 
@@ -1944,7 +1944,6 @@ module.exports = class {
 
         let stage = project.targets.find(t=>t.isStage);
         let sprites = project.targets.filter(t=>!t.isStage);
-        
 
         function checkNestedArray(array_in, value) {
             // used for operand checking and varibale changing block
@@ -1960,33 +1959,12 @@ module.exports = class {
 
         }
 
-        function recurse(block_in, find_opcode) {
-            //basecase 1: there are no blocks inside the subscripts - false
-            //basecase 2: there is no block we are looking for (change variable first part) - false
-            //basecase 3: There is a change variabnle >= 6 (end of program) - true
-            //input: subscripts
-            //output: bool
-            //
-            if (block_in.conditionBlock && hasNumber(block_in, '6')) {
-                if (block_in.subscripts.length == 1 && block_in.subscripts[0].blocks.some(b=>b.opcode.includes("data_changevariableby")) && block_in.subscripts[0].blocks.some(b=>b.opcode.includes(find_opcode))) {
-                    console.log("hit true");
-                    return true;
-                }
-            }
-            if (block_in.subscripts.some(s=>s.blocks.length == 0)) {
-                console.log("hit false")
-                return false;
-            }
-            return recurse(block_in.subscripts[1].blocks.find(b=>b.opcode.includes("control_if")), find_opcode);
-        }
-
         function procSprite(sprite){
             // evaluating a single sprite
             var out = { hasFour: false, hasFive: false, hasSix: false, biggerDie: false, speakingDie: false};
             //if or if else are ok control blocks
             let dieResetsFlag = sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenflagclicked") && s.blocks.some(b=>b.opcode.includes("looks_setsizeto")));
-            // let numberListExpand = [];
-            // let numberListSpeak = [];
+
 
             if (sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_") && s.blocks.some(b=>b.opcode.includes("control_if")))) {
                 let controlBlock = sprite.scripts.find(s=>s.blocks.some(b=>b.opcode.includes("control_if"))).blocks.find(b=>b.opcode.includes("control_if"));
@@ -1996,12 +1974,7 @@ module.exports = class {
                 out.hasSix = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '6')));
 
                 var dieResetsSix = controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, '6') && b.subscripts.some(s=>s.blocks.some(b1=>b1.opcode.includes("looks_setsizeto")))));
-                // for (let i=1; i <= 6; i++) {
 
-                //     // numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("looks_changesizeby"))));
-                //     // numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.))
-                //     numberListSpeak.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say"))));
-                // }
                 let numberListExpand = [];
                 let numberListSpeak = [];
                 numberListExpand.push(hasNumber(controlBlock, '1') && controlBlock.subscripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_changesizeby"))));
@@ -2010,20 +1983,15 @@ module.exports = class {
                     if (i != 6) {
                         numberListExpand.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.subscripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_changesizeby"))))));
                     }
-                    console.log("number", i, " :", controlBlock.subscriptsRecursive.map(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.subscripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_changesizeby"))))));
+                    // console.log("number", i, " :", controlBlock.subscriptsRecursive.map(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.subscripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_changesizeby"))))));
                     numberListSpeak.push(controlBlock.subscriptsRecursive.some(s=>s.blocks.some(b=>b.opcode.includes("control_if") && hasNumber(b, i.toString()) && b.subscripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say"))))));
                 }
-
-
-                // out.biggerDie = (dieResetsFlag || dieResetsSix) && recurse(controlBlock, "looks_changesizeby");
-                // out.speakingDie = recurse(controlBlock, "looks_say");
+                
                 out.biggerDie = (dieResetsFlag || dieResetsSix) && !numberListExpand.includes(false);
                 out.speakingDie = !numberListSpeak.includes(false);
             }
-            console.log("DRF: ", dieResetsFlag);
-            console.log("DRS: ", dieResetsSix);
-            
-            // out.speakingDie = !numberListSpeak.includes(false);
+            console.log("Die size resets with flag: ", dieResetsFlag);
+            console.log("Die size resets with rolling six: ", dieResetsSix);
             return out;
         }
         var results = sprites.map(procSprite);
@@ -2032,16 +2000,15 @@ module.exports = class {
         this.requirements.dieSixSet.bool = results.filter(o=>o.hasSix).length >= 1;
         
         this.extensions.bigDie.bool = results.filter(o=>o.biggerDie).length >= 1;
-        console.log(results.filter(o=>o.biggerDie));
         this.extensions.talkingDie.bool = results.filter(o=>o.speakingDie).length >= 1;
-        console.log(results.filter(o=>o.speakingDie));
-
         
         console.log("-- DEBUG --");
         console.log("remeber to have values inside your conditions");
         console.log("four: ", results.filter(o=>o.hasFour));
         console.log("five: ", results.filter(o=>o.hasFive));
         console.log("six: ", results.filter(o=>o.hasSix));
+        console.log(results.filter(o=>o.biggerDie));
+        console.log(results.filter(o=>o.speakingDie));
 
         return;
     }
