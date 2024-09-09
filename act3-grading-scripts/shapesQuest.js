@@ -1,5 +1,5 @@
 /*
-shapesQuest
+shapesQuest grading script
 Alex Reyes Aranda Summer 2024
 */
 
@@ -17,7 +17,7 @@ module.exports = class {
         this.requirements.usedFunction = { bool: false, str: "Three custom function blocks under 'When this sprite is clicked'"};
 
         this.extensions.turnBlocksAdded = { bool: false, str: "'Turn 15' blocks added in between custom function blocks under 'When this sprite is clicked'"};
-        this.extensions.penColor = { bool: false, str: "'Change pen color (30)' blocks added in between turn blocks under 'When this sprite is clicked'"};
+        this.extensions.penColorChanges = { bool: false, str: "'Change pen color (30)' blocks added in between turn blocks under 'When this sprite is clicked'"};
     }
 
 
@@ -28,20 +28,36 @@ module.exports = class {
 
         let stage = project.targets.find(t=>t.isStage);
         let sprites = project.targets.filter(t=>!t.isStage);
-        
+
+        function scriptHasBlock(script_input, block_input) {
+            return script_input.blocks.some(b=>b.opcode.includes(block_input));
+        }
+        function checkColorChange(block_input, color_val) {
+            return block_input.opcode.includes("pen_changePenColorParamBy") && block_input.inputs.VALUE[1][1] == color_val;
+        }
 
         function procSprite(sprite){
             console.log("sprite: ", sprite);
             console.log("scripts: ", sprite.scripts);
             // evaluating a single sprite
-            var out = { hasFunction: false, repeatingBlocks: false, addedFunctions: false};
+            var out = { hasFunction: false, repeatingBlocks: false, addedFunctions: false, turnBlocks: false, penColor: false};
             out.hasFunction = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("procedures_definition")));
+            out.repeatingBlocks = sprite.scripts.some(s=>s.blocks[0].opcode.includes("procedures_definition") && scriptHasBlock(s, "motion_movesteps") && scriptHasBlock(s, "control_wait") && scriptHasBlock(s,"motion_turnleft"));
+            out.addedFunctions = sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenthisspriteclicked") && s.blocks.filter(b=>b.opcode.includes("procedures_call").length == 3));
+            let scriptTail = sprite.scripts.find(s=>s.blocks[0].opcode.includes("event_whenthisspriteclicked")).blocks.filter(b=>b.opcode.includes("procedures_call") || b.opcode.includes("motion_turnright") || b.opcode.includes("pen_changePenColorParamBy"));
 
-            //if or if else are ok control blocks
+            out.turnBlocks = (out.addedFunctions && scriptTail != null && scriptTail.length == 7) ? scriptTail[1].opcode.includes("motion_turnright") && scriptTail[4].opcode.includes("motion_turnright"): false;
+            out.penColor = (out.turnBlocks) ? checkColorChange(scriptTail[2], '30') && checkColorChange(scriptTail[5], '30'): false;
+
             return out;
         }
         var results = sprites.map(procSprite);
-        this.requirements.createFunction.bool = results.filter(o=>o.hasFunction).length >= 1;
+        this.requirements.createFunction.bool = results.filter(o=>o.hasFunction) != null;
+        this.requirements.validFunction.bool = results.filter(o=>o.repeatingBlocks) != null;
+        this.requirements.usedFunction.bool = results.filter(o=>o.addedFunctions) != null;
+
+        this.extensions.turnBlocksAdded.bool = results.filter(o=>o.turnBlocks) != null;
+        this.extensions.penColorChanges.bool = results.filter(o=>o.penColor) != null;
         
         
         console.log("-- DEBUG --");
