@@ -52,12 +52,12 @@ module.exports = class {
             return out;
         }
         var results = sprites.map(procSprite);
-        this.requirements.createFunction.bool = results.filter(o=>o.hasFunction) != null;
-        this.requirements.validFunction.bool = results.filter(o=>o.repeatingBlocks) != null;
-        this.requirements.usedFunction.bool = results.filter(o=>o.addedFunctions) != null;
+        this.requirements.createFunction.bool = results.filter(o=>o.hasFunction).length >= 1;
+        this.requirements.validFunction.bool = results.filter(o=>o.repeatingBlocks).length >= 1;
+        this.requirements.usedFunction.bool = results.filter(o=>o.addedFunctions).length >= 1;
 
-        this.extensions.turnBlocksAdded.bool = results.filter(o=>o.turnBlocks) != null;
-        this.extensions.penColorChanges.bool = results.filter(o=>o.penColor) != null;
+        this.extensions.turnBlocksAdded.bool = results.filter(o=>o.turnBlocks).length >= 1;
+        this.extensions.penColorChanges.bool = results.filter(o=>o.penColor).length >= 1;
         
         
         console.log("-- DEBUG --");
