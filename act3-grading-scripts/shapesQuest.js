@@ -57,8 +57,7 @@ module.exports = class {
         this.requirements.usedFunction.bool = results.filter(o=>o.addedFunctions).length >= 1;
 
         this.extensions.turnBlocksAdded.bool = results.filter(o=>o.turnBlocks).length >= 1;
-        this.extensions.penColorChanges.bool = results.filter(o=>o.penColor).length >= 1;
-        
+        this.extensions.penColorChanges.bool = results.filter(o=>o.penColor).length >= 1; 
         
         console.log("-- DEBUG --");
         console.log("It is best to have all your scripts under one sprite with starter name 'drawtriangle2'");
