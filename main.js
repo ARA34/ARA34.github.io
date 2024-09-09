@@ -516,7 +516,7 @@ function checkbox(bool) {
 }
 
 function checkStar(bool) {
-    return (bool) ? ('*') : ('⬜️'); //Pending
+    return (bool) ? ('⭐') : ('⬜️'); //Pending
 }
 
 /* Adds results to reports_list and prints. */
