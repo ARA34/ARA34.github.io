@@ -34,17 +34,18 @@ let actOneGraders = {
 
 /// Act 2 graders(DESIGN)
 let actTwoGraders = {
-    myVacation:       { name: 'D1 - My Vacation',   file: require('./act2-grading-scripts/myVacation')  }, //#15
+    myVacation:       { name: 'D1 - My Vacation',   file: require('./act2-grading-scripts/myVacation')  },
     dragonBoat:       { name: 'D2 - Dragon Boat',   file: require('./act2-grading-scripts/dragonBoat')  }
 };
 
 /// Act 3 graders(IMPACT)
 let actThreeGraders = {
-    systems:         { name: 'I1 - Connection Circle',   file: require('./act3-grading-scripts/systems')  }, //#12
-    madlibs:         { name: 'I2 - Madlibs',             file: require('./act3-grading-scripts/madlibs')  }, //#13
-    graphProject:    { name: 'I3 - Graph Project',       file: require('./act3-grading-scripts/graphProject')  }, //#14
+    systems:         { name: 'I1 - Connection Circle',   file: require('./act3-grading-scripts/systems')  },
+    madlibs:         { name: 'I2 - Madlibs',             file: require('./act3-grading-scripts/madlibs')  },
+    graphProject:    { name: 'I3 - Graph Project',       file: require('./act3-grading-scripts/graphProject')  },
     invasiveSpecies: { name: 'I4 - Invasive Species',    file: require('./act3-grading-scripts/invasiveSpecies') },
-    diceQuest:       { name: 'I4 - Dice Quest',          file: require('./act3-grading-scripts/diceQuest')     }
+    diceQuest:       { name: 'I4 - Dice Quest',          file: require('./act3-grading-scripts/diceQuest')     },
+    shapesQuest:     { name: 'I5 - Shapes Quest',        file: require('./act3-grading-scripts/shapesQuest')   }
 };
 
 let allGraders = {};
