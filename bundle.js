@@ -2374,7 +2374,7 @@ module.exports = class {
             var out = { hasFunction: false, repeatingBlocks: false, addedFunctions: false, turnBlocks: false, penColor: false};
             out.hasFunction = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("procedures_definition")));
             out.repeatingBlocks = sprite.scripts.some(s=>s.blocks[0].opcode.includes("procedures_definition") && scriptHasBlock(s, "motion_movesteps") && scriptHasBlock(s, "control_wait") && scriptHasBlock(s,"motion_turnleft"));
-            out.addedFunctions = sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenthisspriteclicked") && s.blocks.filter(b=>b.opcode.includes("procedures_call").length == 3));
+            out.addedFunctions = sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenthisspriteclicked") && s.blocks.filter(b=>b.opcode.includes("procedures_call")).length == 3);
             let scriptTail = sprite.scripts.find(s=>s.blocks[0].opcode.includes("event_whenthisspriteclicked")).blocks.filter(b=>b.opcode.includes("procedures_call") || b.opcode.includes("motion_turnright") || b.opcode.includes("pen_changePenColorParamBy"));
 
             out.turnBlocks = (out.addedFunctions && scriptTail != null && scriptTail.length == 7) ? scriptTail[1].opcode.includes("motion_turnright") && scriptTail[4].opcode.includes("motion_turnright"): false;
@@ -2388,8 +2388,7 @@ module.exports = class {
         this.requirements.usedFunction.bool = results.filter(o=>o.addedFunctions).length >= 1;
 
         this.extensions.turnBlocksAdded.bool = results.filter(o=>o.turnBlocks).length >= 1;
-        this.extensions.penColorChanges.bool = results.filter(o=>o.penColor).length >= 1;
-        
+        this.extensions.penColorChanges.bool = results.filter(o=>o.penColor).length >= 1; 
         
         console.log("-- DEBUG --");
         console.log("It is best to have all your scripts under one sprite with starter name 'drawtriangle2'");
