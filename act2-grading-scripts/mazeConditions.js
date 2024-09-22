@@ -32,20 +32,16 @@ module.exports = class {
 
         function procSprite(sprite){
             // evaluating a single sprite
-            var out = { something: false};
-            out.repeatMoreThanOnceSprite = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_repeat") || b.opcode.includes("control_forever")));
-            out.synchScriptsSprite = collectHeads(sprite.scripts);
-            out.sayOrThinkSprite = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("looks_think")));
-            out.validOriginSprite = sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenflagclicked") && s.blocks.some(b=>b.opcode.includes("motion_gotoxy") && s.blocks.some(b=>b.opcode.incldues("looks_switchcostumeto"))));
-            let looks_blocks = sprite.scripts.map(s=>s.blocks.map(b=>b.opcode.includes("looks_say")));
-            console.log("looks blocks: ", looks_blocks);
+            var out = { validOriginSprite: false, saysDirectionsSprite: false, mazeConditionsSprite: false};
+            
+
+            
 
             return out;
         }
         // we just want to check that at least two sprites have all the requirements
         var results = sprites.map(procSprite);
 
-        this.requirements.repeatMoreThanOnceProject.bool = results.filter(o=>o.repeatMoreThanOnceSprite).length >= 2;
         
         console.log("-- DEBUG --");
 

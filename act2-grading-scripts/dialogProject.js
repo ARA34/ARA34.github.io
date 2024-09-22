@@ -53,12 +53,20 @@ module.exports = class {
             out.synchScriptsSprite = collectHeads(sprite.scripts);
             out.sayOrThinkSprite = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("looks_think")));
             out.validOriginSprite = sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenflagclicked") && s.blocks.some(b=>b.opcode.includes("motion_gotoxy") && s.blocks.some(b=>b.opcode.includes("looks_switchcostumeto"))));
-            let looks_blocks = sprite.scripts.map(s=>s.blocks.map(b=>b.opcode.includes("looks_say")));
-            console.log("looks blocks: ", looks_blocks);
-            // gather all the looks blocks in the sprite
-            out.usedTwoOrMoreSprite = looks_blocks.length >= 2;
-            // let motion_blocks = 
-            // let sound_blocks = 
+
+            let looksBlocksBoolArray = sprite.scripts.map(s=>s.blocks.map(b=>b.opcode.includes("looks_say"))).filter(s=>s.includes(true)).map(sf=>sf.filter(t=>t));
+            looksBlocksBoolArray.filter(b=>b.length >= 1);
+            let looksBlocksBool = looksBlocksBoolArray.length >= 2 || looksBlocksBoolArray.some(t=>t.length >= 2);
+
+            let motionBlocksBoolArray = sprite.scripts.map(s=>s.blocks.map(b=>b.opcode.includes("motion_"))).filter(s=>s.includes(true)).map(sf=>sf.filter(t=>t));
+            motionBlocksBoolArray.filter(b=>b.length >= 1);
+            let motionBlocksBool = motionBlocksBoolArray.length >= 2 || motionBlocksBoolArray.some(t=>t.length >= 2);
+
+            let soundBlocksBoolArray = sprite.scripts.map(s=>s.blocks.map(b=>b.opcode.includes("sound_"))).filter(s=>s.includes(true)).map(sf=>sf.filter(t=>t));
+            soundBlocksBoolArray.filter(b=>b.length >= 1);
+            let soundBlocksBool = soundBlocksBoolArray.length >= 2 || soundBlocksBoolArray.some(t=>t.length >= 2);
+
+            out.usedTwoOrMoreSprite = looksBlocksBool || motionBlocksBool || soundBlocksBool;
 
             return out;
         }
