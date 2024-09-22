@@ -1842,7 +1842,7 @@ module.exports = class {
         function collectHeads(inputScripts) {
             let headCollector = {};
             let heads = inputScripts.map(s=>s[0]);
-            for (i = 0; i <= heads.length; i++) {
+            for (let i = 0; i <= heads.length; i++) {
                 if (!(`${heads[i]}` in headCollector)) {
                     headCollector[heads[i]] = 1;
                 } else {
