@@ -1822,7 +1822,7 @@ module.exports = class {
 
      initReqs() {
         // include something that signifies that this is testing for all sprites
-        this.requiremnts.twoSpritesPresentProject = { bool: false, str: "At least (2) sprites are present and the requiremnts will be tested on them."};
+        this.requirements.twoSpritesPresentProject = { bool: false, str: "At least (2) sprites are present and the requiremnts will be tested on them."};
         this.requirements.repeatMoreThanOnceProject = { bool: false, str: "There is a script that does something more than once."};
         this.requirements.synchScriptsProject = { bool: false, str: "There are at least (2) scripts that are running at the same time."};
         this.requirements.sayOrThinkProject = { bool: false, str: "There is a 'Say' or 'Think' block."};
