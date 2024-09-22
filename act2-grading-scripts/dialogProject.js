@@ -19,7 +19,7 @@ module.exports = class {
         this.requirements.synchScriptsProject = { bool: false, str: "There are at least (2) scripts that are running at the same time."};
         this.requirements.sayOrThinkProject = { bool: false, str: "There is a 'Say' or 'Think' block."};
         this.requirements.validOriginProject = { bool: false, str: "The sprites start at the same place and have same costume when green flag clicked."};
-        this.requirements.usedTwoOrMoreProject = { bool: fasle, str: "Used 2 or more of Looks, Motion, or Sound blocks."};
+        this.requirements.usedTwoOrMoreProject = { bool: false, str: "Used 2 or more of Looks, Motion, or Sound blocks."};
     }
 
     grade(fileObj, user) {
