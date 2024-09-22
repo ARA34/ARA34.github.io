@@ -66,6 +66,10 @@ module.exports = class {
             soundBlocksBoolArray.filter(b=>b.length >= 1);
             let soundBlocksBool = soundBlocksBoolArray.length >= 2 || soundBlocksBoolArray.some(t=>t.length >= 2);
 
+            console.log(looksBlocksBool);
+            console.log(motionBlocksBool);
+            console.log(soundBlocksBool);
+
             out.usedTwoOrMoreSprite = looksBlocksBool || motionBlocksBool || soundBlocksBool;
 
             return out;
