@@ -14,7 +14,7 @@ module.exports = class {
 
      initReqs() {
         // include something that signifies that this is testing for all sprites
-        this.requirements.twoSpritesPresentProject = { bool: false, str: "At least (2) sprites are present and the requiremnts will be tested on them."};
+        this.requirements.twoSpritesPresentProject = { bool: false, str: "At least (2) sprites are present and the requirements will be tested on them."};
         this.requirements.repeatMoreThanOnceProject = { bool: false, str: "There is a script that does something more than once."};
         this.requirements.synchScriptsProject = { bool: false, str: "There are at least (2) scripts that are running at the same time."};
         this.requirements.sayOrThinkProject = { bool: false, str: "There is a 'Say' or 'Think' block."};
@@ -33,7 +33,7 @@ module.exports = class {
 
         function collectHeads(inputScripts) {
             let headCollector = {};
-            let heads = inputScripts.map(s=>s[0]);
+            let heads = inputScripts.map(s=>s[0] && s[0].opcode.includes("event_"));
             for (let i = 0; i <= heads.length; i++) {
                 if (!(`${heads[i]}` in headCollector)) {
                     headCollector[heads[i]] = 1;
