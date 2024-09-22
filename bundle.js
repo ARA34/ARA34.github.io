@@ -1837,7 +1837,7 @@ module.exports = class {
 
         let stage = project.targets.find(t=>t.isStage);
         let sprites = project.targets.filter(t=>!t.isStage);
-        out.twoSpritesPresentProject.bool = sprites.length >= 1;
+        twoSpritesPresentProject.bool = sprites.length >= 2;
 
         function collectHeads(inputScripts) {
             let headCollector = {};
