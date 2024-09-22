@@ -1807,7 +1807,7 @@ module.exports = class {
 }
 },{"../grading-scripts-s3/scratch3":31}],11:[function(require,module,exports){
 /*
-Invasive Species Grading Script
+Dialog Project Grading Script
 Alex Reyes Aranda Fall 2024
 */
 
@@ -1837,7 +1837,7 @@ module.exports = class {
 
         let stage = project.targets.find(t=>t.isStage);
         let sprites = project.targets.filter(t=>!t.isStage);
-        twoSpritesPresentProject.bool = sprites.length >= 2;
+        this.requirements.twoSpritesPresentProject.bool = sprites.length >= 2;
 
         function collectHeads(inputScripts) {
             let headCollector = {};
