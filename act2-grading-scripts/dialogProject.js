@@ -52,7 +52,7 @@ module.exports = class {
             out.repeatMoreThanOnceSprite = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("control_repeat") || b.opcode.includes("control_forever")));
             out.synchScriptsSprite = collectHeads(sprite.scripts);
             out.sayOrThinkSprite = sprite.scripts.some(s=>s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("looks_think")));
-            out.validOriginSprite = sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenflagclicked") && s.blocks.some(b=>b.opcode.includes("motion_gotoxy") && s.blocks.some(b=>b.opcode.incldues("looks_switchcostumeto"))));
+            out.validOriginSprite = sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_whenflagclicked") && s.blocks.some(b=>b.opcode.includes("motion_gotoxy") && s.blocks.some(b=>b.opcode.includes("looks_switchcostumeto"))));
             let looks_blocks = sprite.scripts.map(s=>s.blocks.map(b=>b.opcode.includes("looks_say")));
             console.log("looks blocks: ", looks_blocks);
             // gather all the looks blocks in the sprite
