@@ -37,8 +37,6 @@ module.exports = class {
         let stage = project.targets.find(t =>t.isStage);
         let sprites = project.targets.filter(t=>!t.isStage);
 
-        sprite.scripts.filter(s=>s.blocks[0])
-
         function procSprite(sprite){
             // evaluating a single sprite
             var out = { hasInteractive: false, hasSayOrThink: false };
