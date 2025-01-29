@@ -38,12 +38,14 @@ module.exports = class {
         let stage = project.targets.find(t =>t.isStage);
         let sprites = project.targets.filter(t=>!t.isStage);
 
+        sprite.scripts.filter(s=>s.blocks[0])
+
         function procSprite(sprite){
             // evaluating a single sprite
             var out = { hasInteractive: false, hasSayOrThink: false };
 
-            var available_scripts = sprite.scripts.filter(s=>s.blocks[0] == "event_whenthisspriteclicked");
-            out.hasInteractive = available_scripts.blocks.length > 4;
+            var available_scripts = sprite.scripts.filter(s=>s.blocks[0].opcode.includes("event_whenthisspriteclicked"));
+            out.hasInteractive = available_scripts.some(s=>s.blocks.length > 4);
             out.hasSayOrThink = available_scripts.some(s=>s.blocks.some(block=>block.opcode.includes("looks_say") || s.blocks.some(block=>block.opcode.includes("looks_think"))));
             return out;
         }
