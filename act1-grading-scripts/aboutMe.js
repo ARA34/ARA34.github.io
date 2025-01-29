@@ -1,6 +1,6 @@
 /*
-AboutMe Grading Script
-Spring 2025
+Act 1 AboutMe Grading Script
+Updated by: Alex Reyes, Spring 2025
 */
 require('../grading-scripts-s3/scratch3')
 
@@ -34,7 +34,7 @@ module.exports = class {
         this.initReqs();
         if (!is(fileObj)) return;
 
-        let stage = project.targets.find(t =>t.isStage);
+        let stage = project.targets.find(t=>t.isStage);
         let sprites = project.targets.filter(t=>!t.isStage);
 
         function procSprite(sprite){
@@ -48,7 +48,7 @@ module.exports = class {
         }
 
         // takes care of backdrop
-        this.requirements.hasBackdrop.bool = stage.length >= 1;
+        this.requirements.hasBackdrop.bool = stage.costumes.length > 1;
         // takes care of 1,2,3 sprites
         this.requirements.hasOneSprite.bool = sprites.length >= 1;
         this.requirements.hasTwoSprites.bool = sprites.length >= 2;
