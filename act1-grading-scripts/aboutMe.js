@@ -41,7 +41,7 @@ module.exports = class {
 
         function procSprite(sprite) {
             // evaluating a single sprite
-            var out = { hasInteractive: false, hasActions: false};
+            var out = { hasInteractive: false, hasActions: false };
 
             //events.size;
             var uniqueEvents = new Set();
@@ -52,7 +52,7 @@ module.exports = class {
             console.log("unique sprite events: ", uniqueEvents);
             console.log("event #: ", uniqueEvents.size);
 
-            var sufficientInteractive = available_scripts.filter(s=>s.blocks.length > 4).length >= 2;
+            var sufficientInteractive = available_scripts.filter(s=>s.blocks.length >= 2).length >= 2;
             out.hasInteractive = uniqueEvents.size >= 2 && sufficientInteractive;
             // out.hasInteractive = available_scripts.filter(s=>s.blocks.length > 4).length >= 2;
             
