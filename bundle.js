@@ -2344,10 +2344,11 @@ module.exports = class {
 
             out.invasiveSprite = sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_") && s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play")));
             out.explainingSprite = sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_") && s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play")));
-
+            
+            return out;
         }
         var results = sprites.map(procSprite);
-        
+
         this.requirements.invasiveSprite.bool = sprites.length >= 1; // NUANCE: cannot tell uploaded
         this.requirements.invasiveExplained.bool = results.filter(o=>o.invasiveSprite).length >= 1;
         this.requirements.ecosystemExplained.bool = results.filter(o=>o.explainingSprite).length >= 1;
