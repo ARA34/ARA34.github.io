@@ -28,13 +28,19 @@ module.exports = class {
         let stage = project.targets.find(t=>t.isStage);
         let sprites = project.targets.filter(t=>!t.isStage);
 
-        // let invasiveSprite = project.targets.find(t=>t.name.toLowerCase() == "invasive");
-        // let explainerSprite = project.targets.find(t=>t.name.toLowerCase() == "sprite");
+        function procSprite(sprite) {
+            var out = { invasiveSprite: false, explainingSprite: false };
 
-        this.requirements.invasiveSprite.bool = sprites.length >= 1;//invasiveSprite != null;
-        this.requirements.invasiveExplained.bool = sprites.scripts.some(s=>s.blocks[0].opcode.includes("event_") && s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play")));
-        this.requirements.ecosystemExplained.bool = sprites.scripts.some(s=>s.blocks[0].opcode.includes("event_") && s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play")));
-        this.requirements.backdropPresent.bool = stage.costumes.length >= 1; //NUANCE: can't tell that the image is of ecosystem
+            out.invasiveSprite = sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_") && s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play")));
+            out.explainingSprite = sprite.scripts.some(s=>s.blocks[0].opcode.includes("event_") && s.blocks.some(b=>b.opcode.includes("looks_say") || b.opcode.includes("sound_play")));
+
+        }
+        var results = sprites.map(procSprite);
+        
+        this.requirements.invasiveSprite.bool = sprites.length >= 1; // NUANCE: cannot tell uploaded
+        this.requirements.invasiveExplained.bool = results.filter(o=>o.invasiveSprite).length >= 1;
+        this.requirements.ecosystemExplained.bool = results.filter(o=>o.explainingSprite).length >= 1;
+        this.requirements.backdropPresent.bool = stage.costumes.length >= 1;
         
         console.log("-- DEBUG --");
         // console.log("IMPORTANT: Invasive sprite must be named 'invasive'");
